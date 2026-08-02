@@ -13,7 +13,7 @@ export class Factory<T, TAttributes extends object> {
   private constructor(
     private attributesFn: (ctx: Ctx) => TAttributes,
     private buildFn: (attrs: TAttributes) => T,
-  ) { }
+  ) {}
 
   static define<T, TAttributes extends object>(
     attributesFn: (ctx: Ctx) => TAttributes,
