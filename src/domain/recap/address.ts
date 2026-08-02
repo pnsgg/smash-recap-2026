@@ -1,0 +1,40 @@
+export class Address {
+  constructor(
+    public readonly city: string | null,
+    public readonly state: string | null,
+    public readonly countryCode: string | null,
+    public readonly latitude: number | null,
+    public readonly longitude: number | null,
+  ) {}
+
+  /**
+   * Computes the distance between two addresses using the Haversine formula.
+   */
+  distanceTo(other: Address): number | null {
+    if (
+      this.latitude === null ||
+      this.longitude === null ||
+      other.latitude === null ||
+      other.longitude === null
+    ) {
+      return null
+    }
+
+    const R = 6371 // Earth's radius in kilometers
+    const dLat = ((other.latitude - this.latitude) * Math.PI) / 180
+    const dLon = ((other.longitude - this.longitude) * Math.PI) / 180
+
+    const lat1Rad = (this.latitude * Math.PI) / 180
+    const lat2Rad = (other.latitude * Math.PI) / 180
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLon / 2) *
+        Math.sin(dLon / 2) *
+        Math.cos(lat1Rad) *
+        Math.cos(lat2Rad)
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    return R * c
+  }
+}
