@@ -8,6 +8,7 @@ export class Event {
     public readonly id: EventId,
     public readonly name: string,
     public readonly videogame: Videogame,
+    public readonly isOnline: boolean,
     public readonly participants: Participant[],
     public readonly sets: Set[],
   ) {}

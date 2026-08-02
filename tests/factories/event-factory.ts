@@ -13,11 +13,12 @@ export const EventFactory = Factory.define(
     id: faker.number.int().toString(),
     name: faker.company.buzzNoun(),
     videogame: VideogameFactory.make(),
+    isOnline: faker.datatype.boolean(),
     participants: [] as Participant[],
     sets: [] as Set[],
   }),
-  ({ id, name, videogame, participants, sets }) =>
-    new Event(asEventId(id), name, videogame, participants, sets),
+  ({ id, name, videogame, isOnline, participants, sets }) =>
+    new Event(asEventId(id), name, videogame, isOnline, participants, sets),
 )
   .state('withParticipants', () => ({
     participants: ParticipantFactory.makeMany(5),
