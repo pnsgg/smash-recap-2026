@@ -1,6 +1,7 @@
 import type { SetId, EventId, PlayerId } from '#/domain/shared-kernel/ids'
 import type { Game } from '#/domain/recap/game'
-import type { Seed } from '#/domain/recap/seed'
+import { Seed } from '#/domain/recap/seed'
+import type { BracketType } from '#/domain/recap/bracket-type'
 
 export class SetPlayer {
   public readonly playerId: PlayerId
@@ -49,5 +50,30 @@ export class Set {
     this.fullRoundText = params.fullRoundText
     this.games = params.games
     this.completedAt = params.completedAt
+  }
+
+  /**
+   * Checks if this set was an upset based on competitor seeding.
+   */
+  isUpset(bracket: BracketType): boolean {
+    const uf = this.upsetFactor(bracket)
+    return uf !== null && uf > 0
+  }
+
+  /**
+   * Computes the upset factor of this set.
+   * Returns a positive number if it was an upset, a negative number if it was expected, or null if unsupported.
+   */
+  upsetFactor(bracket: BracketType): number | null {
+    const winner = this.competitors.get(this.winnerId)
+    const loser = Array.from(this.competitors.values()).find(
+      (c) => c.playerId !== this.winnerId,
+    )
+    if (!winner || !loser) return null
+    return Seed.upsetFactor(
+      winner.seed.initialSeed,
+      loser.seed.initialSeed,
+      bracket,
+    )
   }
 }

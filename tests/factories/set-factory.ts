@@ -56,16 +56,16 @@ export const SetFactory = Factory.define(
     games,
     completedAt,
   }) =>
-    new Set(
-      asSetId(id),
-      asEventId(eventId),
+    new Set({
+      id: asSetId(id),
+      eventId: asEventId(eventId),
       competitors,
       winnerId,
       round,
       fullRoundText,
       games,
       completedAt,
-    ),
+    }),
 ).state('withGames', (attrs, { faker }) => {
   const playerIds = Array.from(attrs.competitors.keys())
   const p1Id = playerIds[0]
