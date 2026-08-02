@@ -44,4 +44,32 @@ describe('Address', () => {
       expect(missingLng.distanceTo(paris)).toBeNull()
     })
   })
+
+  describe('distanceTo', () => {
+    test('computes correct distance between two points', () => {
+      const paris = new Address('Paris', null, 'FR', 48.8566, 2.3522)
+      const newYork = new Address('New York', null, 'US', 40.7128, -74.006)
+
+      const distance = paris.distanceTo(newYork)
+      expect(distance).not.toBeNull()
+      expect(distance).toBeGreaterThan(5820)
+      expect(distance).toBeLessThan(5840)
+    })
+
+    test('returns 0 when computing distance to itself', () => {
+      const paris = new Address('Paris', null, 'FR', 48.8566, 2.3522)
+      expect(paris.distanceTo(paris)).toBe(0)
+    })
+
+    test('returns null if any coordinate is missing', () => {
+      const paris = new Address('Paris', null, 'FR', 48.8566, 2.3522)
+      const missingLat = new Address('NoLat', null, 'US', null, -74.006)
+      const missingLng = new Address('NoLng', null, 'US', 40.7128, null)
+
+      expect(paris.distanceTo(missingLat)).toBeNull()
+      expect(paris.distanceTo(missingLng)).toBeNull()
+      expect(missingLat.distanceTo(paris)).toBeNull()
+      expect(missingLng.distanceTo(paris)).toBeNull()
+    })
+  })
 })
