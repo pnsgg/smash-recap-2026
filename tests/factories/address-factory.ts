@@ -10,5 +10,5 @@ export const AddressFactory = Factory.define(
     longitude: faker.location.longitude(),
   }),
   ({ city, state, countryCode, latitude, longitude }) =>
-    new Address(city, state, countryCode, latitude, longitude),
+    new Address({ city, state, countryCode, latitude, longitude }),
 )

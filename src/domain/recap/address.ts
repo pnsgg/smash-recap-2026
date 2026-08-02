@@ -1,11 +1,23 @@
 export class Address {
-  constructor(
-    public readonly city: string | null,
-    public readonly state: string | null,
-    public readonly countryCode: string | null,
-    public readonly latitude: number | null,
-    public readonly longitude: number | null,
-  ) {}
+  public readonly city: string | null
+  public readonly state: string | null
+  public readonly countryCode: string | null
+  public readonly latitude: number | null
+  public readonly longitude: number | null
+
+  constructor(params: {
+    city: string | null
+    state: string | null
+    countryCode: string | null
+    latitude: number | null
+    longitude: number | null
+  }) {
+    this.city = params.city
+    this.state = params.state
+    this.countryCode = params.countryCode
+    this.latitude = params.latitude
+    this.longitude = params.longitude
+  }
 
   /**
    * Computes the distance between two addresses using the Haversine formula.

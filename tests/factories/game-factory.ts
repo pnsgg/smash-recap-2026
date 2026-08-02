@@ -23,5 +23,11 @@ export const GameFactory = Factory.define(
     }
   },
   ({ id, orderNum, winnerId, stage, selections }) =>
-    new Game(asGameId(id), orderNum, winnerId, stage, selections),
+    new Game({
+      id: asGameId(id),
+      orderNum,
+      winnerId,
+      stage,
+      selections,
+    }),
 )

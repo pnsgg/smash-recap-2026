@@ -6,30 +6,30 @@ import { asParticipantId, asPlayerId } from '#/domain/shared-kernel/ids'
 
 describe('Event', () => {
   test('getFinalRankingUpTo sorts participants in ascending order of final placement', () => {
-    const p1 = new Participant(
-      asParticipantId('1'),
-      asPlayerId('p1'),
-      'Player A',
-      new Seed(1, 9),
-    )
-    const p2 = new Participant(
-      asParticipantId('2'),
-      asPlayerId('p2'),
-      'Player B',
-      new Seed(2, 3),
-    )
-    const p3 = new Participant(
-      asParticipantId('3'),
-      asPlayerId('p3'),
-      'Player C',
-      new Seed(3, 1),
-    )
-    const p4 = new Participant(
-      asParticipantId('4'),
-      asPlayerId('p4'),
-      'Player D',
-      new Seed(4, 5),
-    )
+    const p1 = new Participant({
+      id: asParticipantId('1'),
+      playerId: asPlayerId('p1'),
+      name: 'Player A',
+      seed: new Seed(1, 9),
+    })
+    const p2 = new Participant({
+      id: asParticipantId('2'),
+      playerId: asPlayerId('p2'),
+      name: 'Player B',
+      seed: new Seed(2, 3),
+    })
+    const p3 = new Participant({
+      id: asParticipantId('3'),
+      playerId: asPlayerId('p3'),
+      name: 'Player C',
+      seed: new Seed(3, 1),
+    })
+    const p4 = new Participant({
+      id: asParticipantId('4'),
+      playerId: asPlayerId('p4'),
+      name: 'Player D',
+      seed: new Seed(4, 5),
+    })
 
     const event = EventFactory.merge({
       participants: [p1, p2, p3, p4],
@@ -44,18 +44,18 @@ describe('Event', () => {
   })
 
   test('getFinalRankingUpTo does not mutate the original participants array', () => {
-    const p1 = new Participant(
-      asParticipantId('1'),
-      asPlayerId('p1'),
-      'Player A',
-      new Seed(1, 9),
-    )
-    const p2 = new Participant(
-      asParticipantId('2'),
-      asPlayerId('p2'),
-      'Player B',
-      new Seed(2, 1),
-    )
+    const p1 = new Participant({
+      id: asParticipantId('1'),
+      playerId: asPlayerId('p1'),
+      name: 'Player A',
+      seed: new Seed(1, 9),
+    })
+    const p2 = new Participant({
+      id: asParticipantId('2'),
+      playerId: asPlayerId('p2'),
+      name: 'Player B',
+      seed: new Seed(2, 1),
+    })
 
     const event = EventFactory.merge({
       participants: [p1, p2],

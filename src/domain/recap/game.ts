@@ -10,11 +10,23 @@ export class GameSelection {
 }
 
 export class Game {
-  constructor(
-    public readonly id: GameId,
-    public readonly orderNum: number,
-    public readonly winnerId: PlayerId | null,
-    public readonly stage: Stage | null,
-    public readonly selections: GameSelection[],
-  ) {}
+  public readonly id: GameId
+  public readonly orderNum: number
+  public readonly winnerId: PlayerId | null
+  public readonly stage: Stage | null
+  public readonly selections: GameSelection[]
+
+  constructor(params: {
+    id: GameId
+    orderNum: number
+    winnerId: PlayerId | null
+    stage: Stage | null
+    selections: GameSelection[]
+  }) {
+    this.id = params.id
+    this.orderNum = params.orderNum
+    this.winnerId = params.winnerId
+    this.stage = params.stage
+    this.selections = params.selections
+  }
 }

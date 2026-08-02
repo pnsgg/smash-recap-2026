@@ -1,5 +1,6 @@
 import { Set, SetPlayer } from '#/domain/recap/set'
 import { asSetId, asEventId, asPlayerId } from '#/domain/shared-kernel/ids'
+import type { PlayerId } from '#/domain/shared-kernel/ids'
 import { GameFactory } from './game-factory'
 import { SeedFactory } from './seed-factory'
 import { CharacterFactory } from './character-factory'
@@ -13,21 +14,27 @@ export const SetFactory = Factory.define(
     const p2Id = asPlayerId(faker.number.int().toString())
     const winnerId = faker.helpers.arrayElement([p1Id, p2Id])
 
+    const p1 = new SetPlayer({
+      playerId: p1Id,
+      seed: SeedFactory.make(),
+      score: faker.number.int({ min: 0, max: 3 }),
+      isDisqualified: false,
+    })
+    const p2 = new SetPlayer({
+      playerId: p2Id,
+      seed: SeedFactory.make(),
+      score: faker.number.int({ min: 0, max: 3 }),
+      isDisqualified: false,
+    })
+    const competitors = new Map<PlayerId, SetPlayer>([
+      [p1Id, p1],
+      [p2Id, p2],
+    ])
+
     return {
       id: faker.number.int().toString(),
       eventId: faker.number.int().toString(),
-      player1: new SetPlayer(
-        p1Id,
-        SeedFactory.make(),
-        faker.number.int({ min: 0, max: 3 }),
-        false,
-      ),
-      player2: new SetPlayer(
-        p2Id,
-        SeedFactory.make(),
-        faker.number.int({ min: 0, max: 3 }),
-        false,
-      ),
+      competitors,
       winnerId: winnerId,
       round: faker.number.int({ min: -10, max: 10 }),
       fullRoundText: faker.helpers.arrayElement([
@@ -42,8 +49,7 @@ export const SetFactory = Factory.define(
   ({
     id,
     eventId,
-    player1,
-    player2,
+    competitors,
     winnerId,
     round,
     fullRoundText,
@@ -53,8 +59,7 @@ export const SetFactory = Factory.define(
     new Set(
       asSetId(id),
       asEventId(eventId),
-      player1,
-      player2,
+      competitors,
       winnerId,
       round,
       fullRoundText,
@@ -62,18 +67,18 @@ export const SetFactory = Factory.define(
       completedAt,
     ),
 ).state('withGames', (attrs, { faker }) => {
+  const playerIds = Array.from(attrs.competitors.keys())
+  const p1Id = playerIds[0]
+  const p2Id = playerIds[1]
+
   const games = Array.from({ length: 3 }, (_, i) => {
-    const winnerId = faker.helpers.arrayElement([
-      attrs.player1.playerId,
-      attrs.player2.playerId,
-      null,
-    ])
+    const winnerId = faker.helpers.arrayElement([p1Id, p2Id, null])
     return GameFactory.merge({
       orderNum: i + 1,
       winnerId,
       selections: [
-        new GameSelection(attrs.player1.playerId, CharacterFactory.make()),
-        new GameSelection(attrs.player2.playerId, CharacterFactory.make()),
+        new GameSelection(p1Id, CharacterFactory.make()),
+        new GameSelection(p2Id, CharacterFactory.make()),
       ],
     }).make()
   })

@@ -10,7 +10,14 @@ export const TournamentFactory = Factory.define(
     name: faker.company.name() + ' Open',
     address: AddressFactory.make(),
     events: [] as Event[],
+    startDate: faker.date.past(),
   }),
-  ({ id, name, address, events }) =>
-    new Tournament(asTournamentId(id), name, address, events),
+  ({ id, name, address, events, startDate }) =>
+    new Tournament({
+      id: asTournamentId(id),
+      name,
+      address,
+      events,
+      startDate,
+    }),
 )

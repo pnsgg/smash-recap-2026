@@ -4,7 +4,13 @@ import { AddressFactory } from '#tests/factories/address-factory'
 
 describe('Address', () => {
   test('initializes correctly with location attributes', () => {
-    const address = new Address('Paris', 'IDF', 'FR', 48.8566, 2.3522)
+    const address = new Address({
+      city: 'Paris',
+      state: 'IDF',
+      countryCode: 'FR',
+      latitude: 48.8566,
+      longitude: 2.3522,
+    })
     expect(address.city).toBe('Paris')
     expect(address.state).toBe('IDF')
     expect(address.countryCode).toBe('FR')
@@ -19,8 +25,20 @@ describe('Address', () => {
 
   describe('distanceTo', () => {
     test('computes correct distance between two points', () => {
-      const paris = new Address('Paris', null, 'FR', 48.8566, 2.3522)
-      const newYork = new Address('New York', null, 'US', 40.7128, -74.006)
+      const paris = new Address({
+        city: 'Paris',
+        state: null,
+        countryCode: 'FR',
+        latitude: 48.8566,
+        longitude: 2.3522,
+      })
+      const newYork = new Address({
+        city: 'New York',
+        state: null,
+        countryCode: 'US',
+        latitude: 40.7128,
+        longitude: -74.006,
+      })
 
       const distance = paris.distanceTo(newYork)
       expect(distance).not.toBeNull()
@@ -29,42 +47,38 @@ describe('Address', () => {
     })
 
     test('returns 0 when computing distance to itself', () => {
-      const paris = new Address('Paris', null, 'FR', 48.8566, 2.3522)
+      const paris = new Address({
+        city: 'Paris',
+        state: null,
+        countryCode: 'FR',
+        latitude: 48.8566,
+        longitude: 2.3522,
+      })
       expect(paris.distanceTo(paris)).toBe(0)
     })
 
     test('returns null if any coordinate is missing', () => {
-      const paris = new Address('Paris', null, 'FR', 48.8566, 2.3522)
-      const missingLat = new Address('NoLat', null, 'US', null, -74.006)
-      const missingLng = new Address('NoLng', null, 'US', 40.7128, null)
-
-      expect(paris.distanceTo(missingLat)).toBeNull()
-      expect(paris.distanceTo(missingLng)).toBeNull()
-      expect(missingLat.distanceTo(paris)).toBeNull()
-      expect(missingLng.distanceTo(paris)).toBeNull()
-    })
-  })
-
-  describe('distanceTo', () => {
-    test('computes correct distance between two points', () => {
-      const paris = new Address('Paris', null, 'FR', 48.8566, 2.3522)
-      const newYork = new Address('New York', null, 'US', 40.7128, -74.006)
-
-      const distance = paris.distanceTo(newYork)
-      expect(distance).not.toBeNull()
-      expect(distance).toBeGreaterThan(5820)
-      expect(distance).toBeLessThan(5840)
-    })
-
-    test('returns 0 when computing distance to itself', () => {
-      const paris = new Address('Paris', null, 'FR', 48.8566, 2.3522)
-      expect(paris.distanceTo(paris)).toBe(0)
-    })
-
-    test('returns null if any coordinate is missing', () => {
-      const paris = new Address('Paris', null, 'FR', 48.8566, 2.3522)
-      const missingLat = new Address('NoLat', null, 'US', null, -74.006)
-      const missingLng = new Address('NoLng', null, 'US', 40.7128, null)
+      const paris = new Address({
+        city: 'Paris',
+        state: null,
+        countryCode: 'FR',
+        latitude: 48.8566,
+        longitude: 2.3522,
+      })
+      const missingLat = new Address({
+        city: 'NoLat',
+        state: null,
+        countryCode: 'US',
+        latitude: null,
+        longitude: -74.006,
+      })
+      const missingLng = new Address({
+        city: 'NoLng',
+        state: null,
+        countryCode: 'US',
+        latitude: 40.7128,
+        longitude: null,
+      })
 
       expect(paris.distanceTo(missingLat)).toBeNull()
       expect(paris.distanceTo(missingLng)).toBeNull()

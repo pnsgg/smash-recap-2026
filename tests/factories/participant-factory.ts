@@ -12,10 +12,10 @@ export const ParticipantFactory = Factory.define(
     finalPlacement: faker.number.int({ min: 1, max: 256 }),
   }),
   ({ id, playerId, name, initialSeed, finalPlacement }) =>
-    new Participant(
-      asParticipantId(id),
-      asPlayerId(playerId),
+    new Participant({
+      id: asParticipantId(id),
+      playerId: asPlayerId(playerId),
       name,
-      new Seed(initialSeed, finalPlacement),
-    ),
+      seed: new Seed(initialSeed, finalPlacement),
+    }),
 )
