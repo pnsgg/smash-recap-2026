@@ -6,5 +6,5 @@ export const SeedFactory = Factory.define(
     initialSeed: faker.number.int({ min: 1, max: 32 }),
     finalPlacement: faker.number.int({ min: 1, max: 32 }),
   }),
-  (attrs) => new Seed(attrs.initialSeed, attrs.finalPlacement)
+  (attrs) => new Seed(attrs.initialSeed, attrs.finalPlacement),
 ).state('winner', () => ({ finalPlacement: 1 }))

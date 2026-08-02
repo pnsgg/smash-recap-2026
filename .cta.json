@@ -13,10 +13,5 @@
   "routerOnly": false,
   "version": 1,
   "framework": "react",
-  "chosenAddOns": [
-    "eslint",
-    "nitro",
-    "paraglide",
-    "t3env"
-  ]
+  "chosenAddOns": ["eslint", "nitro", "paraglide", "t3env"]
 }

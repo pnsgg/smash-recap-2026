@@ -8,20 +8,24 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
 
+const isTest = typeof process !== 'undefined' && !!process.env.VITEST
+
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
-  plugins: [
-    devtools(),
-    paraglideVitePlugin({
-      project: './project.inlang',
-      outdir: './src/paraglide',
-      strategy: ['url', 'baseLocale'],
-    }),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
-    tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-  ],
+  plugins: isTest
+    ? []
+    : [
+        devtools(),
+        paraglideVitePlugin({
+          project: './project.inlang',
+          outdir: './src/paraglide',
+          strategy: ['url', 'baseLocale'],
+        }),
+        nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+        tailwindcss(),
+        tanstackStart(),
+        viteReact(),
+      ],
 })
 
 export default config
