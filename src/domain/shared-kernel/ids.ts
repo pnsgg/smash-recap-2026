@@ -7,6 +7,7 @@ export type ParticipantId = Brand<string, 'ParticipantId'>
 export type CharacterId = Brand<string, 'CharacterId'>
 export type StageId = Brand<string, 'StageId'>
 export type GameId = Brand<string, 'GameId'>
+export type SetId = Brand<string, 'SetId'>
 
 export const asPlayerId = (id: string): PlayerId => id as PlayerId
 export const asTournamentId = (id: string): TournamentId => id as TournamentId
@@ -16,3 +17,4 @@ export const asParticipantId = (id: string): ParticipantId =>
 export const asCharacterId = (id: string): CharacterId => id as CharacterId
 export const asStageId = (id: string): StageId => id as StageId
 export const asGameId = (id: string): GameId => id as GameId
+export const asSetId = (id: string): SetId => id as SetId
