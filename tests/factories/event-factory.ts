@@ -6,16 +6,18 @@ import { asEventId } from '#/domain/shared-kernel/ids'
 import { Factory } from './factory'
 import { ParticipantFactory } from './participant-factory'
 import { SetFactory } from './set-factory'
+import { VideogameFactory } from './videogame-factory'
 
 export const EventFactory = Factory.define(
   ({ faker }) => ({
     id: faker.number.int().toString(),
     name: faker.company.buzzNoun(),
+    videogame: VideogameFactory.make(),
     participants: [] as Participant[],
     sets: [] as Set[],
   }),
-  ({ id, name, participants, sets }) =>
-    new Event(asEventId(id), name, participants, sets),
+  ({ id, name, videogame, participants, sets }) =>
+    new Event(asEventId(id), name, videogame, participants, sets),
 )
   .state('withParticipants', () => ({
     participants: ParticipantFactory.makeMany(5),
