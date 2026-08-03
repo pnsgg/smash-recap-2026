@@ -5,10 +5,77 @@ import { PlayerFactory } from '#tests/factories/player-factory.ts'
 import { SeedFactory } from '#tests/factories/seed-factory.ts'
 import { SetFactory } from '#tests/factories/set-factory.ts'
 import { TournamentFactory } from '#tests/factories/tournament-factory.ts'
+import { CharacterFactory } from '#tests/factories/character-factory.ts'
+import { GameFactory } from '#tests/factories/game-factory.ts'
+import { GameSelection } from '#/domain/recap/game'
 import { describe, expect, test } from 'vitest'
 
 describe('Player', () => {
-  test.todo('mostPlayedCharacters')
+  describe('mostPlayedCharacters', () => {
+    test('should return empty list if player did not play any games or characters', () => {
+      const player = PlayerFactory.make()
+      expect(player.mostPlayedCharacters(3)).toEqual([])
+    })
+
+    test('should count, sort, and limit character usage', () => {
+      const playerId = asPlayerId('1')
+      const charFox = CharacterFactory.merge({ name: 'Fox' }).make()
+      const charMarth = CharacterFactory.merge({ name: 'Marth' }).make()
+      const charFalco = CharacterFactory.merge({ name: 'Falco' }).make()
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({
+                sets: [
+                  SetFactory.merge({
+                    competitors: new Map([
+                      [
+                        playerId,
+                        new SetPlayer({
+                          playerId,
+                          seed: SeedFactory.make(),
+                          score: 3,
+                          isDisqualified: false,
+                        }),
+                      ],
+                    ]),
+                    games: [
+                      GameFactory.merge({
+                        selections: [new GameSelection(playerId, charFox)],
+                      }).make(),
+                      GameFactory.merge({
+                        selections: [new GameSelection(playerId, charFox)],
+                      }).make(),
+                      GameFactory.merge({
+                        selections: [new GameSelection(playerId, charFox)],
+                      }).make(),
+                      GameFactory.merge({
+                        selections: [new GameSelection(playerId, charMarth)],
+                      }).make(),
+                      GameFactory.merge({
+                        selections: [new GameSelection(playerId, charMarth)],
+                      }).make(),
+                      GameFactory.merge({
+                        selections: [new GameSelection(playerId, charFalco)],
+                      }).make(),
+                    ],
+                  }).make(),
+                ],
+              }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      const result = player.mostPlayedCharacters(2)
+      expect(result).toHaveLength(2)
+      expect(result[0]).toEqual({ character: charFox, count: 3 })
+      expect(result[1]).toEqual({ character: charMarth, count: 2 })
+    })
+  })
   test.todo('highestUpset')
   test.todo('encounteredCharacters')
   test.todo('stageActivity')
