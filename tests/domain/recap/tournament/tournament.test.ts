@@ -190,5 +190,77 @@ describe('Tournament', () => {
       expect(bestUpset!.factor).toBe(6)
       expect(bestUpset!.set.id).toBe(set2.id)
     })
+
+    test('returns the highest upset when the first event has higher upset than subsequent events', () => {
+      const playerId = asPlayerId('target-player')
+      const opponentId = asPlayerId('opponent')
+
+      const set1 = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: new Seed(16, 1),
+              score: 2,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            opponentId,
+            new SetPlayer({
+              playerId: opponentId,
+              seed: new Seed(2, 1),
+              score: 0,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        winnerId: playerId,
+      }).make()
+
+      const event1 = EventFactory.merge({
+        bracketType: BracketType.DOUBLE_ELIMINATION,
+        sets: [set1],
+      }).make()
+
+      const set2 = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: new Seed(8, 1),
+              score: 2,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            opponentId,
+            new SetPlayer({
+              playerId: opponentId,
+              seed: new Seed(2, 1),
+              score: 0,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        winnerId: playerId,
+      }).make()
+
+      const event2 = EventFactory.merge({
+        bracketType: BracketType.DOUBLE_ELIMINATION,
+        sets: [set2],
+      }).make()
+
+      const tournament = TournamentFactory.merge({
+        events: [event1, event2],
+      }).make()
+
+      const bestUpset = tournament.getPlayerHighestUpset(playerId)
+      expect(bestUpset).not.toBeNull()
+      expect(bestUpset!.factor).toBe(6)
+      expect(bestUpset!.set.id).toBe(set1.id)
+    })
   })
 })
