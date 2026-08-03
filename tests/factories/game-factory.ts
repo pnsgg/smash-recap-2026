@@ -1,4 +1,5 @@
 import { Game, GameSelection } from '#/domain/recap/game'
+import type { Stage } from '#/domain/recap/stage'
 import { asGameId, asPlayerId } from '#/domain/shared-kernel/ids'
 import { CharacterFactory } from './character-factory'
 import { StageFactory } from './stage-factory'
