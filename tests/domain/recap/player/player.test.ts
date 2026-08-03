@@ -582,7 +582,105 @@ describe('Player', () => {
     })
   })
 
-  test.todo('uniqueOpponentsFaced')
+  describe('uniqueOpponentsFaced', () => {
+    test('should return empty list if no opponents are faced', () => {
+      const player = PlayerFactory.make()
+      expect(player.uniqueOpponentsFaced()).toEqual([])
+    })
+
+    test('should return unique opponent player IDs', () => {
+      const playerId = asPlayerId('1')
+      const opponent1Id = asPlayerId('2')
+      const opponent2Id = asPlayerId('3')
+
+      const set1 = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.make(),
+              score: 2,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            opponent1Id,
+            new SetPlayer({
+              playerId: opponent1Id,
+              seed: SeedFactory.make(),
+              score: 0,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+      }).make()
+
+      const set2 = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.make(),
+              score: 2,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            opponent2Id,
+            new SetPlayer({
+              playerId: opponent2Id,
+              seed: SeedFactory.make(),
+              score: 1,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+      }).make()
+
+      const set3 = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.make(),
+              score: 2,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            opponent1Id,
+            new SetPlayer({
+              playerId: opponent1Id,
+              seed: SeedFactory.make(),
+              score: 1,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+      }).make()
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({
+                sets: [set1, set2, set3],
+              }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      const result = player.uniqueOpponentsFaced()
+      expect(result).toHaveLength(2)
+      expect(result).toContain(opponent1Id)
+      expect(result).toContain(opponent2Id)
+    })
+  })
 
   describe('dayOfWeekActivity', () => {
     test('should not contains values if the player did not attend any tournaments this year', () => {
