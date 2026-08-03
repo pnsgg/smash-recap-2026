@@ -86,6 +86,7 @@ describe('Game', () => {
     test('returns null if player has no selection', () => {
       const playerId = asPlayerId('1')
       const game = GameFactory.merge({
+        winnerId: playerId,
         selections: [],
       }).make()
 
@@ -96,6 +97,7 @@ describe('Game', () => {
       const playerId = asPlayerId('1')
       const selection = new GameSelection(playerId, CharacterFactory.make())
       const game = GameFactory.merge({
+        winnerId: playerId,
         selections: [selection],
       }).make()
 
