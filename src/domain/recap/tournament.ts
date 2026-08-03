@@ -88,4 +88,11 @@ export class Tournament {
       event.getPlayerLossesAgainstCharacters(playerId),
     )
   }
+
+  /**
+   * Aggregates opponent player IDs faced in this tournament.
+   */
+  getOpponentPlayerIds(playerId: PlayerId): PlayerId[] {
+    return this.events.flatMap((event) => event.getOpponentPlayerIds(playerId))
+  }
 }

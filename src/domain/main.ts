@@ -109,3 +109,4 @@ const player = new Player({
   ],
 })
 
+console.log('Player loaded:', player.gamerTag)

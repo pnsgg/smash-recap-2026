@@ -106,4 +106,11 @@ export class Event {
       set.getPlayerLossesAgainstCharacters(playerId),
     )
   }
+
+  /**
+   * Aggregates opponent player IDs faced in this event.
+   */
+  getOpponentPlayerIds(playerId: PlayerId): PlayerId[] {
+    return this.sets.flatMap((set) => set.getOpponentPlayerIds(playerId))
+  }
 }

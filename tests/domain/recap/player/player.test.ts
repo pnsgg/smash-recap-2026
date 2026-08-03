@@ -7,4 +7,5 @@ describe('Player', () => {
   test.todo('stageActivity')
   test.todo('totalSets')
   test.todo('worstMatchups')
+  test.todo('uniqueOpponentsFaced')
 })

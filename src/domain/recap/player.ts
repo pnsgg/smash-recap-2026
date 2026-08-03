@@ -310,4 +310,9 @@ export class Player {
       .sort((a, b) => b.lossCount - a.lossCount)
       .slice(0, limit)
   }
+
+  uniqueOpponentsFaced(): PlayerId[] {
+    const ids = this.tournaments.flatMap((t) => t.getOpponentPlayerIds(this.id))
+    return Array.from(new globalThis.Set(ids))
+  }
 }

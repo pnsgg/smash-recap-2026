@@ -179,4 +179,12 @@ export class Set {
     }
     return records
   }
+
+  /**
+   * Retrieves player IDs of opponents faced in this set.
+   */
+  getOpponentPlayerIds(playerId: PlayerId): PlayerId[] {
+    if (!this.competitors.has(playerId)) return []
+    return Array.from(this.competitors.keys()).filter((id) => id !== playerId)
+  }
 }
