@@ -1,0 +1,28 @@
+.DS_Store
+dist
+dist-ssr
+*.local
+.wrangler
+.vinxi
+__unconfig*
+todos.json
+
+# Docker stuff
+.dockerignore
+Dockerfile
+
+# Editor config
+.vscode
+.idea
+.zed
+
+# Temp files
+.tanstack
+
+# Build outputs
+node_modules
+.output
+.nitro
+
+# Env files
+.env
