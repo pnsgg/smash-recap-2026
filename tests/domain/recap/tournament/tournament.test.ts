@@ -155,4 +155,36 @@ describe('Tournament - getPlayerSPR', () => {
     expect(bestUpset!.factor).toBe(6)
     expect(bestUpset!.set.id).toBe(set2.id)
   })
+
+  test('returns the maximum SPR when the first event has higher SPR than subsequent events', () => {
+    const playerId = asPlayerId('1')
+
+    const p1 = new Participant({
+      id: asParticipantId('1'),
+      playerId,
+      name: 'Target',
+      seed: new Seed(8, 1),
+    })
+    const event1 = EventFactory.merge({
+      bracketType: BracketType.SINGLE_ELIMINATION,
+      participants: [p1],
+    }).make()
+
+    const p2 = new Participant({
+      id: asParticipantId('2'),
+      playerId,
+      name: 'Target',
+      seed: new Seed(8, 5),
+    })
+    const event2 = EventFactory.merge({
+      bracketType: BracketType.SINGLE_ELIMINATION,
+      participants: [p2],
+    }).make()
+
+    const tournament = TournamentFactory.merge({
+      events: [event1, event2],
+    }).make()
+
+    expect(tournament.getPlayerSPR(playerId)).toBe(3)
+  })
 })
