@@ -195,4 +195,90 @@ describe('Player', () => {
       expect(player.cleanSweeps()).toBe(20)
     })
   })
+
+  describe('totalDisqualifications', () => {
+    test('should be 0 if the player did not attend any tournaments this year', () => {
+      const player = PlayerFactory.make()
+
+      expect(player.totalDisqualifications()).toBe(0)
+    })
+
+    test('should be 0 if the opponent is the one who DQed', () => {
+      const playerId = asPlayerId('1')
+      const opponentId = asPlayerId('2')
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: TournamentFactory.merge({
+          events: [
+            EventFactory.merge({
+              sets: SetFactory.merge({
+                competitors: new Map()
+                  .set(
+                    playerId,
+                    new SetPlayer({
+                      isDisqualified: false,
+                      playerId,
+                      score: 0,
+                      seed: SeedFactory.make(),
+                    }),
+                  )
+                  .set(
+                    opponentId,
+                    new SetPlayer({
+                      isDisqualified: true,
+                      playerId: opponentId,
+                      score: 0,
+                      seed: SeedFactory.make(),
+                    }),
+                  ),
+                winnerId: playerId,
+              }).makeMany(10),
+            }).make(),
+          ],
+        }).makeMany(5),
+      }).make()
+
+      expect(player.totalDisqualifications()).toBe(0)
+    })
+
+    test('should count DQs if the player is the one who DQed', () => {
+      const playerId = asPlayerId('1')
+      const opponentId = asPlayerId('2')
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: TournamentFactory.merge({
+          events: [
+            EventFactory.merge({
+              sets: SetFactory.merge({
+                competitors: new Map()
+                  .set(
+                    playerId,
+                    new SetPlayer({
+                      isDisqualified: true,
+                      playerId,
+                      score: 0,
+                      seed: SeedFactory.make(),
+                    }),
+                  )
+                  .set(
+                    opponentId,
+                    new SetPlayer({
+                      isDisqualified: false,
+                      playerId: opponentId,
+                      score: 0,
+                      seed: SeedFactory.make(),
+                    }),
+                  ),
+                winnerId: playerId,
+              }).makeMany(10),
+            }).make(),
+          ],
+        }).makeMany(5),
+      }).make()
+
+      expect(player.totalDisqualifications()).toBe(50)
+    })
+  })
 })
