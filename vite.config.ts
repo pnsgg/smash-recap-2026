@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import { devtools } from '@tanstack/devtools-vite'
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
 
@@ -26,6 +26,12 @@ const config = defineConfig({
         tanstackStart(),
         viteReact(),
       ],
+  test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'json-summary', 'html'],
+    },
+  },
 })
 
 export default config
