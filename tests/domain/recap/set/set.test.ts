@@ -248,5 +248,33 @@ describe('Set', () => {
       expect(set.isPlayerDisqualified(p1Id)).toBe(true)
       expect(set.isPlayerDisqualified(p2Id)).toBe(false)
     })
+
+    test('returns false if player is not a competitor', () => {
+      const p1Id = asPlayerId('player-1')
+      const p2Id = asPlayerId('player-2')
+      const unknownPlayerId = asPlayerId('player-unknown')
+
+      const player1 = new SetPlayer({
+        playerId: p1Id,
+        seed: new Seed(8, 5),
+        score: 2,
+        isDisqualified: false,
+      })
+      const player2 = new SetPlayer({
+        playerId: p2Id,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2],
+        ]),
+      }).make()
+
+      expect(set.isPlayerDisqualified(unknownPlayerId)).toBe(false)
+    })
   })
 })
