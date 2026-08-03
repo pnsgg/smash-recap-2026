@@ -381,4 +381,80 @@ describe('Set', () => {
       expect(characters).toContain(marth)
     })
   })
+
+  describe('getStageActivity', () => {
+    test('returns empty array if player is not in competitors', () => {
+      const playerId = asPlayerId('player-1')
+      const set = SetFactory.merge({
+        competitors: new Map(),
+      }).make()
+
+      expect(set.getStageActivity(playerId)).toEqual([])
+    })
+
+    test('returns empty array if a competitor is disqualified', () => {
+      const playerId = asPlayerId('player-1')
+      const opponentId = asPlayerId('player-2')
+
+      const player = new SetPlayer({
+        playerId,
+        seed: new Seed(1, 5),
+        score: 0,
+        isDisqualified: true,
+      })
+      const opponent = new SetPlayer({
+        playerId: opponentId,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player],
+          [opponentId, opponent],
+        ]),
+      }).make()
+
+      expect(set.getStageActivity(playerId)).toEqual([])
+    })
+
+    test('returns stage activity outcomes for the player from games', () => {
+      const playerId = asPlayerId('player-1')
+      const opponentId = asPlayerId('player-2')
+
+      const player = new SetPlayer({
+        playerId,
+        seed: new Seed(1, 5),
+        score: 2,
+        isDisqualified: false,
+      })
+      const opponent = new SetPlayer({
+        playerId: opponentId,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const game1 = GameFactory.merge({
+        winnerId: playerId,
+      }).make()
+      const game2 = GameFactory.merge({
+        winnerId: opponentId,
+      }).make()
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player],
+          [opponentId, opponent],
+        ]),
+        games: [game1, game2],
+      }).make()
+
+      expect(set.getStageActivity(playerId)).toEqual([
+        { stage: game1.stage, won: true },
+        { stage: game2.stage, won: false },
+      ])
+    })
+  })
 })
