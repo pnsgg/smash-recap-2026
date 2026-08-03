@@ -2,6 +2,8 @@ import type { SetId, EventId, PlayerId } from '#/domain/shared-kernel/ids'
 import type { Game } from '#/domain/recap/game'
 import { Seed } from '#/domain/recap/seed'
 import type { BracketType } from '#/domain/recap/bracket-type'
+import type { Character } from '#/domain/recap/character'
+import type { Stage } from '#/domain/recap/stage'
 
 export class SetPlayer {
   public readonly playerId: PlayerId
@@ -75,5 +77,106 @@ export class Set {
       loser.seed.initialSeed,
       bracket,
     )
+  }
+
+  /**
+   * Checks if this set was won with a clean sweep (opponent score was exactly 0).
+   * Excludes disqualified sets.
+   */
+  isCleanSweep(): boolean {
+    const winner = this.competitors.get(this.winnerId)
+    const loser = Array.from(this.competitors.values()).find(
+      (c) => c.playerId !== this.winnerId,
+    )
+    if (!winner || !loser) return false
+    return !winner.isDisqualified && !loser.isDisqualified && loser.score === 0
+  }
+
+  /**
+   * Checks if this set went to the deciding game (score difference is exactly 1).
+   * Excludes disqualified sets.
+   */
+  isDecidingGameSet(): boolean {
+    const competitors = Array.from(this.competitors.values())
+    if (competitors.length < 2) return false
+    const c1 = competitors[0]
+    const c2 = competitors[1]
+    if (c1.isDisqualified || c2.isDisqualified) return false
+    return Math.abs(c1.score - c2.score) === 1
+  }
+
+  /**
+   * Checks if the specified player was disqualified in this set.
+   */
+  isPlayerDisqualified(playerId: PlayerId): boolean {
+    const competitor = this.competitors.get(playerId)
+    return competitor ? competitor.isDisqualified : false
+  }
+
+  /**
+   * Retrieves characters played by a player in this set.
+   */
+  getPlayerCharacters(playerId: PlayerId): Character[] {
+    const characters: Character[] = []
+    for (const game of this.games) {
+      const char = game.getPlayerCharacter(playerId)
+      if (char) {
+        characters.push(char)
+      }
+    }
+    return characters
+  }
+
+  getOpponentCharacters(playerId: PlayerId): Character[] {
+    if (!this.competitors.has(playerId)) return []
+    const opponentId = Array.from(this.competitors.keys()).find(
+      (id) => id !== playerId,
+    )
+    if (!opponentId) return []
+    return this.getPlayerCharacters(opponentId)
+  }
+
+  /**
+   * Retrieves stage activity outcome for a player in this set's games.
+   * Excludes disqualified sets.
+   */
+  getStageActivity(playerId: PlayerId): { stage: Stage; won: boolean }[] {
+    if (!this.competitors.has(playerId)) return []
+    const isDq = Array.from(this.competitors.values()).some(
+      (c) => c.isDisqualified,
+    )
+    if (isDq) return []
+
+    const activity: { stage: Stage; won: boolean }[] = []
+    for (const game of this.games) {
+      const act = game.getStageActivity(playerId)
+      if (act) {
+        activity.push(act)
+      }
+    }
+    return activity
+  }
+
+  /**
+   * Retrieves player loss records against opponent characters in this set.
+   * Excludes disqualified sets.
+   */
+  getPlayerLossesAgainstCharacters(
+    playerId: PlayerId,
+  ): { opponentCharacter: Character; lost: boolean }[] {
+    if (!this.competitors.has(playerId)) return []
+    const isDq = Array.from(this.competitors.values()).some(
+      (c) => c.isDisqualified,
+    )
+    if (isDq) return []
+
+    const records: { opponentCharacter: Character; lost: boolean }[] = []
+    for (const game of this.games) {
+      const record = game.getPlayerLossAgainstCharacter(playerId)
+      if (record) {
+        records.push(record)
+      }
+    }
+    return records
   }
 }
