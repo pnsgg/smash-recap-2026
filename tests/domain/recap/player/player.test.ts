@@ -1,4 +1,4 @@
-import { Set, SetPlayer } from '#/domain/recap/set'
+import { SetPlayer } from '#/domain/recap/set'
 import { asPlayerId } from '#/domain/shared-kernel/ids'
 import { EventFactory } from '#tests/factories/event-factory.ts'
 import { PlayerFactory } from '#tests/factories/player-factory.ts'
@@ -12,7 +12,6 @@ describe('Player', () => {
   test.todo('highestUpset')
   test.todo('encounteredCharacters')
   test.todo('stageActivity')
-  test.todo('totalSets')
   test.todo('worstMatchups')
   test.todo('uniqueOpponentsFaced')
 
@@ -279,6 +278,47 @@ describe('Player', () => {
       }).make()
 
       expect(player.totalDisqualifications()).toBe(50)
+    })
+  })
+
+  describe('totalSets', () => {
+    test("should count total number of sets player by the player", () => {
+      const playerId = asPlayerId('1')
+      const opponentId = asPlayerId('2')
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: TournamentFactory.merge({
+          events: [
+            EventFactory.merge({
+              sets: SetFactory.merge({
+                competitors: new Map()
+                  .set(
+                    playerId,
+                    new SetPlayer({
+                      isDisqualified: false,
+                      playerId,
+                      score: 3,
+                      seed: SeedFactory.make(),
+                    }),
+                  )
+                  .set(
+                    opponentId,
+                    new SetPlayer({
+                      isDisqualified: false,
+                      playerId: opponentId,
+                      score: 2,
+                      seed: SeedFactory.make(),
+                    }),
+                  ),
+                winnerId: playerId,
+              }).makeMany(10),
+            }).make(),
+          ],
+        }).makeMany(5),
+      }).make()
+
+      expect(player.totalSets()).toBe(50)
     })
   })
 })
