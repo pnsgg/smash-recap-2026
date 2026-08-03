@@ -8,6 +8,7 @@ import { TournamentFactory } from '#tests/factories/tournament-factory.ts'
 import { CharacterFactory } from '#tests/factories/character-factory.ts'
 import { GameFactory } from '#tests/factories/game-factory.ts'
 import { GameSelection } from '#/domain/recap/game'
+import { BracketType } from '#/domain/recap/bracket-type'
 import { describe, expect, test } from 'vitest'
 
 describe('Player', () => {
@@ -77,7 +78,147 @@ describe('Player', () => {
     })
   })
 
-  test.todo('highestUpset')
+  describe('highestUpset', () => {
+    test('should return null if there are no tournaments or sets played', () => {
+      const player = PlayerFactory.make()
+      expect(player.highestUpset()).toBeNull()
+    })
+
+    test('should return null if player won no sets or achieved no upsets', () => {
+      const playerId = asPlayerId('1')
+      const opponentId = asPlayerId('2')
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({
+                bracketType: BracketType.DOUBLE_ELIMINATION,
+                sets: [
+                  SetFactory.merge({
+                    competitors: new Map([
+                      [
+                        playerId,
+                        new SetPlayer({
+                          playerId,
+                          seed: SeedFactory.merge({
+                            initialSeed: 1,
+                            finalPlacement: 1,
+                          }).make(),
+                          score: 3,
+                          isDisqualified: false,
+                        }),
+                      ],
+                      [
+                        opponentId,
+                        new SetPlayer({
+                          playerId: opponentId,
+                          seed: SeedFactory.merge({
+                            initialSeed: 2,
+                            finalPlacement: 2,
+                          }).make(),
+                          score: 0,
+                          isDisqualified: false,
+                        }),
+                      ],
+                    ]),
+                    winnerId: playerId,
+                  }).make(),
+                ],
+              }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      expect(player.highestUpset()).toBeNull()
+    })
+
+    test('should return the set with the highest upset factor', () => {
+      const playerId = asPlayerId('1')
+      const opponentId = asPlayerId('2')
+
+      const expectedSet = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.merge({
+                initialSeed: 4,
+                finalPlacement: 1,
+              }).make(),
+              score: 3,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            opponentId,
+            new SetPlayer({
+              playerId: opponentId,
+              seed: SeedFactory.merge({
+                initialSeed: 2,
+                finalPlacement: 2,
+              }).make(),
+              score: 0,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        winnerId: playerId,
+      }).make()
+
+      const minorUpsetSet = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.merge({
+                initialSeed: 3,
+                finalPlacement: 1,
+              }).make(),
+              score: 3,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            opponentId,
+            new SetPlayer({
+              playerId: opponentId,
+              seed: SeedFactory.merge({
+                initialSeed: 2,
+                finalPlacement: 2,
+              }).make(),
+              score: 0,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        winnerId: playerId,
+      }).make()
+
+      const event = EventFactory.merge({
+        bracketType: BracketType.DOUBLE_ELIMINATION,
+        sets: [minorUpsetSet, expectedSet],
+      }).make()
+
+      const tournament = TournamentFactory.merge({
+        events: [event],
+      }).make()
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [tournament],
+      }).make()
+
+      const upset = player.highestUpset()
+      expect(upset).not.toBeNull()
+      expect(upset?.set.id).toEqual(expectedSet.id)
+      expect(upset?.factor).toBe(2)
+    })
+  })
 
   describe('encounteredCharacters', () => {
     test('should return empty list if there are no opponent characters encountered', () => {
