@@ -4,6 +4,9 @@ import { SetPlayer } from '#/domain/recap/set'
 import { Seed } from '#/domain/recap/seed'
 import { BracketType } from '#/domain/recap/bracket-type'
 import { asPlayerId } from '#/domain/shared-kernel/ids'
+import { CharacterFactory } from '#tests/factories/character-factory'
+import { GameFactory } from '#tests/factories/game-factory'
+import { GameSelection } from '#/domain/recap/game'
 
 describe('Set', () => {
   describe('upsetFactor & isUpset', () => {
@@ -275,6 +278,41 @@ describe('Set', () => {
       }).make()
 
       expect(set.isPlayerDisqualified(unknownPlayerId)).toBe(false)
+    })
+  })
+
+  describe('getPlayerCharacters', () => {
+    test('returns all characters played by the player across games', () => {
+      const playerId = asPlayerId('player-1')
+      const fox = CharacterFactory.merge({ name: 'Fox' }).make()
+      const marth = CharacterFactory.merge({ name: 'Marth' }).make()
+
+      const game1 = GameFactory.merge({
+        selections: [new GameSelection(playerId, fox)],
+      }).make()
+      const game2 = GameFactory.merge({
+        selections: [new GameSelection(playerId, marth)],
+      }).make()
+
+      const set = SetFactory.merge({
+        games: [game1, game2],
+      }).make()
+
+      const characters = set.getPlayerCharacters(playerId)
+      expect(characters).toHaveLength(2)
+      expect(characters).toContain(fox)
+      expect(characters).toContain(marth)
+    })
+
+    test('returns empty array if no characters are found', () => {
+      const playerId = asPlayerId('player-1')
+      const game1 = GameFactory.merge({ selections: [] }).make()
+
+      const set = SetFactory.merge({
+        games: [game1],
+      }).make()
+
+      expect(set.getPlayerCharacters(playerId)).toEqual([])
     })
   })
 })
