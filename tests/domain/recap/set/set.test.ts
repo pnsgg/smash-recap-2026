@@ -457,4 +457,90 @@ describe('Set', () => {
       ])
     })
   })
+
+  describe('getPlayerLossesAgainstCharacters', () => {
+    test('returns empty array if player is not in competitors', () => {
+      const playerId = asPlayerId('player-1')
+      const set = SetFactory.merge({
+        competitors: new Map(),
+      }).make()
+
+      expect(set.getPlayerLossesAgainstCharacters(playerId)).toEqual([])
+    })
+
+    test('returns empty array if a competitor is disqualified', () => {
+      const playerId = asPlayerId('player-1')
+      const opponentId = asPlayerId('player-2')
+
+      const player = new SetPlayer({
+        playerId,
+        seed: new Seed(1, 5),
+        score: 0,
+        isDisqualified: true,
+      })
+      const opponent = new SetPlayer({
+        playerId: opponentId,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player],
+          [opponentId, opponent],
+        ]),
+      }).make()
+
+      expect(set.getPlayerLossesAgainstCharacters(playerId)).toEqual([])
+    })
+
+    test('returns records of player loss outcomes against opponent characters in the games', () => {
+      const playerId = asPlayerId('player-1')
+      const opponentId = asPlayerId('player-2')
+      const fox = CharacterFactory.merge({ name: 'Fox' }).make()
+      const marth = CharacterFactory.merge({ name: 'Marth' }).make()
+
+      const player = new SetPlayer({
+        playerId,
+        seed: new Seed(1, 5),
+        score: 2,
+        isDisqualified: false,
+      })
+      const opponent = new SetPlayer({
+        playerId: opponentId,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const game1 = GameFactory.merge({
+        winnerId: playerId,
+        selections: [
+          new GameSelection(playerId, CharacterFactory.make()),
+          new GameSelection(opponentId, fox),
+        ],
+      }).make()
+      const game2 = GameFactory.merge({
+        winnerId: opponentId,
+        selections: [
+          new GameSelection(playerId, CharacterFactory.make()),
+          new GameSelection(opponentId, marth),
+        ],
+      }).make()
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player],
+          [opponentId, opponent],
+        ]),
+        games: [game1, game2],
+      }).make()
+
+      expect(set.getPlayerLossesAgainstCharacters(playerId)).toEqual([
+        { opponentCharacter: fox, lost: false },
+        { opponentCharacter: marth, lost: true },
+      ])
+    })
+  })
 })
