@@ -8,6 +8,7 @@ import { TournamentFactory } from '#tests/factories/tournament-factory.ts'
 import { CharacterFactory } from '#tests/factories/character-factory.ts'
 import { GameFactory } from '#tests/factories/game-factory.ts'
 import { GameSelection } from '#/domain/recap/game'
+import { StageFactory } from '#tests/factories/stage-factory.ts'
 import { BracketType } from '#/domain/recap/bracket-type'
 import { describe, expect, test } from 'vitest'
 
@@ -299,7 +300,115 @@ describe('Player', () => {
     })
   })
 
-  test.todo('stageActivity')
+  describe('stageActivity', () => {
+    test('should return empty list if there is no stage activity', () => {
+      const player = PlayerFactory.make()
+      expect(player.stageActivity()).toEqual([])
+    })
+
+    test('should aggregate stage usage counts and win rates, excluding DQ sets', () => {
+      const playerId = asPlayerId('1')
+      const opponentId = asPlayerId('2')
+
+      const stageBF = StageFactory.merge({ name: 'Battlefield' }).make()
+      const stageFD = StageFactory.merge({ name: 'Final Destination' }).make()
+      const stageSV = StageFactory.merge({ name: 'Smashville' }).make()
+
+      const game1 = GameFactory.merge({
+        stage: stageBF,
+        winnerId: playerId,
+      }).make()
+
+      const game2 = GameFactory.merge({
+        stage: stageBF,
+        winnerId: opponentId,
+      }).make()
+
+      const game3 = GameFactory.merge({
+        stage: stageFD,
+        winnerId: playerId,
+      }).make()
+
+      const game4 = GameFactory.merge({
+        stage: stageSV,
+        winnerId: playerId,
+      }).make()
+
+      const validSet = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.make(),
+              score: 2,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            opponentId,
+            new SetPlayer({
+              playerId: opponentId,
+              seed: SeedFactory.make(),
+              score: 1,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        games: [game1, game2, game3],
+      }).make()
+
+      const dqSet = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.make(),
+              score: 1,
+              isDisqualified: true,
+            }),
+          ],
+          [
+            opponentId,
+            new SetPlayer({
+              playerId: opponentId,
+              seed: SeedFactory.make(),
+              score: 0,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        games: [game4],
+      }).make()
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({
+                sets: [validSet, dqSet],
+              }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      const result = player.stageActivity()
+      expect(result).toHaveLength(2)
+
+      const bfStats = result.find((r) => r.stage.name === 'Battlefield')
+      expect(bfStats).toBeDefined()
+      expect(bfStats?.count).toBe(2)
+      expect(bfStats?.winRate).toBe(0.5)
+
+      const fdStats = result.find((r) => r.stage.name === 'Final Destination')
+      expect(fdStats).toBeDefined()
+      expect(fdStats?.count).toBe(1)
+      expect(fdStats?.winRate).toBe(1.0)
+    })
+  })
   test.todo('worstMatchups')
   test.todo('uniqueOpponentsFaced')
 
