@@ -282,7 +282,7 @@ describe('Player', () => {
   })
 
   describe('totalSets', () => {
-    test("should count total number of sets player by the player", () => {
+    test('should count total number of sets player by the player', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
 
