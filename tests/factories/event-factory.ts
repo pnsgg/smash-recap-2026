@@ -4,6 +4,7 @@ import type { Set } from '#/domain/recap/set'
 import { SetPlayer } from '#/domain/recap/set'
 import { asEventId } from '#/domain/shared-kernel/ids'
 import type { PlayerId } from '#/domain/shared-kernel/ids'
+import { BracketType } from '#/domain/recap/bracket-type'
 import { Factory } from './factory'
 import { ParticipantFactory } from './participant-factory'
 import { SetFactory } from './set-factory'
@@ -15,15 +16,17 @@ export const EventFactory = Factory.define(
     name: faker.company.buzzNoun(),
     videogame: VideogameFactory.make(),
     isOnline: faker.datatype.boolean(),
+    bracketType: faker.helpers.arrayElement(Object.values(BracketType)),
     participants: [] as Participant[],
     sets: [] as Set[],
   }),
-  ({ id, name, videogame, isOnline, participants, sets }) =>
+  ({ id, name, videogame, isOnline, bracketType, participants, sets }) =>
     new Event({
       id: asEventId(id),
       name,
       videogame,
       isOnline,
+      bracketType,
       participants,
       sets,
     }),

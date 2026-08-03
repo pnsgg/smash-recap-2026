@@ -87,4 +87,120 @@ describe('Set - upset calculations', () => {
       expect(set.upsetFactor(BracketType.SWISS)).toBeNull()
     })
   })
+
+  describe('Set - calculation properties', () => {
+    test('isCleanSweep checks correctly', () => {
+      const p1Id = asPlayerId('player-1')
+      const p2Id = asPlayerId('player-2')
+
+      const player1 = new SetPlayer({
+        playerId: p1Id,
+        seed: new Seed(8, 5),
+        score: 2,
+        isDisqualified: false,
+      })
+      const player2 = new SetPlayer({
+        playerId: p2Id,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2],
+        ]),
+        winnerId: p1Id,
+      }).make()
+
+      expect(set.isCleanSweep()).toBe(true)
+
+      const player2WithOne = new SetPlayer({
+        playerId: p2Id,
+        seed: new Seed(2, 5),
+        score: 1,
+        isDisqualified: false,
+      })
+      const setNotSweep = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2WithOne],
+        ]),
+        winnerId: p1Id,
+      }).make()
+      expect(setNotSweep.isCleanSweep()).toBe(false)
+    })
+
+    test('isDecidingGameSet checks correctly', () => {
+      const p1Id = asPlayerId('player-1')
+      const p2Id = asPlayerId('player-2')
+
+      const player1 = new SetPlayer({
+        playerId: p1Id,
+        seed: new Seed(8, 5),
+        score: 2,
+        isDisqualified: false,
+      })
+      const player2 = new SetPlayer({
+        playerId: p2Id,
+        seed: new Seed(2, 5),
+        score: 1,
+        isDisqualified: false,
+      })
+
+      const decidingSet = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2],
+        ]),
+        winnerId: p1Id,
+      }).make()
+      expect(decidingSet.isDecidingGameSet()).toBe(true)
+
+      const player2Zero = new SetPlayer({
+        playerId: p2Id,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+      const regularSet = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2Zero],
+        ]),
+        winnerId: p1Id,
+      }).make()
+      expect(regularSet.isDecidingGameSet()).toBe(false)
+    })
+
+    test('isPlayerDisqualified checks correctly', () => {
+      const p1Id = asPlayerId('player-1')
+      const p2Id = asPlayerId('player-2')
+
+      const player1 = new SetPlayer({
+        playerId: p1Id,
+        seed: new Seed(8, 5),
+        score: 0,
+        isDisqualified: true,
+      })
+      const player2 = new SetPlayer({
+        playerId: p2Id,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2],
+        ]),
+        winnerId: p2Id,
+      }).make()
+
+      expect(set.isPlayerDisqualified(p1Id)).toBe(true)
+      expect(set.isPlayerDisqualified(p2Id)).toBe(false)
+    })
+  })
 })
