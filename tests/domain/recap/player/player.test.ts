@@ -409,7 +409,179 @@ describe('Player', () => {
       expect(fdStats?.winRate).toBe(1.0)
     })
   })
-  test.todo('worstMatchups')
+  describe('worstMatchups', () => {
+    test('should return empty list if there are no matchups', () => {
+      const player = PlayerFactory.make()
+      expect(player.worstMatchups(3)).toEqual([])
+    })
+
+    test('should aggregate losses, sort by lossCount descending, and respect limit', () => {
+      const playerId = asPlayerId('1')
+      const marthPlayerId = asPlayerId('marth-player')
+      const foxPlayerId = asPlayerId('fox-player')
+      const falcoPlayerId = asPlayerId('falco-player')
+
+      const charMarth = CharacterFactory.merge({ name: 'Marth' }).make()
+      const charFox = CharacterFactory.merge({ name: 'Fox' }).make()
+      const charFalco = CharacterFactory.merge({ name: 'Falco' }).make()
+
+      const setMarth = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.make(),
+              score: 1,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            marthPlayerId,
+            new SetPlayer({
+              playerId: marthPlayerId,
+              seed: SeedFactory.make(),
+              score: 1,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        games: [
+          GameFactory.merge({
+            winnerId: playerId,
+            selections: [
+              new GameSelection(playerId, charFox),
+              new GameSelection(marthPlayerId, charMarth),
+            ],
+          }).make(),
+          GameFactory.merge({
+            winnerId: marthPlayerId,
+            selections: [
+              new GameSelection(playerId, charFox),
+              new GameSelection(marthPlayerId, charMarth),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      const setFox = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.make(),
+              score: 0,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            foxPlayerId,
+            new SetPlayer({
+              playerId: foxPlayerId,
+              seed: SeedFactory.make(),
+              score: 3,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        games: [
+          GameFactory.merge({
+            winnerId: foxPlayerId,
+            selections: [
+              new GameSelection(playerId, charMarth),
+              new GameSelection(foxPlayerId, charFox),
+            ],
+          }).make(),
+          GameFactory.merge({
+            winnerId: foxPlayerId,
+            selections: [
+              new GameSelection(playerId, charMarth),
+              new GameSelection(foxPlayerId, charFox),
+            ],
+          }).make(),
+          GameFactory.merge({
+            winnerId: foxPlayerId,
+            selections: [
+              new GameSelection(playerId, charMarth),
+              new GameSelection(foxPlayerId, charFox),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      const setFalco = SetFactory.merge({
+        competitors: new Map([
+          [
+            playerId,
+            new SetPlayer({
+              playerId,
+              seed: SeedFactory.make(),
+              score: 0,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            falcoPlayerId,
+            new SetPlayer({
+              playerId: falcoPlayerId,
+              seed: SeedFactory.make(),
+              score: 2,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        games: [
+          GameFactory.merge({
+            winnerId: falcoPlayerId,
+            selections: [
+              new GameSelection(playerId, charMarth),
+              new GameSelection(falcoPlayerId, charFalco),
+            ],
+          }).make(),
+          GameFactory.merge({
+            winnerId: falcoPlayerId,
+            selections: [
+              new GameSelection(playerId, charMarth),
+              new GameSelection(falcoPlayerId, charFalco),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({
+                sets: [setMarth, setFox, setFalco],
+              }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      const result = player.worstMatchups(2)
+      expect(result).toHaveLength(2)
+
+      expect(result).toEqual([
+        {
+          character: charFox,
+          count: 3,
+          lossCount: 3,
+          looseRate: 1.0,
+        },
+        {
+          character: charFalco,
+          count: 2,
+          lossCount: 2,
+          looseRate: 1.0,
+        },
+      ])
+    })
+  })
+
   test.todo('uniqueOpponentsFaced')
 
   describe('dayOfWeekActivity', () => {
