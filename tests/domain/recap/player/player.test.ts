@@ -76,8 +76,88 @@ describe('Player', () => {
       expect(result[1]).toEqual({ character: charMarth, count: 2 })
     })
   })
+
   test.todo('highestUpset')
-  test.todo('encounteredCharacters')
+
+  describe('encounteredCharacters', () => {
+    test('should return empty list if there are no opponent characters encountered', () => {
+      const player = PlayerFactory.make()
+      expect(player.encounteredCharacters()).toEqual([])
+    })
+
+    test('should return unique characters played by opponents', () => {
+      const playerId = asPlayerId('1')
+      const opponentId = asPlayerId('2')
+
+      const myChar = CharacterFactory.merge({ name: 'Marth' }).make()
+      const charFox = CharacterFactory.merge({ name: 'Fox' }).make()
+      const charFalco = CharacterFactory.merge({ name: 'Falco' }).make()
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({
+                sets: [
+                  SetFactory.merge({
+                    competitors: new Map([
+                      [
+                        playerId,
+                        new SetPlayer({
+                          playerId,
+                          seed: SeedFactory.make(),
+                          score: 2,
+                          isDisqualified: false,
+                        }),
+                      ],
+                      [
+                        opponentId,
+                        new SetPlayer({
+                          playerId: opponentId,
+                          seed: SeedFactory.make(),
+                          score: 1,
+                          isDisqualified: false,
+                        }),
+                      ],
+                    ]),
+                    games: [
+                      GameFactory.merge({
+                        selections: [
+                          new GameSelection(playerId, myChar),
+                          new GameSelection(opponentId, charFox),
+                        ],
+                      }).make(),
+                      GameFactory.merge({
+                        selections: [
+                          new GameSelection(playerId, myChar),
+                          new GameSelection(opponentId, charFox),
+                        ],
+                      }).make(),
+                      GameFactory.merge({
+                        selections: [
+                          new GameSelection(playerId, myChar),
+                          new GameSelection(opponentId, charFalco),
+                        ],
+                      }).make(),
+                    ],
+                  }).make(),
+                ],
+              }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      const result = player.encounteredCharacters()
+      expect(result).toHaveLength(2)
+      // Verify names of encountered characters
+      const names = result.map((c) => c.name)
+      expect(names).toContain('Fox')
+      expect(names).toContain('Falco')
+    })
+  })
+
   test.todo('stageActivity')
   test.todo('worstMatchups')
   test.todo('uniqueOpponentsFaced')
