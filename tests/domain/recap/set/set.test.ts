@@ -315,4 +315,70 @@ describe('Set', () => {
       expect(set.getPlayerCharacters(playerId)).toEqual([])
     })
   })
+
+  describe('getOpponentCharacters', () => {
+    test('returns empty array if player is not in competitors', () => {
+      const playerId = asPlayerId('player-1')
+      const set = SetFactory.merge({
+        competitors: new Map(),
+      }).make()
+
+      expect(set.getOpponentCharacters(playerId)).toEqual([])
+    })
+
+    test('returns empty array if there is no opponent competitor', () => {
+      const playerId = asPlayerId('player-1')
+      const player = new SetPlayer({
+        playerId,
+        seed: new Seed(1, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+      const set = SetFactory.merge({
+        competitors: new Map([[playerId, player]]),
+      }).make()
+
+      expect(set.getOpponentCharacters(playerId)).toEqual([])
+    })
+
+    test('returns all characters played by the opponent player across games', () => {
+      const playerId = asPlayerId('player-1')
+      const opponentId = asPlayerId('player-2')
+      const fox = CharacterFactory.merge({ name: 'Fox' }).make()
+      const marth = CharacterFactory.merge({ name: 'Marth' }).make()
+
+      const player = new SetPlayer({
+        playerId,
+        seed: new Seed(1, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+      const opponent = new SetPlayer({
+        playerId: opponentId,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const game1 = GameFactory.merge({
+        selections: [new GameSelection(opponentId, fox)],
+      }).make()
+      const game2 = GameFactory.merge({
+        selections: [new GameSelection(opponentId, marth)],
+      }).make()
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player],
+          [opponentId, opponent],
+        ]),
+        games: [game1, game2],
+      }).make()
+
+      const characters = set.getOpponentCharacters(playerId)
+      expect(characters).toHaveLength(2)
+      expect(characters).toContain(fox)
+      expect(characters).toContain(marth)
+    })
+  })
 })
