@@ -17,6 +17,11 @@ export class Player {
     gamerTag: string
     tournaments: Tournament[]
   }) {
+    if (!params.gamerTag || params.gamerTag.trim() === '') {
+      throw new Error(
+        `Invalid parameter gamer tag: ${params.gamerTag}. Value cannot be empty.`,
+      )
+    }
     this.id = params.id
     this.prefix = params.prefix
     this.gamerTag = params.gamerTag

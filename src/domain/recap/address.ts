@@ -12,6 +12,22 @@ export class Address {
     latitude: number | null
     longitude: number | null
   }) {
+    if (
+      params.latitude !== null &&
+      (params.latitude < -90 || params.latitude > 90)
+    ) {
+      throw new Error(
+        `Invalid parameter latitude: ${params.latitude}. Value must be between -90 and 90.`,
+      )
+    }
+    if (
+      params.longitude !== null &&
+      (params.longitude < -180 || params.longitude > 180)
+    ) {
+      throw new Error(
+        `Invalid parameter longitude: ${params.longitude}. Value must be between -180 and 180.`,
+      )
+    }
     this.city = params.city
     this.state = params.state
     this.countryCode = params.countryCode

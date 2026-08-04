@@ -13,6 +13,12 @@ export class Participant {
     name: string
     seed: Seed
   }) {
+    if (!params.name || params.name.trim() === '') {
+      throw new Error(
+        `Invalid parameter name: ${params.name}. Value cannot be empty.`,
+      )
+    }
+
     this.id = params.id
     this.playerId = params.playerId
     this.name = params.name

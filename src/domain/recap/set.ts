@@ -17,6 +17,11 @@ export class SetPlayer {
     score: number
     isDisqualified: boolean
   }) {
+    if (params.score < 0) {
+      throw new Error(
+        `Invalid parameter score: ${params.score}. Value must be non-negative.`,
+      )
+    }
     this.playerId = params.playerId
     this.seed = params.seed
     this.score = params.score
@@ -44,6 +49,7 @@ export class Set {
     games: Game[]
     completedAt: Date | null
   }) {
+    this.checkPreconditions(params)
     this.id = params.id
     this.eventId = params.eventId
     this.competitors = params.competitors
@@ -52,6 +58,22 @@ export class Set {
     this.fullRoundText = params.fullRoundText
     this.games = params.games
     this.completedAt = params.completedAt
+  }
+
+  private checkPreconditions(params: { fullRoundText: string; games: Game[] }) {
+    if (!params.fullRoundText || params.fullRoundText.trim() === '') {
+      throw new Error(
+        `Invalid parameter full round text: ${params.fullRoundText}. Value cannot be empty.`,
+      )
+    }
+    const orderNums = params.games.map((g) => g.orderNum).sort((a, b) => a - b)
+    for (let i = 0; i < orderNums.length; i++) {
+      if (orderNums[i] !== i + 1) {
+        throw new Error(
+          `Invalid parameter games: order numbers must start at 1 and be sequential without gaps.`,
+        )
+      }
+    }
   }
 
   /**

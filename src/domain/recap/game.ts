@@ -23,6 +23,12 @@ export class Game {
     stage: Stage | null
     selections: GameSelection[]
   }) {
+    if (params.orderNum <= 0) {
+      throw new Error(
+        `Invalid parameter order num: ${params.orderNum}. Value has to be strictly positive.`,
+      )
+    }
+
     this.id = params.id
     this.orderNum = params.orderNum
     this.winnerId = params.winnerId

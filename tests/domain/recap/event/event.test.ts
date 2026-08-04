@@ -6,6 +6,17 @@ import { BracketType } from '#/domain/recap/bracket-type'
 import { asParticipantId, asPlayerId } from '#/domain/shared-kernel/ids'
 
 describe('Event', () => {
+  describe('constructor', () => {
+    test('throws error if name is empty or whitespace', () => {
+      expect(() => EventFactory.merge({ name: '' }).make()).toThrow(
+        'Invalid parameter name',
+      )
+      expect(() => EventFactory.merge({ name: '   ' }).make()).toThrow(
+        'Invalid parameter name',
+      )
+    })
+  })
+
   test('getFinalRankingUpTo sorts participants in ascending order of final placement', () => {
     const p1 = new Participant({
       id: asParticipantId('1'),

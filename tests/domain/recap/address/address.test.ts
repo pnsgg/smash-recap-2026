@@ -3,19 +3,69 @@ import { Address } from '#/domain/recap/address'
 import { AddressFactory } from '#tests/factories/address-factory'
 
 describe('Address', () => {
-  test('initializes correctly with location attributes', () => {
-    const address = new Address({
-      city: 'Paris',
-      state: 'IDF',
-      countryCode: 'FR',
-      latitude: 48.8566,
-      longitude: 2.3522,
+  describe('constructor', () => {
+    test('initializes correctly with location attributes', () => {
+      const address = new Address({
+        city: 'Paris',
+        state: 'IDF',
+        countryCode: 'FR',
+        latitude: 48.8566,
+        longitude: 2.3522,
+      })
+      expect(address.city).toBe('Paris')
+      expect(address.state).toBe('IDF')
+      expect(address.countryCode).toBe('FR')
+      expect(address.latitude).toBe(48.8566)
+      expect(address.longitude).toBe(2.3522)
     })
-    expect(address.city).toBe('Paris')
-    expect(address.state).toBe('IDF')
-    expect(address.countryCode).toBe('FR')
-    expect(address.latitude).toBe(48.8566)
-    expect(address.longitude).toBe(2.3522)
+
+    test('throws error if latitude is invalid', () => {
+      expect(
+        () =>
+          new Address({
+            city: 'Paris',
+            state: null,
+            countryCode: 'FR',
+            latitude: 91,
+            longitude: 2.3522,
+          }),
+      ).toThrow('Invalid parameter latitude')
+
+      expect(
+        () =>
+          new Address({
+            city: 'Paris',
+            state: null,
+            countryCode: 'FR',
+            latitude: -91,
+            longitude: 2.3522,
+          }),
+      ).toThrow('Invalid parameter latitude')
+    })
+
+    test('throws error if longitude is invalid', () => {
+      expect(
+        () =>
+          new Address({
+            city: 'Paris',
+            state: null,
+            countryCode: 'FR',
+            latitude: 48.8566,
+            longitude: 181,
+          }),
+      ).toThrow('Invalid parameter longitude')
+
+      expect(
+        () =>
+          new Address({
+            city: 'Paris',
+            state: null,
+            countryCode: 'FR',
+            latitude: 48.8566,
+            longitude: -181,
+          }),
+      ).toThrow('Invalid parameter longitude')
+    })
   })
 
   test('factory generates valid instances', () => {

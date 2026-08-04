@@ -24,6 +24,11 @@ export class Event {
     participants: Participant[]
     sets: Set[]
   }) {
+    if (!params.name || params.name.trim() === '') {
+      throw new Error(
+        `Invalid parameter name: ${params.name}. Value cannot be empty.`,
+      )
+    }
     this.id = params.id
     this.name = params.name
     this.videogame = params.videogame

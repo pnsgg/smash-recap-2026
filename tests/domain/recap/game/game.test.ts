@@ -5,8 +5,20 @@ import { GameSelection } from '#/domain/recap/game'
 import { asPlayerId } from '#/domain/shared-kernel/ids'
 
 describe('Game', () => {
-  test.todo('initialization')
+  describe('constructor', () => {
+    test('initializes correctly with valid orderNum', () => {
+      expect(() => GameFactory.merge({ orderNum: 1 }).make()).not.toThrow()
+    })
 
+    test('throws error if orderNum is zero or negative', () => {
+      expect(() => GameFactory.merge({ orderNum: 0 }).make()).toThrow(
+        'Invalid parameter order num',
+      )
+      expect(() => GameFactory.merge({ orderNum: -1 }).make()).toThrow(
+        'Invalid parameter order num',
+      )
+    })
+  })
   describe('getPlayerCharacter', () => {
     test('returns character if player has a selection', () => {
       const playerId = asPlayerId('1')

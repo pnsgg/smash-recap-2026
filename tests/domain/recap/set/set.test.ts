@@ -9,6 +9,68 @@ import { GameFactory } from '#tests/factories/game-factory'
 import { GameSelection } from '#/domain/recap/game'
 
 describe('Set', () => {
+  describe('constructor', () => {
+    test('initializes Set correctly with valid attributes', () => {
+      expect(() => SetFactory.make()).not.toThrow()
+    })
+
+    test('throws error if fullRoundText is empty or whitespace', () => {
+      expect(() => SetFactory.merge({ fullRoundText: '' }).make()).toThrow(
+        'Invalid parameter full round text',
+      )
+      expect(() => SetFactory.merge({ fullRoundText: '   ' }).make()).toThrow(
+        'Invalid parameter full round text',
+      )
+    })
+
+    test('SetPlayer throws error if score is negative', () => {
+      const pId = asPlayerId('player-1')
+      expect(
+        () =>
+          new SetPlayer({
+            playerId: pId,
+            seed: new Seed(1, 5),
+            score: -1,
+            isDisqualified: false,
+          }),
+      ).toThrow('Invalid parameter score')
+    })
+
+    test('throws error if games list has skips or does not start at 1', () => {
+      const game1 = GameFactory.merge({ orderNum: 1 }).make()
+      const game2 = GameFactory.merge({ orderNum: 2 }).make()
+      const game3 = GameFactory.merge({ orderNum: 3 }).make()
+
+      // Gaps exist
+      expect(() =>
+        SetFactory.merge({
+          games: [game1, game3],
+        }).make(),
+      ).toThrow('Invalid parameter games')
+
+      // Doesn't start at 1
+      expect(() =>
+        SetFactory.merge({
+          games: [game2, game3],
+        }).make(),
+      ).toThrow('Invalid parameter games')
+
+      // Duplicates exist
+      expect(() =>
+        SetFactory.merge({
+          games: [game1, game1],
+        }).make(),
+      ).toThrow('Invalid parameter games')
+
+      // Valid sequence (even if unsorted in input)
+      expect(() =>
+        SetFactory.merge({
+          games: [game2, game1, game3],
+        }).make(),
+      ).not.toThrow()
+    })
+  })
+
   describe('upsetFactor & isUpset', () => {
     describe.each([
       {
@@ -288,9 +350,11 @@ describe('Set', () => {
       const marth = CharacterFactory.merge({ name: 'Marth' }).make()
 
       const game1 = GameFactory.merge({
+        orderNum: 1,
         selections: [new GameSelection(playerId, fox)],
       }).make()
       const game2 = GameFactory.merge({
+        orderNum: 2,
         selections: [new GameSelection(playerId, marth)],
       }).make()
 
@@ -306,7 +370,7 @@ describe('Set', () => {
 
     test('returns empty array if no characters are found', () => {
       const playerId = asPlayerId('player-1')
-      const game1 = GameFactory.merge({ selections: [] }).make()
+      const game1 = GameFactory.merge({ orderNum: 1, selections: [] }).make()
 
       const set = SetFactory.merge({
         games: [game1],
@@ -361,9 +425,11 @@ describe('Set', () => {
       })
 
       const game1 = GameFactory.merge({
+        orderNum: 1,
         selections: [new GameSelection(opponentId, fox)],
       }).make()
       const game2 = GameFactory.merge({
+        orderNum: 2,
         selections: [new GameSelection(opponentId, marth)],
       }).make()
 
@@ -437,12 +503,15 @@ describe('Set', () => {
       })
 
       const game1 = GameFactory.merge({
+        orderNum: 1,
         winnerId: playerId,
       }).make()
       const game2 = GameFactory.merge({
+        orderNum: 2,
         winnerId: opponentId,
       }).make()
       const game3 = GameFactory.merge({
+        orderNum: 3,
         winnerId: playerId,
         stage: null,
       }).make()
@@ -519,6 +588,7 @@ describe('Set', () => {
       })
 
       const game1 = GameFactory.merge({
+        orderNum: 1,
         winnerId: playerId,
         selections: [
           new GameSelection(playerId, CharacterFactory.make()),
@@ -526,6 +596,7 @@ describe('Set', () => {
         ],
       }).make()
       const game2 = GameFactory.merge({
+        orderNum: 2,
         winnerId: opponentId,
         selections: [
           new GameSelection(playerId, CharacterFactory.make()),
@@ -533,6 +604,7 @@ describe('Set', () => {
         ],
       }).make()
       const game3 = GameFactory.merge({
+        orderNum: 3,
         winnerId: opponentId,
         selections: [],
       }).make()

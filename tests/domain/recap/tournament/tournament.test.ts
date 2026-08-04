@@ -9,6 +9,21 @@ import { BracketType } from '#/domain/recap/bracket-type'
 import { asParticipantId, asPlayerId } from '#/domain/shared-kernel/ids'
 
 describe('Tournament', () => {
+  describe('constructor', () => {
+    test('initializes correctly with valid name', () => {
+      expect(() => TournamentFactory.make()).not.toThrow()
+    })
+
+    test('throws error if name is empty or whitespace', () => {
+      expect(() => TournamentFactory.merge({ name: '' }).make()).toThrow(
+        'Invalid parameter name',
+      )
+      expect(() => TournamentFactory.merge({ name: '   ' }).make()).toThrow(
+        'Invalid parameter name',
+      )
+    })
+  })
+
   describe('getPlayerSPR', () => {
     test('returns null if player did not participate in any event', () => {
       const playerId = asPlayerId('target-player')

@@ -13,6 +13,21 @@ import { BracketType } from '#/domain/recap/bracket-type'
 import { describe, expect, test } from 'vitest'
 
 describe('Player', () => {
+  describe('constructor', () => {
+    test('initializes correctly with valid gamerTag', () => {
+      expect(() => PlayerFactory.make()).not.toThrow()
+    })
+
+    test('throws error if gamerTag is empty or whitespace', () => {
+      expect(() => PlayerFactory.merge({ gamerTag: '' }).make()).toThrow(
+        'Invalid parameter gamer tag',
+      )
+      expect(() => PlayerFactory.merge({ gamerTag: '   ' }).make()).toThrow(
+        'Invalid parameter gamer tag',
+      )
+    })
+  })
+
   describe('mostPlayedCharacters', () => {
     test('should return empty list if player did not play any games or characters', () => {
       const player = PlayerFactory.make()
@@ -46,21 +61,27 @@ describe('Player', () => {
                     ]),
                     games: [
                       GameFactory.merge({
+                        orderNum: 1,
                         selections: [new GameSelection(playerId, charFox)],
                       }).make(),
                       GameFactory.merge({
+                        orderNum: 2,
                         selections: [new GameSelection(playerId, charFox)],
                       }).make(),
                       GameFactory.merge({
+                        orderNum: 3,
                         selections: [new GameSelection(playerId, charFox)],
                       }).make(),
                       GameFactory.merge({
+                        orderNum: 4,
                         selections: [new GameSelection(playerId, charMarth)],
                       }).make(),
                       GameFactory.merge({
+                        orderNum: 5,
                         selections: [new GameSelection(playerId, charMarth)],
                       }).make(),
                       GameFactory.merge({
+                        orderNum: 6,
                         selections: [new GameSelection(playerId, charFalco)],
                       }).make(),
                     ],
@@ -265,18 +286,21 @@ describe('Player', () => {
                     ]),
                     games: [
                       GameFactory.merge({
+                        orderNum: 1,
                         selections: [
                           new GameSelection(playerId, myChar),
                           new GameSelection(opponentId, charFox),
                         ],
                       }).make(),
                       GameFactory.merge({
+                        orderNum: 2,
                         selections: [
                           new GameSelection(playerId, myChar),
                           new GameSelection(opponentId, charFox),
                         ],
                       }).make(),
                       GameFactory.merge({
+                        orderNum: 3,
                         selections: [
                           new GameSelection(playerId, myChar),
                           new GameSelection(opponentId, charFalco),
@@ -315,21 +339,25 @@ describe('Player', () => {
       const stageSV = StageFactory.merge({ name: 'Smashville' }).make()
 
       const game1 = GameFactory.merge({
+        orderNum: 1,
         stage: stageBF,
         winnerId: playerId,
       }).make()
 
       const game2 = GameFactory.merge({
+        orderNum: 2,
         stage: stageBF,
         winnerId: opponentId,
       }).make()
 
       const game3 = GameFactory.merge({
+        orderNum: 3,
         stage: stageFD,
         winnerId: playerId,
       }).make()
 
       const game4 = GameFactory.merge({
+        orderNum: 1,
         stage: stageSV,
         winnerId: playerId,
       }).make()
@@ -448,6 +476,7 @@ describe('Player', () => {
         ]),
         games: [
           GameFactory.merge({
+            orderNum: 1,
             winnerId: playerId,
             selections: [
               new GameSelection(playerId, charFox),
@@ -455,6 +484,7 @@ describe('Player', () => {
             ],
           }).make(),
           GameFactory.merge({
+            orderNum: 2,
             winnerId: marthPlayerId,
             selections: [
               new GameSelection(playerId, charFox),
@@ -487,6 +517,7 @@ describe('Player', () => {
         ]),
         games: [
           GameFactory.merge({
+            orderNum: 1,
             winnerId: foxPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
@@ -494,6 +525,7 @@ describe('Player', () => {
             ],
           }).make(),
           GameFactory.merge({
+            orderNum: 2,
             winnerId: foxPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
@@ -501,6 +533,7 @@ describe('Player', () => {
             ],
           }).make(),
           GameFactory.merge({
+            orderNum: 3,
             winnerId: foxPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
@@ -533,6 +566,7 @@ describe('Player', () => {
         ]),
         games: [
           GameFactory.merge({
+            orderNum: 1,
             winnerId: falcoPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
@@ -540,6 +574,7 @@ describe('Player', () => {
             ],
           }).make(),
           GameFactory.merge({
+            orderNum: 2,
             winnerId: falcoPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
