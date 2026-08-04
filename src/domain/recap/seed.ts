@@ -1,18 +1,27 @@
 import { BracketType } from '#/domain/recap/bracket-type'
 
+export type SeedParams = {
+  initialSeed: number
+  finalPlacement: number
+}
+
 export class Seed {
   constructor(
     public readonly initialSeed: number,
     public readonly finalPlacement: number,
   ) {
-    if (initialSeed <= 0) {
+    this.checkPreconditions({ initialSeed, finalPlacement })
+  }
+
+  private checkPreconditions(params: SeedParams) {
+    if (params.initialSeed <= 0) {
       throw new Error(
-        `Invalid parameter seed: ${initialSeed}. Value has to be strictly positive.`,
+        `Invalid parameter seed: ${params.initialSeed}. Value has to be strictly positive.`,
       )
     }
-    if (finalPlacement <= 0) {
+    if (params.finalPlacement <= 0) {
       throw new Error(
-        `Invalid parameter final placement: ${finalPlacement}. Values has to be strictly positive.`,
+        `Invalid parameter final placement: ${params.finalPlacement}. Values has to be strictly positive.`,
       )
     }
   }
