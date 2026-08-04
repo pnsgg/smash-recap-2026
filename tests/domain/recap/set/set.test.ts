@@ -442,13 +442,17 @@ describe('Set', () => {
       const game2 = GameFactory.merge({
         winnerId: opponentId,
       }).make()
+      const game3 = GameFactory.merge({
+        winnerId: playerId,
+        stage: null,
+      }).make()
 
       const set = SetFactory.merge({
         competitors: new Map([
           [playerId, player],
           [opponentId, opponent],
         ]),
-        games: [game1, game2],
+        games: [game1, game2, game3],
       }).make()
 
       expect(set.getStageActivity(playerId)).toEqual([
@@ -528,13 +532,17 @@ describe('Set', () => {
           new GameSelection(opponentId, marth),
         ],
       }).make()
+      const game3 = GameFactory.merge({
+        winnerId: opponentId,
+        selections: [],
+      }).make()
 
       const set = SetFactory.merge({
         competitors: new Map([
           [playerId, player],
           [opponentId, opponent],
         ]),
-        games: [game1, game2],
+        games: [game1, game2, game3],
       }).make()
 
       expect(set.getPlayerLossesAgainstCharacters(playerId)).toEqual([
