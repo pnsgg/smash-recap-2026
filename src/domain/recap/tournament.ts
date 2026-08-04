@@ -5,6 +5,14 @@ import type { Set } from '#/domain/recap/set'
 import type { Stage } from '#/domain/recap/stage'
 import type { Character } from '#/domain/recap/character'
 
+export type TournamentParams = {
+  id: TournamentId
+  name: string
+  address: Address | null
+  events: Event[]
+  startDate: Date
+}
+
 export class Tournament {
   public readonly id: TournamentId
   public readonly name: string
@@ -12,23 +20,21 @@ export class Tournament {
   public readonly events: Event[]
   public readonly startDate: Date
 
-  constructor(params: {
-    id: TournamentId
-    name: string
-    address: Address | null
-    events: Event[]
-    startDate: Date
-  }) {
-    if (!params.name || params.name.trim() === '') {
-      throw new Error(
-        `Invalid parameter name: ${params.name}. Value cannot be empty.`,
-      )
-    }
+  constructor(params: TournamentParams) {
+    this.checkPreconditions(params)
     this.id = params.id
     this.name = params.name
     this.address = params.address
     this.events = params.events
     this.startDate = params.startDate
+  }
+
+  private checkPreconditions(params: TournamentParams) {
+    if (!params.name || params.name.trim() === '') {
+      throw new Error(
+        `Invalid parameter name: ${params.name}. Value cannot be empty.`,
+      )
+    }
   }
 
   /**

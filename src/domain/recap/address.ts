@@ -1,3 +1,11 @@
+export type AddressParams = {
+  city: string | null
+  state: string | null
+  countryCode: string | null
+  latitude: number | null
+  longitude: number | null
+}
+
 export class Address {
   public readonly city: string | null
   public readonly state: string | null
@@ -5,13 +13,16 @@ export class Address {
   public readonly latitude: number | null
   public readonly longitude: number | null
 
-  constructor(params: {
-    city: string | null
-    state: string | null
-    countryCode: string | null
-    latitude: number | null
-    longitude: number | null
-  }) {
+  constructor(params: AddressParams) {
+    this.checkPreconditions(params)
+    this.city = params.city
+    this.state = params.state
+    this.countryCode = params.countryCode
+    this.latitude = params.latitude
+    this.longitude = params.longitude
+  }
+
+  private checkPreconditions(params: AddressParams) {
     if (
       params.latitude !== null &&
       (params.latitude < -90 || params.latitude > 90)
@@ -28,11 +39,6 @@ export class Address {
         `Invalid parameter longitude: ${params.longitude}. Value must be between -180 and 180.`,
       )
     }
-    this.city = params.city
-    this.state = params.state
-    this.countryCode = params.countryCode
-    this.latitude = params.latitude
-    this.longitude = params.longitude
   }
 
   /**

@@ -5,28 +5,45 @@ import type { BracketType } from '#/domain/recap/bracket-type'
 import type { Character } from '#/domain/recap/character'
 import type { Stage } from '#/domain/recap/stage'
 
+export type SetPlayerParams = {
+  playerId: PlayerId
+  seed: Seed
+  score: number
+  isDisqualified: boolean
+}
+
 export class SetPlayer {
   public readonly playerId: PlayerId
   public readonly seed: Seed
   public readonly score: number
   public readonly isDisqualified: boolean
 
-  constructor(params: {
-    playerId: PlayerId
-    seed: Seed
-    score: number
-    isDisqualified: boolean
-  }) {
-    if (params.score < 0) {
-      throw new Error(
-        `Invalid parameter score: ${params.score}. Value must be non-negative.`,
-      )
-    }
+  constructor(params: SetPlayerParams) {
+    this.checkPreconditions(params)
     this.playerId = params.playerId
     this.seed = params.seed
     this.score = params.score
     this.isDisqualified = params.isDisqualified
   }
+
+  private checkPreconditions(params: SetPlayerParams) {
+    if (params.score < 0) {
+      throw new Error(
+        `Invalid parameter score: ${params.score}. Value must be non-negative.`,
+      )
+    }
+  }
+}
+
+export type SetParams = {
+  id: SetId
+  eventId: EventId
+  competitors: Map<PlayerId, SetPlayer>
+  winnerId: PlayerId
+  round: number
+  fullRoundText: string
+  games: Game[]
+  completedAt: Date | null
 }
 
 export class Set {
@@ -39,17 +56,9 @@ export class Set {
   public readonly games: Game[]
   public readonly completedAt: Date | null
 
-  constructor(params: {
-    id: SetId
-    eventId: EventId
-    competitors: Map<PlayerId, SetPlayer>
-    winnerId: PlayerId
-    round: number
-    fullRoundText: string
-    games: Game[]
-    completedAt: Date | null
-  }) {
+  constructor(params: SetParams) {
     this.checkPreconditions(params)
+
     this.id = params.id
     this.eventId = params.eventId
     this.competitors = params.competitors
@@ -60,7 +69,7 @@ export class Set {
     this.completedAt = params.completedAt
   }
 
-  private checkPreconditions(params: { fullRoundText: string; games: Game[] }) {
+  private checkPreconditions(params: SetParams) {
     if (!params.fullRoundText || params.fullRoundText.trim() === '') {
       throw new Error(
         `Invalid parameter full round text: ${params.fullRoundText}. Value cannot be empty.`,

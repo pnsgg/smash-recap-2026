@@ -5,27 +5,34 @@ import type { Event } from '#/domain/recap/event'
 import type { Set } from '#/domain/recap/set'
 import type { Stage } from '#/domain/recap/stage'
 
+export type PlayerParams = {
+  id: PlayerId
+  prefix: string | null
+  gamerTag: string
+  tournaments: Tournament[]
+}
+
 export class Player {
   public readonly id: PlayerId
   public readonly prefix: string | null
   public readonly gamerTag: string
   public readonly tournaments: Tournament[]
 
-  constructor(params: {
-    id: PlayerId
-    prefix: string | null
-    gamerTag: string
-    tournaments: Tournament[]
-  }) {
+  constructor(params: PlayerParams) {
+    this.checkPreconditions(params)
+
+    this.id = params.id
+    this.prefix = params.prefix
+    this.gamerTag = params.gamerTag
+    this.tournaments = params.tournaments
+  }
+
+  private checkPreconditions(params: PlayerParams) {
     if (!params.gamerTag || params.gamerTag.trim() === '') {
       throw new Error(
         `Invalid parameter gamer tag: ${params.gamerTag}. Value cannot be empty.`,
       )
     }
-    this.id = params.id
-    this.prefix = params.prefix
-    this.gamerTag = params.gamerTag
-    this.tournaments = params.tournaments
   }
 
   equals(other: Player): boolean {

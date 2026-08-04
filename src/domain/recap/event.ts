@@ -6,6 +6,16 @@ import type { BracketType } from '#/domain/recap/bracket-type'
 import type { Character } from '#/domain/recap/character'
 import type { Stage } from '#/domain/recap/stage'
 
+export type EventParams = {
+  id: EventId
+  name: string
+  videogame: Videogame
+  isOnline: boolean
+  bracketType: BracketType
+  participants: Participant[]
+  sets: Set[]
+}
+
 export class Event {
   public readonly id: EventId
   public readonly name: string
@@ -15,20 +25,9 @@ export class Event {
   public readonly participants: Participant[]
   public readonly sets: Set[]
 
-  constructor(params: {
-    id: EventId
-    name: string
-    videogame: Videogame
-    isOnline: boolean
-    bracketType: BracketType
-    participants: Participant[]
-    sets: Set[]
-  }) {
-    if (!params.name || params.name.trim() === '') {
-      throw new Error(
-        `Invalid parameter name: ${params.name}. Value cannot be empty.`,
-      )
-    }
+  constructor(params: EventParams) {
+    this.checkPreconditions(params)
+
     this.id = params.id
     this.name = params.name
     this.videogame = params.videogame
@@ -36,6 +35,14 @@ export class Event {
     this.bracketType = params.bracketType
     this.participants = params.participants
     this.sets = params.sets
+  }
+
+  private checkPreconditions(params: EventParams) {
+    if (!params.name || params.name.trim() === '') {
+      throw new Error(
+        `Invalid parameter name: ${params.name}. Value cannot be empty.`,
+      )
+    }
   }
 
   getFinalRankingUpTo(upTo: number): Participant[] {

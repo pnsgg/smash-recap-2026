@@ -2,11 +2,28 @@ import type { GameId, PlayerId } from '#/domain/shared-kernel/ids'
 import type { Character } from '#/domain/recap/character'
 import type { Stage } from '#/domain/recap/stage'
 
+export type GameSelectionParams = {
+  playerId: PlayerId
+  character: Character
+}
+
 export class GameSelection {
   constructor(
     public readonly playerId: PlayerId,
     public readonly character: Character,
-  ) {}
+  ) {
+    this.checkPreconditions({ playerId, character })
+  }
+
+  private checkPreconditions(params: GameSelectionParams) {}
+}
+
+export type GameParams = {
+  id: GameId
+  orderNum: number
+  winnerId: PlayerId | null
+  stage: Stage | null
+  selections: GameSelection[]
 }
 
 export class Game {
@@ -16,24 +33,22 @@ export class Game {
   public readonly stage: Stage | null
   public readonly selections: GameSelection[]
 
-  constructor(params: {
-    id: GameId
-    orderNum: number
-    winnerId: PlayerId | null
-    stage: Stage | null
-    selections: GameSelection[]
-  }) {
-    if (params.orderNum <= 0) {
-      throw new Error(
-        `Invalid parameter order num: ${params.orderNum}. Value has to be strictly positive.`,
-      )
-    }
+  constructor(params: GameParams) {
+    this.checkPreconditions(params)
 
     this.id = params.id
     this.orderNum = params.orderNum
     this.winnerId = params.winnerId
     this.stage = params.stage
     this.selections = params.selections
+  }
+
+  private checkPreconditions(params: GameParams) {
+    if (params.orderNum <= 0) {
+      throw new Error(
+        `Invalid parameter order num: ${params.orderNum}. Value has to be strictly positive.`,
+      )
+    }
   }
 
   /**
