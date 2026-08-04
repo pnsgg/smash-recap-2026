@@ -551,4 +551,62 @@ describe('Set', () => {
       ])
     })
   })
+
+  describe('getOpponentPlayerIds', () => {
+    test('returns opponent player ids', () => {
+      const p1Id = asPlayerId('player-1')
+      const p2Id = asPlayerId('player-2')
+
+      const player1 = new SetPlayer({
+        playerId: p1Id,
+        seed: new Seed(1, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+      const player2 = new SetPlayer({
+        playerId: p2Id,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2],
+        ]),
+      }).make()
+
+      expect(set.getOpponentPlayerIds(p1Id)).toEqual([p2Id])
+    })
+
+    test('returns empty array if player is not a competitor', () => {
+      const p1Id = asPlayerId('player-1')
+      const p2Id = asPlayerId('player-2')
+      const otherId = asPlayerId('player-3')
+
+      const player1 = new SetPlayer({
+        playerId: p1Id,
+        seed: new Seed(1, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+      const player2 = new SetPlayer({
+        playerId: p2Id,
+        seed: new Seed(2, 5),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const set = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2],
+        ]),
+      }).make()
+
+      expect(set.getOpponentPlayerIds(otherId)).toEqual([])
+    })
+  })
 })
+
