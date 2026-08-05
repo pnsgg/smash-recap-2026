@@ -4,7 +4,9 @@ import { InMemoryFetcher } from '#tests/infrastructure/secondary/startgg/in-memo
 import { describe, expect, test } from 'vitest'
 
 const isSortedDesc = <T>(array: T[]): boolean =>
-  array.every((value, index, elements) => !index || elements[index - 1] >= value)
+  array.every(
+    (value, index, elements) => !index || elements[index - 1] >= value,
+  )
 
 /** Minimal shape of a player node returned by the searchPlayerByGamerTag query */
 type PlayerNode = {
@@ -19,7 +21,13 @@ type PlayerNode = {
   }
 }
 
-const makePlayer = (overrides: { id: string; gamerTag: string; nbEvents: number } & Partial<PlayerNode>): PlayerNode => ({
+const makePlayer = (
+  overrides: {
+    id: string
+    gamerTag: string
+    nbEvents: number
+  } & Partial<PlayerNode>,
+): PlayerNode => ({
   id: overrides.id,
   prefix: null,
   gamerTag: overrides.gamerTag,
@@ -31,29 +39,32 @@ const makePlayer = (overrides: { id: string; gamerTag: string; nbEvents: number 
   },
 })
 
-const fetcher = new InMemoryFetcher().register(searchPlayerByGamerTag, ({ query }) => {
-  const gamerTag = query.filter?.gamerTag as string | undefined
+const fetcher = new InMemoryFetcher().register(
+  searchPlayerByGamerTag,
+  ({ query }) => {
+    const gamerTag = query.filter?.gamerTag as string | undefined
 
-  const fixturesByGamerTag: Record<string, PlayerNode[]> = {
-    Glutonny: [
-      makePlayer({ id: '1', gamerTag: 'Glutonny', nbEvents: 312 }),
-      makePlayer({ id: '2', gamerTag: 'Glutonny', nbEvents: 5 }),
-      makePlayer({ id: '3', gamerTag: 'Glutonny', nbEvents: 1 }),
-      makePlayer({ id: '4', gamerTag: 'Glutonny', nbEvents: 0 }),
-    ],
-    Licane: [
-      makePlayer({ id: '10', gamerTag: 'Licane', nbEvents: 88 }),
-      makePlayer({ id: '11', gamerTag: 'Licane', nbEvents: 14 }),
-      makePlayer({ id: '12', gamerTag: 'Licane', nbEvents: 0 }),
-    ],
-  }
+    const fixturesByGamerTag: Record<string, PlayerNode[]> = {
+      Glutonny: [
+        makePlayer({ id: '1', gamerTag: 'Glutonny', nbEvents: 312 }),
+        makePlayer({ id: '2', gamerTag: 'Glutonny', nbEvents: 5 }),
+        makePlayer({ id: '3', gamerTag: 'Glutonny', nbEvents: 1 }),
+        makePlayer({ id: '4', gamerTag: 'Glutonny', nbEvents: 0 }),
+      ],
+      Licane: [
+        makePlayer({ id: '10', gamerTag: 'Licane', nbEvents: 88 }),
+        makePlayer({ id: '11', gamerTag: 'Licane', nbEvents: 14 }),
+        makePlayer({ id: '12', gamerTag: 'Licane', nbEvents: 0 }),
+      ],
+    }
 
-  return {
-    players: {
-      nodes: fixturesByGamerTag[gamerTag ?? ''] ?? [],
-    },
-  }
-})
+    return {
+      players: {
+        nodes: fixturesByGamerTag[gamerTag ?? ''] ?? [],
+      },
+    }
+  },
+)
 
 describe('Searching for players', () => {
   const repository = new StartggPlayerRepository(fetcher)
@@ -64,7 +75,11 @@ describe('Searching for players', () => {
 
       expect(results.length).toBe(3)
       expect(isSortedDesc(results.map((result) => result.nbEvents))).toBe(true)
-      expect(results.map((result) => result.nbEvents).some((nbEvent) => nbEvent === 0)).toBe(false)
+      expect(
+        results
+          .map((result) => result.nbEvents)
+          .some((nbEvent) => nbEvent === 0),
+      ).toBe(false)
     })
   })
 
@@ -74,7 +89,11 @@ describe('Searching for players', () => {
 
       expect(results.length).toBe(2)
       expect(isSortedDesc(results.map((result) => result.nbEvents))).toBe(true)
-      expect(results.map((result) => result.nbEvents).some((nbEvent) => nbEvent === 0)).toBe(false)
+      expect(
+        results
+          .map((result) => result.nbEvents)
+          .some((nbEvent) => nbEvent === 0),
+      ).toBe(false)
     })
   })
 })
