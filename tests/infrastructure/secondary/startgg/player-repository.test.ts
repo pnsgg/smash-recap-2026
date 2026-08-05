@@ -8,10 +8,10 @@ const isSortedDesc = <T>(array: T[]): boolean =>
 
 /** Minimal shape of a player node returned by the searchPlayerByGamerTag query */
 type PlayerNode = {
+  id: string
   prefix: string | null
   gamerTag: string
   user: {
-    id: string
     slug: string
     location: { country: string } | null
     images: { url: string }[]
@@ -19,16 +19,16 @@ type PlayerNode = {
   }
 }
 
-const makePlayer = (overrides: Partial<PlayerNode> & { id: string; gamerTag: string; nbEvents: number }): PlayerNode => ({
+const makePlayer = (overrides: { id: string; gamerTag: string; nbEvents: number } & Partial<PlayerNode>): PlayerNode => ({
+  id: overrides.id,
   prefix: null,
+  gamerTag: overrides.gamerTag,
   user: {
-    id: overrides.id,
     slug: `user/${overrides.id}`,
     location: null,
     images: [],
     events: { pageInfo: { total: overrides.nbEvents } },
   },
-  ...overrides,
 })
 
 const fetcher = new InMemoryFetcher().register(searchPlayerByGamerTag, ({ query }) => {

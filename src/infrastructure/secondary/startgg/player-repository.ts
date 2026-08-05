@@ -33,18 +33,18 @@ export class StartggPlayerRepository implements IPlayerRepository {
           (
             player,
           ): player is typeof player & {
-            user: { id: string | number }
+            id: string | number
             gamerTag: string
-          } => player?.user?.id !== undefined && player.gamerTag !== null,
+          } => player?.id !== undefined && player.gamerTag !== null,
         )
         .map((player) =>
           mapSearchPlayerResult({
-            id: player.user.id,
+            id: player.id,
             prefix: player.prefix,
             gamerTag: player.gamerTag,
-            country: player.user.location?.country,
-            profilePictureUrl: player.user.images?.[0]?.url,
-            nbEvents: player.user.events?.pageInfo?.total,
+            country: player.user?.location?.country,
+            profilePictureUrl: player.user?.images?.[0]?.url,
+            nbEvents: player.user?.events?.pageInfo?.total,
           }),
         ) ?? []
 
