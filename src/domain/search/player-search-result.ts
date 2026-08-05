@@ -29,4 +29,15 @@ export class SearchPlayerResult {
   fullName(): string {
     return this.gamerTag ? `${this.prefix} ${this.gamerTag}` : this.gamerTag
   }
+
+  /**
+   * Rank results
+   * - Filters out players with no events attended
+   * - Sorts the remaining results by number of events attended, descending
+   */
+  static rankResults(results: SearchPlayerResult[]): SearchPlayerResult[] {
+    return results
+      .filter((player) => player.nbEvents > 0)
+      .sort((a, b) => b.nbEvents - a.nbEvents)
+  }
 }
