@@ -2,12 +2,12 @@ import type { IPlayerRepository } from '#/domain/ports/player-repository'
 import type { Player } from '#/domain/recap/player'
 import { SearchPlayerResult } from '#/domain/search/player-search-result'
 import type { PlayerId } from '#/domain/shared-kernel/ids'
-import type { IFetcher } from './fetcher'
+import type { IStartggClient } from './startgg-client'
 import { mapSearchPlayerResult } from './mappers/search-player-result-mapper'
 import { searchPlayerByGamerTag } from './queries/search-player-by-gamertag'
 
 export class StartggPlayerRepository implements IPlayerRepository {
-  constructor(private readonly fetcher: IFetcher) {}
+  constructor(private readonly fetcher: IStartggClient) {}
 
   /**
    * Search for players matching the gamertag.

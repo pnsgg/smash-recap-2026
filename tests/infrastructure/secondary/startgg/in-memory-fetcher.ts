@@ -1,11 +1,11 @@
 import type { TadaDocumentNode } from '#/graphql'
-import type { IFetcher } from '#/infrastructure/secondary/startgg/fetcher'
+import type { IStartggClient } from '#/infrastructure/secondary/startgg/startgg-client'
 import { parse, print } from 'graphql'
 
 type AnyResult = Record<string, unknown>
 type AnyVariables = Record<string, unknown>
 
-export class InMemoryFetcher implements IFetcher {
+export class InMemoryFetcher implements IStartggClient {
   private readonly handlers = new Map<
     string,
     (variables: AnyVariables) => AnyResult
