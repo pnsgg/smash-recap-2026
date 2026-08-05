@@ -103,6 +103,7 @@ export class Set {
       (c) => c.playerId !== this.winnerId,
     )
     if (!winner || !loser) return null
+    if (winner.isDisqualified || loser.isDisqualified) return null
     return Seed.upsetFactor(
       winner.seed.initialSeed,
       loser.seed.initialSeed,

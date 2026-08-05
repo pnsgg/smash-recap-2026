@@ -153,6 +153,37 @@ describe('Set', () => {
         expect(set.upsetFactor(BracketType.SWISS)).toBeNull()
       })
     })
+
+    describe('disqualified competitors', () => {
+      test('returns null upsetFactor and false isUpset when a competitor is disqualified', () => {
+        const p1Id = asPlayerId('player-1')
+        const p2Id = asPlayerId('player-2')
+
+        const player1 = new SetPlayer({
+          playerId: p1Id,
+          seed: new Seed(8, 5),
+          score: 0,
+          isDisqualified: false,
+        })
+        const player2 = new SetPlayer({
+          playerId: p2Id,
+          seed: new Seed(2, 5),
+          score: 0,
+          isDisqualified: true,
+        })
+
+        const set = SetFactory.merge({
+          competitors: new Map([
+            [p1Id, player1],
+            [p2Id, player2],
+          ]),
+          winnerId: p1Id,
+        }).make()
+
+        expect(set.isUpset(BracketType.DOUBLE_ELIMINATION)).toBe(false)
+        expect(set.upsetFactor(BracketType.DOUBLE_ELIMINATION)).toBeNull()
+      })
+    })
   })
 
   describe('isCleanSweep', () => {
