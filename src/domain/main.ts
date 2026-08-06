@@ -984,19 +984,28 @@ const player = new Player({
               seed: saturneSeed,
             }),
           ],
-          sets: [set1, set2, set3, set4, set5, set6, set7, set8, set9, set10, set11, set12, set13],
+          sets: [
+            set1,
+            set2,
+            set3,
+            set4,
+            set5,
+            set6,
+            set7,
+            set8,
+            set9,
+            set10,
+            set11,
+            set12,
+            set13,
+          ],
         }),
       ],
     }),
   ],
 })
 
-// 6. Execution & Validation Output
-console.log('===================================================')
-console.log(`SMASH TOURNAMENT RECAP DEMO FOR: ${player.gamerTag}`)
-console.log('===================================================')
-
-console.log('\n--- PLAYER CHARACTER METRICS ---')
+console.log('--- PLAYER CHARACTER METRICS ---')
 const characterMetrics = player.mostPlayedCharacters(3)
 characterMetrics.forEach((metric, idx) => {
   console.log(

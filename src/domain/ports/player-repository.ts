@@ -18,4 +18,3 @@ export interface IPlayerRepository {
    */
   getPlayerRecap: (slug: UserSlug, year: Date) => Promise<Player>
 }
-

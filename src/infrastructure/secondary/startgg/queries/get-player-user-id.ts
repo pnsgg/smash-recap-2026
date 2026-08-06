@@ -5,6 +5,7 @@ export const getPlayerUserId = graphql(`
     user(slug: $slug) {
       id
       player {
+        id
         prefix
         gamerTag
       }
