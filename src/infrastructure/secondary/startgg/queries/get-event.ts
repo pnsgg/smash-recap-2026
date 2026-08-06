@@ -24,6 +24,9 @@ export const getEvent = graphql(`
       userEntrant(userId: $userId) {
         id
         name
+        phaseGroups {
+          bracketType
+        }
         isOnline @deprecated(reason: "Use event.isOnline")
         isDisqualified
         initialSeedNum
@@ -47,6 +50,9 @@ export const getEvent = graphql(`
                 isDisqualified
                 players {
                   id
+                }
+                standing {
+                  placement
                 }
               }
               seed {

@@ -3,6 +3,7 @@ import { asPlayerId, asUserSlug } from '#/domain/shared-kernel/ids'
 
 export function mapSearchPlayerResult(params: {
   id: string | number
+  // TODO: Remove nullish union type for slug
   slug: string | null | undefined
   prefix: string | null | undefined
   gamerTag: string
@@ -20,4 +21,3 @@ export function mapSearchPlayerResult(params: {
     nbEvents: params.nbEvents || 0,
   })
 }
-
