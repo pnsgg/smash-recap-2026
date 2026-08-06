@@ -11,11 +11,7 @@ export class GameSelection {
   constructor(
     public readonly playerId: PlayerId,
     public readonly character: Character,
-  ) {
-    this.checkPreconditions({ playerId, character })
-  }
-
-  private checkPreconditions(params: GameSelectionParams) {}
+  ) {}
 }
 
 export type GameParams = {
