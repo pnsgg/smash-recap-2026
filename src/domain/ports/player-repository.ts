@@ -1,5 +1,5 @@
 import type { Player } from '#/domain/recap/player'
-import type { PlayerId } from '#/domain/shared-kernel/ids'
+import type { UserSlug } from '#/domain/shared-kernel/ids'
 import type { SearchPlayerResult } from '#/domain/search/player-search-result'
 
 export interface IPlayerRepository {
@@ -11,10 +11,11 @@ export interface IPlayerRepository {
   searchPlayerByGamerTag: (gamerTag: string) => Promise<SearchPlayerResult[]>
 
   /**
-   * Fetches a player by their ID and makes their recap for the given year
-   * @param playerId The ID of the player to fetch
+   * Fetches a player by their slug and makes their recap for the given year
+   * @param slug The start.gg user slug of the player (e.g. "user/abc123")
    * @param year The year of the recap to generate
    * @returns A promise that resolves to the player
    */
-  getPlayerRecap: (playerId: PlayerId, year: Date) => Promise<Player>
+  getPlayerRecap: (slug: UserSlug, year: Date) => Promise<Player>
 }
+

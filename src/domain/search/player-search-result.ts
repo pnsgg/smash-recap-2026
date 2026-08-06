@@ -1,7 +1,8 @@
-import type { PlayerId } from '#/domain/shared-kernel/ids'
+import type { PlayerId, UserSlug } from '#/domain/shared-kernel/ids'
 
 export type SearchPlayerResultProps = {
   id: PlayerId
+  slug: UserSlug
   prefix: string | null
   gamerTag: string
   country: string | null
@@ -11,6 +12,7 @@ export type SearchPlayerResultProps = {
 
 export class SearchPlayerResult {
   public readonly id: PlayerId
+  public readonly slug: UserSlug
   public readonly prefix: string | null
   public readonly gamerTag: string
   public readonly country: string | null
@@ -19,6 +21,7 @@ export class SearchPlayerResult {
 
   constructor(params: SearchPlayerResultProps) {
     this.id = params.id
+    this.slug = params.slug
     this.prefix = params.prefix
     this.gamerTag = params.gamerTag
     this.country = params.country

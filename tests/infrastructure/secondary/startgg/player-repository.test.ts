@@ -26,13 +26,14 @@ const makePlayer = (
     id: string
     gamerTag: string
     nbEvents: number
+    slug?: string
   } & Partial<PlayerNode>,
 ): PlayerNode => ({
   id: overrides.id,
   prefix: null,
   gamerTag: overrides.gamerTag,
   user: {
-    slug: `user/${overrides.id}`,
+    slug: overrides.slug ?? `user/${overrides.id}`,
     location: null,
     images: [],
     events: { pageInfo: { total: overrides.nbEvents } },
@@ -67,7 +68,10 @@ const fetcher = new InMemoryFetcher().register(
 )
 
 describe('Searching for players', () => {
-  const repository = new StartggPlayerRepository(fetcher)
+  const repository = new StartggPlayerRepository(fetcher, {
+    videogameIds: [1386],
+    eventType: 1,
+  })
 
   describe("when looking for 'Glutonny'", () => {
     test('it should return 3 results ordered by the number of events attended and ignore results with no events attended', async () => {

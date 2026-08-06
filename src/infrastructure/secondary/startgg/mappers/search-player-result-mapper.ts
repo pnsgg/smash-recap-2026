@@ -1,8 +1,9 @@
 import { SearchPlayerResult } from '#/domain/search/player-search-result'
-import { asPlayerId } from '#/domain/shared-kernel/ids'
+import { asPlayerId, asUserSlug } from '#/domain/shared-kernel/ids'
 
 export function mapSearchPlayerResult(params: {
   id: string | number
+  slug: string | null | undefined
   prefix: string | null | undefined
   gamerTag: string
   country: string | null | undefined
@@ -11,6 +12,7 @@ export function mapSearchPlayerResult(params: {
 }): SearchPlayerResult {
   return new SearchPlayerResult({
     id: asPlayerId(params.id.toString()),
+    slug: asUserSlug(params.slug ?? ''),
     prefix: params.prefix || null,
     gamerTag: params.gamerTag,
     country: params.country || null,
@@ -18,3 +20,4 @@ export function mapSearchPlayerResult(params: {
     nbEvents: params.nbEvents || 0,
   })
 }
+
