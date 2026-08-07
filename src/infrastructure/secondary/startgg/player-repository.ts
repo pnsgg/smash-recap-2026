@@ -21,7 +21,7 @@ export class StartggPlayerRepository implements IPlayerRepository {
   constructor(
     private readonly fetcher: IStartggClient,
     private readonly config: StartggPlayerRepositoryConfig,
-  ) { }
+  ) {}
 
   /**
    * Search for players matching the gamertag.
@@ -135,7 +135,7 @@ export class StartggPlayerRepository implements IPlayerRepository {
     const ids: string[] = []
     let page = 1
 
-    for (; ;) {
+    for (;;) {
       const { data } = await this.fetcher.fetch(getPlayerEventIds, {
         slug,
         page,

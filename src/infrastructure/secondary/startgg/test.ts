@@ -12,7 +12,7 @@ const SLUGS = {
   PAZ: 'user/caa366ab',
   POTICHAT: 'user/c904c6ee',
   RAARCHYOR: 'user/52b2a832',
-  ROUXCHOV: 'user/89723908'
+  ROUXCHOV: 'user/89723908',
 }
 const slug = asUserSlug(SLUGS.BLOU)
 

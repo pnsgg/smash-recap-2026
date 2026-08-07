@@ -91,21 +91,21 @@ export function mapPlayerRecap(
         name: rawTournamentName,
         address:
           rawTournament.lat !== null ||
-            rawTournament.lng !== null ||
-            rawTournament.city ||
-            rawTournament.addrState ||
-            rawTournament.countryCode
+          rawTournament.lng !== null ||
+          rawTournament.city ||
+          rawTournament.addrState ||
+          rawTournament.countryCode
             ? new Address({
-              city: rawTournament.city || null,
-              state: rawTournament.addrState || null,
-              countryCode: rawTournament.countryCode || null,
-              latitude: rawTournament.lat
-                ? parseFloat(rawTournament.lat.toString())
-                : null,
-              longitude: rawTournament.lng
-                ? parseFloat(rawTournament.lng.toString())
-                : null,
-            })
+                city: rawTournament.city || null,
+                state: rawTournament.addrState || null,
+                countryCode: rawTournament.countryCode || null,
+                latitude: rawTournament.lat
+                  ? parseFloat(rawTournament.lat.toString())
+                  : null,
+                longitude: rawTournament.lng
+                  ? parseFloat(rawTournament.lng.toString())
+                  : null,
+              })
             : null,
         startDate: new Date(((rawTournament.startAt as number) || 0) * 1000),
         events,
@@ -145,19 +145,27 @@ function mapEvent(
   if (!userEntrant || !userEntrant.id) return null
 
   const videogameId = rawEvent.videogame?.id?.toString()
-  if (!videogameId) throw new Error('Cannot map event. Reason: Videogame ID is missing')
+  if (!videogameId)
+    throw new Error('Cannot map event. Reason: Videogame ID is missing')
 
   const videogameName = rawEvent.videogame?.name
-  if (!videogameName) throw new Error('Cannot map event. Reason: Videogame name is missing')
+  if (!videogameName)
+    throw new Error('Cannot map event. Reason: Videogame name is missing')
 
   const videogame = new Videogame(asVideogameId(videogameId), videogameName)
 
   const rawBracketType = userEntrant.phaseGroups?.[0]?.bracketType
   const bracketType = mapBracketType(rawBracketType)
   const placement = userEntrant.standing?.placement
-  if (placement === null || placement === undefined) throw new Error('Cannot map event. Reason: User entrant placement is missing')
+  if (placement === null || placement === undefined)
+    throw new Error(
+      'Cannot map event. Reason: User entrant placement is missing',
+    )
   const initialSeedNum = userEntrant.initialSeedNum
-  if (initialSeedNum === null) throw new Error('Cannot map event. Reason: User entrant initial seed is missing')
+  if (initialSeedNum === null)
+    throw new Error(
+      'Cannot map event. Reason: User entrant initial seed is missing',
+    )
 
   const seed = new Seed(initialSeedNum, placement)
 
@@ -165,7 +173,8 @@ function mapEvent(
   const participantsMap = new Map<string, Participant>()
 
   entrantIdToPlayerId.set(userEntrant.id.toString(), targetPlayerId)
-  if (!userEntrant.name) throw new Error('Cannot map event. Reason: User entrant name is missing')
+  if (!userEntrant.name)
+    throw new Error('Cannot map event. Reason: User entrant name is missing')
   participantsMap.set(
     userEntrant.id.toString(),
     new Participant({
@@ -180,7 +189,8 @@ function mapEvent(
   if (!eventId) throw new Error('Cannot map event. Reason: Event ID is missing')
 
   const eventName = rawEvent.name
-  if (!eventName) throw new Error('Cannot map event. Reason: Event name is missing')
+  if (!eventName)
+    throw new Error('Cannot map event. Reason: Event name is missing')
 
   const sets: Set[] = []
   const rawSets = userEntrant.paginatedSets?.nodes || []
