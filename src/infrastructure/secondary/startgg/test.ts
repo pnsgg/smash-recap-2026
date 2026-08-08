@@ -14,14 +14,17 @@ const DISCRIMINATORS = {
   POTICHAT: 'user/c904c6ee',
   RAARCHYOR: 'user/52b2a832',
   ROUXCHOV: 'user/89723908',
-  SPARG0: 'user/b5230de8'
-} as const;
+  SPARG0: 'user/b5230de8',
+} as const
 
 const outputRecap = async (
-  discriminator: (typeof DISCRIMINATORS)[keyof typeof DISCRIMINATORS]
+  discriminator: (typeof DISCRIMINATORS)[keyof typeof DISCRIMINATORS],
 ): Promise<void> => {
-  console.log("*********************************************")
-  const player = await sgg.getPlayerRecap(asUserSlug(discriminator), new Date('2026-12-31'))
+  console.log('*********************************************')
+  const player = await sgg.getPlayerRecap(
+    asUserSlug(discriminator),
+    new Date('2026-12-31'),
+  )
   console.log(`Fetching player recap for ${player.gamerTag}...`)
 
   console.log('Tournaments attended:', player.tournaments.length)
@@ -106,7 +109,7 @@ const outputRecap = async (
       'Player has not attended enough tournaments to have a proper recap...',
     )
   }
-    console.log("*********************************************\n\n")
+  console.log('*********************************************\n\n')
 }
 
 for (const disctriminator of Object.values(DISCRIMINATORS)) {
