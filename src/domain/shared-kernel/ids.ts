@@ -1,6 +1,7 @@
 type Brand<TValue, TBrand> = TValue & { __brand: TBrand }
 
 export type PlayerId = Brand<string, 'PlayerId'>
+export type UserSlug = Brand<string, 'UserSlug'>
 export type TournamentId = Brand<string, 'TournamentId'>
 export type EventId = Brand<string, 'EventId'>
 export type ParticipantId = Brand<string, 'ParticipantId'>
@@ -11,6 +12,7 @@ export type SetId = Brand<string, 'SetId'>
 export type VideogameId = Brand<string, 'VideogameId'>
 
 export const asPlayerId = (id: string): PlayerId => id as PlayerId
+export const asUserSlug = (slug: string): UserSlug => slug as UserSlug
 export const asTournamentId = (id: string): TournamentId => id as TournamentId
 export const asEventId = (id: string): EventId => id as EventId
 export const asParticipantId = (id: string): ParticipantId =>

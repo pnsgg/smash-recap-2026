@@ -15,12 +15,12 @@ describe('Set', () => {
     })
 
     test('throws error if fullRoundText is empty or whitespace', () => {
-      expect(() => SetFactory.merge({ fullRoundText: '' }).make()).toThrow(
-        'Invalid parameter full round text',
-      )
-      expect(() => SetFactory.merge({ fullRoundText: '   ' }).make()).toThrow(
-        'Invalid parameter full round text',
-      )
+      expect(() =>
+        SetFactory.merge({ fullRoundText: '' as any }).make(),
+      ).toThrow('Invalid parameter full round text')
+      expect(() =>
+        SetFactory.merge({ fullRoundText: '   ' as any }).make(),
+      ).toThrow('Invalid parameter full round text')
     })
 
     test('SetPlayer throws error if score is negative', () => {

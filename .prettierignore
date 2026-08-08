@@ -18,3 +18,8 @@ yarn.lock
 project.inlang/
 src/paraglide/
 coverage/
+
+# Code gen files
+schema.graphql
+graphql.ts
+graphql-env.d.ts

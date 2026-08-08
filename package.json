@@ -16,7 +16,8 @@
     "check": "prettier --check .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "start": "bun .output/server/index.mjs"
+    "start": "bun .output/server/index.mjs",
+    "gql:generate": "gql-tada generate-schema schema.graphql"
   },
   "dependencies": {
     "@faker-js/faker": "^10.5.0",
@@ -26,6 +27,8 @@
     "@tanstack/react-router": "latest",
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-start": "latest",
+    "gql.tada": "^1.11.3",
+    "graphql": "^17.0.2",
     "nitro": "3.0.260610-beta",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

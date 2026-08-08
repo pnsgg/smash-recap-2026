@@ -138,6 +138,7 @@ export class Player {
           perf.spr !== null,
       )
       .sort((a, b) => b.spr - a.spr)
+      .filter(({ spr }) => spr > 0)
       .slice(0, limit)
   }
 
