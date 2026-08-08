@@ -141,6 +141,8 @@ function mapEvent(
   rawEvent: EventResult,
   targetPlayerId: PlayerId,
 ): Event | null {
+  if (rawEvent.userEntrant?.isDisqualified) return null
+
   const userEntrant = rawEvent.userEntrant
   if (!userEntrant || !userEntrant.id) return null
 
