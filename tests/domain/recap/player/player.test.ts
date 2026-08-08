@@ -245,7 +245,7 @@ describe('Player', () => {
   describe('encounteredCharacters', () => {
     test('should return empty list if there are no opponent characters encountered', () => {
       const player = PlayerFactory.make()
-      expect(player.encounteredCharacters()).toEqual([])
+      expect(player.encounteredCharacters()).toEqual(new Set())
     })
 
     test('should return unique characters played by opponents', () => {
@@ -315,10 +315,9 @@ describe('Player', () => {
         ],
       }).make()
 
-      const result = player.encounteredCharacters()
-      expect(result).toHaveLength(2)
-      // Verify names of encountered characters
-      const names = result.map((c) => c.name)
+      const characters = player.encounteredCharacters()
+      expect(characters).toHaveLength(2)
+      const names = Array.from(characters.keys()).map((c) => c.name)
       expect(names).toContain('Fox')
       expect(names).toContain('Falco')
     })
@@ -620,7 +619,7 @@ describe('Player', () => {
   describe('uniqueOpponentsFaced', () => {
     test('should return empty list if no opponents are faced', () => {
       const player = PlayerFactory.make()
-      expect(player.uniqueOpponentsFaced()).toEqual([])
+      expect(player.uniqueOpponentsFaced()).toEqual(new Set())
     })
 
     test('should return unique opponent player IDs', () => {

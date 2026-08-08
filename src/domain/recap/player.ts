@@ -2,7 +2,7 @@ import type { PlayerId } from '#/domain/shared-kernel/ids'
 import type { Tournament } from '#/domain/recap/tournament'
 import type { Character } from '#/domain/recap/character'
 import type { Event } from '#/domain/recap/event'
-import type { Set } from '#/domain/recap/set'
+import type { Set as EventSet } from '#/domain/recap/set'
 import type { Stage } from '#/domain/recap/stage'
 
 export type PlayerParams = {
@@ -191,13 +191,13 @@ export class Player {
    * Returns details of the match, or null if no upsets were achieved.
    */
   highestUpset(): {
-    set: Set
+    set: EventSet
     event: Event
     tournament: Tournament
     factor: number
   } | null {
     let bestUpset: {
-      set: Set
+      set: EventSet
       event: Event
       tournament: Tournament
       factor: number
@@ -221,17 +221,14 @@ export class Player {
   }
 
   /**
-   * Returns the list of unique characters played by opponents in games.
+   * Returns a set characters played by opponents in games.
    */
-  encounteredCharacters(): Character[] {
-    const characterMap = new Map<string, Character>()
+  encounteredCharacters(): Set<Character> {
     const opponentChars = this.tournaments.flatMap((t) =>
       t.events.flatMap((e) => e.getOpponentCharacters(this.id)),
     )
-    for (const char of opponentChars) {
-      characterMap.set(char.name, char)
-    }
-    return Array.from(characterMap.values())
+
+    return new Set(opponentChars)
   }
 
   /**
@@ -324,8 +321,8 @@ export class Player {
       .slice(0, limit)
   }
 
-  uniqueOpponentsFaced(): PlayerId[] {
+  uniqueOpponentsFaced(): Set<PlayerId> {
     const ids = this.tournaments.flatMap((t) => t.getOpponentPlayerIds(this.id))
-    return Array.from(new globalThis.Set(ids))
+    return new Set(ids)
   }
 }
