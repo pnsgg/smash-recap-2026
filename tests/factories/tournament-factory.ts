@@ -11,13 +11,15 @@ export const TournamentFactory = Factory.define(
     address: AddressFactory.make(),
     events: [] as Event[],
     startDate: faker.date.past(),
+    numAttendees: faker.number.int({ min: 50, max: 500 }),
   }),
-  ({ id, name, address, events, startDate }) =>
+  ({ id, name, address, events, startDate, numAttendees }) =>
     new Tournament({
       id: asTournamentId(id),
       name,
       address,
       events,
       startDate,
+      numAttendees,
     }),
 )

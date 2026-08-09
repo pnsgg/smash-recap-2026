@@ -19,8 +19,18 @@ export const EventFactory = Factory.define(
     bracketType: faker.helpers.arrayElement(Object.values(BracketType)),
     participants: [] as Participant[],
     sets: [] as Set[],
+    numEntrants: faker.number.int({ min: 10, max: 100 }),
   }),
-  ({ id, name, videogame, isOnline, bracketType, participants, sets }) =>
+  ({
+    id,
+    name,
+    videogame,
+    isOnline,
+    bracketType,
+    participants,
+    sets,
+    numEntrants,
+  }) =>
     new Event({
       id: asEventId(id),
       name,
@@ -29,6 +39,7 @@ export const EventFactory = Factory.define(
       bracketType,
       participants,
       sets,
+      numEntrants,
     }),
 )
   .state('withParticipants', () => ({
