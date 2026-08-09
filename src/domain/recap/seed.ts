@@ -27,6 +27,9 @@ export class Seed {
   }
   /**
    * Computes the Rounds From Victory (RFV) for a given placement.
+   *
+   * Note: This calculation is only mathematically supported for DOUBLE_ELIMINATION and SINGLE_ELIMINATION brackets.
+   *
    * Returns null if the bracket type does not support standard RFV calculations.
    */
   static roundsFromVictory(
@@ -48,6 +51,8 @@ export class Seed {
 
   /**
    * Computes the Seeding Performance Rating (SPR) for this seed.
+   *
+   * Note: This calculation is only supported for DOUBLE_ELIMINATION and SINGLE_ELIMINATION brackets.
    */
   seedingPerformanceRating(bracket: BracketType): number | null {
     const expectedRFV = Seed.roundsFromVictory(this.initialSeed, bracket)
@@ -59,6 +64,7 @@ export class Seed {
   /**
    * Computes the upset factor of a match between two seeds.
    * A positive number indicates the player upset the opponent.
+   * Note: This calculation is only supported for DOUBLE_ELIMINATION and SINGLE_ELIMINATION brackets.
    */
   static upsetFactor(
     playerSeed: number,
