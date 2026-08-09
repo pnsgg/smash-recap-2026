@@ -211,4 +211,70 @@ export class Set {
     if (!this.competitors.has(playerId)) return []
     return Array.from(this.competitors.keys()).filter((id) => id !== playerId)
   }
+
+  /**
+   * Checks if the specified player won this set via a reverse sweep.
+   * A reverse sweep is when a player wins all remaining games in a set after being down
+   * (e.g., down 0-1 in Bo3, 0-2 in Bo5, 0-3 in Bo7) without winning any games first.
+   */
+  isReverseSweepWon(playerId: PlayerId): boolean {
+    if (this.winnerId !== playerId) return false
+
+    const opponentId = Array.from(this.competitors.keys()).find(
+      (id) => id !== playerId,
+    )
+    if (!opponentId) return false
+
+    const winners = this.games
+      .map((g) => g.winnerId)
+      .filter((w): w is PlayerId => w !== null)
+
+    const playerWins = winners.filter((w) => w === playerId).length
+    const opponentWins = winners.filter((w) => w === opponentId).length
+
+    // Winner must have won more games, and loser must have won at least 1 game
+    if (playerWins <= opponentWins || opponentWins === 0) return false
+
+    // Sequence must be: all opponent wins first, followed by all player wins
+    for (let i = 0; i < opponentWins; i++) {
+      if (winners[i] !== opponentId) return false
+    }
+    for (let i = opponentWins; i < winners.length; i++) {
+      if (winners[i] !== playerId) return false
+    }
+
+    return true
+  }
+
+  /**
+   * Checks if the specified player lost this set via being reverse swept.
+   */
+  isReverseSweepLost(playerId: PlayerId): boolean {
+    const opponentId = Array.from(this.competitors.keys()).find(
+      (id) => id !== playerId,
+    )
+    if (!opponentId) return false
+
+    if (this.winnerId !== opponentId) return false
+
+    const winners = this.games
+      .map((g) => g.winnerId)
+      .filter((w): w is PlayerId => w !== null)
+
+    const playerWins = winners.filter((w) => w === playerId).length
+    const opponentWins = winners.filter((w) => w === opponentId).length
+
+    // Winner (opponent) must have won more games, and loser (player) must have won at least 1 game
+    if (opponentWins <= playerWins || playerWins === 0) return false
+
+    // Sequence must be: all player wins first, followed by all opponent wins
+    for (let i = 0; i < playerWins; i++) {
+      if (winners[i] !== playerId) return false
+    }
+    for (let i = playerWins; i < winners.length; i++) {
+      if (winners[i] !== opponentId) return false
+    }
+
+    return true
+  }
 }

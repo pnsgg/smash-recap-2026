@@ -209,6 +209,83 @@ describe('Set', () => {
     })
   })
 
+  describe('reverse sweeps', () => {
+    test('detects reverse sweeps correctly', () => {
+      const p1Id = asPlayerId('player-1')
+      const p2Id = asPlayerId('player-2')
+
+      const player1 = new SetPlayer({
+        playerId: p1Id,
+        seed: new Seed(1, 5),
+        score: 3,
+        isDisqualified: false,
+      })
+      const player2 = new SetPlayer({
+        playerId: p2Id,
+        seed: new Seed(2, 5),
+        score: 2,
+        isDisqualified: false,
+      })
+
+      // Bo5 Reverse Sweep won by p1
+      const bo5SweepSet = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2],
+        ]),
+        winnerId: p1Id,
+        games: [
+          GameFactory.merge({ orderNum: 1, winnerId: p2Id }).make(),
+          GameFactory.merge({ orderNum: 2, winnerId: p2Id }).make(),
+          GameFactory.merge({ orderNum: 3, winnerId: p1Id }).make(),
+          GameFactory.merge({ orderNum: 4, winnerId: p1Id }).make(),
+          GameFactory.merge({ orderNum: 5, winnerId: p1Id }).make(),
+        ],
+      }).make()
+
+      expect(bo5SweepSet.isReverseSweepWon(p1Id)).toBe(true)
+      expect(bo5SweepSet.isReverseSweepWon(p2Id)).toBe(false)
+      expect(bo5SweepSet.isReverseSweepLost(p1Id)).toBe(false)
+      expect(bo5SweepSet.isReverseSweepLost(p2Id)).toBe(true)
+
+      // Bo5 standard win (not reverse sweep)
+      const bo5StandardSet = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2],
+        ]),
+        winnerId: p1Id,
+        games: [
+          GameFactory.merge({ orderNum: 1, winnerId: p2Id }).make(),
+          GameFactory.merge({ orderNum: 2, winnerId: p1Id }).make(),
+          GameFactory.merge({ orderNum: 3, winnerId: p2Id }).make(),
+          GameFactory.merge({ orderNum: 4, winnerId: p1Id }).make(),
+          GameFactory.merge({ orderNum: 5, winnerId: p1Id }).make(),
+        ],
+      }).make()
+
+      expect(bo5StandardSet.isReverseSweepWon(p1Id)).toBe(false)
+      expect(bo5StandardSet.isReverseSweepLost(p2Id)).toBe(false)
+
+      // Bo3 Reverse Sweep won by p1
+      const bo3SweepSet = SetFactory.merge({
+        competitors: new Map([
+          [p1Id, player1],
+          [p2Id, player2],
+        ]),
+        winnerId: p1Id,
+        games: [
+          GameFactory.merge({ orderNum: 1, winnerId: p2Id }).make(),
+          GameFactory.merge({ orderNum: 2, winnerId: p1Id }).make(),
+          GameFactory.merge({ orderNum: 3, winnerId: p1Id }).make(),
+        ],
+      }).make()
+
+      expect(bo3SweepSet.isReverseSweepWon(p1Id)).toBe(true)
+      expect(bo3SweepSet.isReverseSweepLost(p2Id)).toBe(true)
+    })
+  })
+
   describe('isDecidingGameSet', () => {
     test('isDecidingGameSet checks correctly', () => {
       const p1Id = asPlayerId('player-1')
