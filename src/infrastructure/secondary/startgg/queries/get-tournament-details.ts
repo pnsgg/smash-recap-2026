@@ -8,16 +8,16 @@ export const getTournamentDetails = graphql(`
       numAttendees
       events {
         id
+        name
         videogame {
           id
           name
         }
         isOnline
-        isTeams
-        isSingleBracket
-        isFFA
-        type
         numEntrants
+        phaseGroups {
+          bracketType
+        }
       }
     }
   }
