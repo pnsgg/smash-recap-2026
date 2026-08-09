@@ -1,0 +1,51 @@
+import { StartggClient } from './startgg-client'
+import { StartggTournamentOrganizerRepository } from './tournament-organizer-repository'
+import { asUserSlug } from '#/domain/shared-kernel/ids'
+
+const client = new StartggClient()
+const sgg = new StartggTournamentOrganizerRepository(client)
+
+const DISCRIMINATORS = {
+  CLEMBS: 'user/a922f126',
+  MASKIME: 'user/3d2f6e89',
+  ROUXCHOV: 'user/89723908',
+} as const
+
+const outputToRecap = async (
+  discriminator: (typeof DISCRIMINATORS)[keyof typeof DISCRIMINATORS],
+): Promise<void> => {
+  console.log('*********************************************')
+  const to = await sgg.getTournamentOrganizerRecap(
+    asUserSlug(discriminator),
+    new Date('2026-12-31'),
+  )
+  console.log(`Fetching TO recap for ${to.gamerTag}...`)
+
+  console.log('Total Tournaments Organized:', to.totalTournaments())
+  if (to.totalTournaments() > 0) {
+    console.log('\nBiggest Tournaments:')
+    to.biggestTournaments(3).forEach(({ tournament, attendees }, idx) => {
+      console.log(` ${idx + 1}. ${tournament.name} (${attendees} attendees)`)
+    })
+
+    console.log('\nGames Organized:')
+    to.gamesOrganized().forEach(({ videogame, count }) => {
+      console.log(` - ${videogame.name}: ${count} times`)
+    })
+
+    console.log('\nEvent Types:')
+    to.eventTypeDistribution().forEach(({ type, count }) => {
+      console.log(` - ${type}: ${count} events`)
+    })
+  } else {
+    console.log('This user did not organize any tournaments this year.')
+  }
+}
+
+const run = async () => {
+  for (const discriminator of Object.values(DISCRIMINATORS)) {
+    await outputToRecap(discriminator)
+  }
+}
+
+run()

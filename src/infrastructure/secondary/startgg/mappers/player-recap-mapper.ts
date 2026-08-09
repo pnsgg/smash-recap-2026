@@ -9,7 +9,6 @@ import { Game, GameSelection } from '#/domain/recap/game'
 import { Character } from '#/domain/recap/character'
 import { Stage } from '#/domain/recap/stage'
 import { Videogame } from '#/domain/recap/videogame'
-import { BracketType } from '#/domain/recap/bracket-type'
 import {
   asPlayerId,
   asTournamentId,
@@ -24,6 +23,7 @@ import {
 import type { PlayerId } from '#/domain/shared-kernel/ids'
 import type { ResultOf } from 'gql.tada'
 import type { getEvent } from '../queries/get-event'
+import { mapBracketType } from './utils'
 
 export type EventResult = Exclude<
   ResultOf<typeof getEvent>['event'],
@@ -354,31 +354,4 @@ function mapGame(
     stage,
     selections,
   })
-}
-
-function mapBracketType(type: string | null | undefined): BracketType {
-  switch (type) {
-    case 'SINGLE_ELIMINATION':
-      return BracketType.SINGLE_ELIMINATION
-    case 'DOUBLE_ELIMINATION':
-      return BracketType.DOUBLE_ELIMINATION
-    case 'ROUND_ROBIN':
-      return BracketType.ROUND_ROBIN
-    case 'SWISS':
-      return BracketType.SWISS
-    case 'EXHIBITION':
-      return BracketType.EXHIBITION
-    case 'CUSTOM_SCHEDULE':
-      return BracketType.CUSTOM_SCHEDULE
-    case 'MATCHMAKING':
-      return BracketType.MATCHMAKING
-    case 'ELIMINATION_ROUNDS':
-      return BracketType.ELIMINATION_ROUNDS
-    case 'RACE':
-      return BracketType.RACE
-    case 'CIRCUIT':
-      return BracketType.CIRCUIT
-    default:
-      throw new Error(`Unsupported or missing bracket type: ${type}`)
-  }
 }

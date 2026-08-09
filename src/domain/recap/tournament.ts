@@ -11,7 +11,7 @@ export type TournamentParams = {
   address: Address | null
   events: Event[]
   startDate: Date
-  numAttendees: number | null
+  numAttendees?: number | null
 }
 
 export class Tournament {

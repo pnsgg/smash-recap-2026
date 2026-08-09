@@ -14,6 +14,7 @@ export type EventParams = {
   bracketType: BracketType
   participants: Participant[]
   sets: Set[]
+  numEntrants?: number
 }
 
 export class Event {
@@ -24,6 +25,7 @@ export class Event {
   public readonly bracketType: BracketType
   public readonly participants: Participant[]
   public readonly sets: Set[]
+  public readonly numEntrants: number
 
   constructor(params: EventParams) {
     this.checkPreconditions(params)
@@ -35,6 +37,7 @@ export class Event {
     this.bracketType = params.bracketType
     this.participants = params.participants
     this.sets = params.sets
+    this.numEntrants = params.numEntrants ?? 0
   }
 
   private checkPreconditions(params: EventParams) {

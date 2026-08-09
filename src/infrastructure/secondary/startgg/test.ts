@@ -103,7 +103,7 @@ const outputRecap = async (
     })
     console.log()
 
-    console.log('Unique Opponents Faced:', player.uniqueOpponentsFaced().length)
+    console.log('Unique Opponents Faced:', player.uniqueOpponentsFaced().size)
   } else {
     console.log(
       'Player has not attended enough tournaments to have a proper recap...',
