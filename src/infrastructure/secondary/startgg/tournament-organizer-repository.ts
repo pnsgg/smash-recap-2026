@@ -14,7 +14,7 @@ type TournamentDetailsResult = Exclude<
 >
 
 export class StartggTournamentOrganizerRepository implements ITournamentOrganizerRepository {
-  constructor(private readonly fetcher: IStartggClient) { }
+  constructor(private readonly fetcher: IStartggClient) {}
 
   /**
    * Fetches a tournament organizer's yearly recap.
@@ -31,7 +31,9 @@ export class StartggTournamentOrganizerRepository implements ITournamentOrganize
     year: Date,
   ): Promise<TournamentOrganizer> {
     // Phase 0 — resolve gamerTag from slug
-    const { data: userData } = await this.fetcher.fetch(getPlayerUserId, { slug })
+    const { data: userData } = await this.fetcher.fetch(getPlayerUserId, {
+      slug,
+    })
     const gamerTag = userData.user?.player?.gamerTag
 
     if (!gamerTag) throw new Error('Gamer tag is missing')
@@ -48,7 +50,7 @@ export class StartggTournamentOrganizerRepository implements ITournamentOrganize
 
     const rawTournaments = detailResponses
       .map((r) => r.data.tournament)
-      .filter((t): t is TournamentDetailsResult => t !== null && t !== undefined)
+      .filter((t): t is TournamentDetailsResult => t !== null)
 
     return mapTournamentOrganizer(slug, gamerTag, rawTournaments)
   }
@@ -66,7 +68,7 @@ export class StartggTournamentOrganizerRepository implements ITournamentOrganize
     let page = 1
     const perPage = 25
 
-    for (; ;) {
+    for (;;) {
       const { data } = await this.fetcher.fetch(getTournamentsOrganized, {
         slug,
         page,
@@ -74,7 +76,11 @@ export class StartggTournamentOrganizerRepository implements ITournamentOrganize
       })
 
       const tournaments = data.user?.tournaments
-      if (!tournaments || !tournaments.nodes || tournaments.nodes.length === 0) {
+      if (
+        !tournaments ||
+        !tournaments.nodes ||
+        tournaments.nodes.length === 0
+      ) {
         break
       }
 
@@ -83,7 +89,9 @@ export class StartggTournamentOrganizerRepository implements ITournamentOrganize
 
       for (const node of nodes) {
         if (!node || !node.id) continue
-        const tournamentYear = new Date((node.startAt as number) * 1000).getFullYear()
+        const tournamentYear = new Date(
+          (node.startAt as number) * 1000,
+        ).getFullYear()
         if (tournamentYear === targetYear) {
           ids.push(node.id.toString())
         }

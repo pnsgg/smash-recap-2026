@@ -6,8 +6,8 @@ import {
   asTournamentId,
   asEventId,
   asVideogameId,
-  type UserSlug,
 } from '#/domain/shared-kernel/ids'
+import type { UserSlug } from '#/domain/shared-kernel/ids'
 import type { ResultOf } from 'gql.tada'
 import type { getTournamentDetails } from '../queries/get-tournament-details'
 import { mapBracketType } from './utils'
@@ -16,7 +16,6 @@ type TournamentDetailsResult = Exclude<
   ResultOf<typeof getTournamentDetails>['tournament'],
   null | undefined
 >
-
 
 export function mapTournamentOrganizer(
   slug: UserSlug,

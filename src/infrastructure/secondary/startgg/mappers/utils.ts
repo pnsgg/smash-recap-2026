@@ -27,5 +27,6 @@ export function mapBracketType(type: string | null | undefined): BracketType {
     case 'CIRCUIT':
       return BracketType.CIRCUIT
     default:
-      throw new Error(`Unsupported or missing bracket type: ${type}`)  }
+      throw new Error(`Unsupported or missing bracket type: ${type}`)
+  }
 }
