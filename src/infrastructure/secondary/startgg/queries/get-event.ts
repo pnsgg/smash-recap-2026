@@ -42,6 +42,9 @@ export const getEvent = graphql(`
             fullRoundText
             completedAt
             winnerId
+            phaseGroup {
+              bracketType
+            }
             slots(includeByes: false) {
               entrant {
                 id

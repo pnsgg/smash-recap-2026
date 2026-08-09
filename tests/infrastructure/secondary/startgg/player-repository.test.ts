@@ -159,6 +159,9 @@ const fetcher = new InMemoryFetcher()
                   fullRoundText: 'Winners Semis',
                   completedAt: 1785276620,
                   winnerId: 1001,
+                  phaseGroup: {
+                    bracketType: 'DOUBLE_ELIMINATION' as const,
+                  },
                   slots: [
                     {
                       entrant: {

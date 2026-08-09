@@ -67,7 +67,7 @@ describe('Set', () => {
           { winnerSeed: 8, loserSeed: 7, expectedFactor: 0, isUpset: false },
         ],
       },
-    ])('$bracket bracket calculations', ({ upsetCases }) => {
+    ])('$bracket bracket calculations', ({ bracket, upsetCases }) => {
       test.each(upsetCases)(
         'winner seed $winnerSeed vs loser seed $loserSeed results in upset=$isUpset, factor=$expectedFactor',
         ({ winnerSeed, loserSeed, expectedFactor, isUpset }) => {
@@ -88,6 +88,7 @@ describe('Set', () => {
           })
 
           const set = SetFactory.merge({
+            bracketType: bracket,
             competitors: new Map([
               [p1Id, player1],
               [p2Id, player2],
@@ -120,6 +121,7 @@ describe('Set', () => {
         })
 
         const set = SetFactory.merge({
+          bracketType: BracketType.SWISS,
           competitors: new Map([
             [p1Id, player1],
             [p2Id, player2],

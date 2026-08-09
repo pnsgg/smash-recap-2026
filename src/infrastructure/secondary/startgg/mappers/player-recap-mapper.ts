@@ -287,6 +287,8 @@ function mapSet(
   if (!fullRoundText)
     throw new Error('Cannot map set. Reason: Set fullRoundText is missing')
 
+  const bracketType = mapBracketType(rawSet.phaseGroup?.bracketType)
+
   return new Set({
     id: asSetId(setId),
     eventId: asEventId(eventId),
@@ -295,8 +297,10 @@ function mapSet(
     round: rawSet.round || 0,
     fullRoundText,
     games,
-    completedAt: rawSet.completedAt ? new Date((rawSet.completedAt as number) * 1000) : null,
-    bracketType: 1 as unknown as any, // FIXME: remove this cast when Event domain is updated
+    completedAt: rawSet.completedAt
+      ? new Date((rawSet.completedAt as number) * 1000)
+      : null,
+    bracketType,
   })
 }
 
