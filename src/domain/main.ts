@@ -1045,7 +1045,9 @@ event.sets.forEach((set) => {
 console.log('\n--- ENCOUNTERED OPPONENT CHARACTERS ---')
 const opponents = player.encounteredCharacters()
 console.log(
-  `Unique characters played against: ${opponents.map((c) => c.name).join(', ')}`,
+  `Unique characters played against: ${Array.from(opponents)
+    .map((c) => c.name)
+    .join(', ')}`,
 )
 
 console.log('\n--- DQ STATISTICS ---')
@@ -1056,11 +1058,17 @@ console.log(
 console.log('\n--- SEASON OVERVIEW ---')
 console.log(`Total Sets Played: ${player.totalSets()}`)
 console.log(`Clean Sweeps (3-0 or 2-0): ${player.cleanSweeps()}`)
+console.log(
+  'Reverse Sweeps Played Won:',
+  player.reverseSweeps().won,
+  'Lost:',
+  player.reverseSweeps().lost,
+)
+console.log(`Unique Opponents Faced: ${player.uniqueOpponentsFaced().size}`)
 const deciding = player.decidingGameSets()
 console.log(
   `Deciding Game Sets (3-2 or 2-1): ${deciding.count} (Wins: ${deciding.winCount}, Win Rate: ${(deciding.winRate * 100).toFixed(1)}%)`,
 )
-console.log(`Unique Opponents Faced: ${player.uniqueOpponentsFaced().length}`)
 
 console.log('\n--- WORST MATCHUPS ---')
 const worst = player.worstMatchups(3)
