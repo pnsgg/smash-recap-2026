@@ -27,7 +27,6 @@ export const getEvent = graphql(`
         phaseGroups {
           bracketType
         }
-        isOnline @deprecated(reason: "Use event.isOnline")
         isDisqualified
         initialSeedNum
         players {
