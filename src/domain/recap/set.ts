@@ -38,6 +38,7 @@ export class SetPlayer {
 export type SetParams = {
   id: SetId
   eventId: EventId
+  bracketType: BracketType
   competitors: Map<PlayerId, SetPlayer>
   winnerId: PlayerId
   round: number
@@ -49,6 +50,7 @@ export type SetParams = {
 export class Set {
   public readonly id: SetId
   public readonly eventId: EventId
+  public readonly bracketType: BracketType
   public readonly competitors: Map<PlayerId, SetPlayer>
   public readonly winnerId: PlayerId
   public readonly round: number
@@ -61,6 +63,7 @@ export class Set {
 
     this.id = params.id
     this.eventId = params.eventId
+    this.bracketType = params.bracketType
     this.competitors = params.competitors
     this.winnerId = params.winnerId
     this.round = params.round
@@ -79,9 +82,11 @@ export class Set {
 
   /**
    * Checks if this set was an upset based on competitor seeding.
+   *
+   * @returns true if the set is an upset, false otherwise (including if the bracket type does not support calculation).
    */
-  isUpset(bracket: BracketType): boolean {
-    const uf = this.upsetFactor(bracket)
+  isUpset(): boolean {
+    const uf = this.upsetFactor()
     return uf !== null && uf > 0
   }
 
@@ -89,7 +94,7 @@ export class Set {
    * Computes the upset factor of this set.
    * Returns a positive number if it was an upset, a negative number if it was expected, or null if unsupported.
    */
-  upsetFactor(bracket: BracketType): number | null {
+  upsetFactor(): number | null {
     const winner = this.competitors.get(this.winnerId)
     const loser = Array.from(this.competitors.values()).find(
       (c) => c.playerId !== this.winnerId,
@@ -99,7 +104,7 @@ export class Set {
     return Seed.upsetFactor(
       winner.seed.initialSeed,
       loser.seed.initialSeed,
-      bracket,
+      this.bracketType,
     )
   }
 

@@ -295,9 +295,8 @@ function mapSet(
     round: rawSet.round || 0,
     fullRoundText,
     games,
-    completedAt: rawSet.completedAt
-      ? new Date((rawSet.completedAt as number) * 1000)
-      : null,
+    completedAt: rawSet.completedAt ? new Date((rawSet.completedAt as number) * 1000) : null,
+    bracketType: 1 as unknown as any, // FIXME: remove this cast when Event domain is updated
   })
 }
 

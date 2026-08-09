@@ -87,7 +87,7 @@ export class Event {
     let bestSet: { set: Set; factor: number } | null = null
     for (const set of this.sets) {
       if (set.winnerId !== playerId) continue
-      const factor = set.upsetFactor(this.bracketType)
+      const factor = set.upsetFactor()
       if (factor !== null && factor > 0) {
         if (bestSet === null || factor > bestSet.factor) {
           bestSet = { set, factor }

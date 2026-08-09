@@ -1,3 +1,4 @@
+import { BracketType } from '#/domain/recap/bracket-type'
 import { Set, SetPlayer } from '#/domain/recap/set'
 import { asSetId, asEventId, asPlayerId } from '#/domain/shared-kernel/ids'
 import type { PlayerId } from '#/domain/shared-kernel/ids'
@@ -42,6 +43,7 @@ export const SetFactory = Factory.define(
         'Losers Quarterfinals',
         'Grand Finals',
       ]),
+      bracketType: BracketType.DOUBLE_ELIMINATION,
       games: [] as Game[],
       completedAt: faker.date.past(),
     }
@@ -49,6 +51,7 @@ export const SetFactory = Factory.define(
   ({
     id,
     eventId,
+    bracketType,
     competitors,
     winnerId,
     round,
@@ -65,6 +68,7 @@ export const SetFactory = Factory.define(
       fullRoundText,
       games,
       completedAt,
+      bracketType,
     }),
 ).state('withGames', (attrs, { faker }) => {
   const playerIds = Array.from(attrs.competitors.keys())
