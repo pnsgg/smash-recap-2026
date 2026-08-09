@@ -11,6 +11,7 @@ export type TournamentParams = {
   address: Address | null
   events: Event[]
   startDate: Date
+  numAttendees: number | null
 }
 
 export class Tournament {
@@ -19,6 +20,7 @@ export class Tournament {
   public readonly address: Address | null
   public readonly events: Event[]
   public readonly startDate: Date
+  public readonly numAttendees: number
 
   constructor(params: TournamentParams) {
     this.checkPreconditions(params)
@@ -27,6 +29,7 @@ export class Tournament {
     this.address = params.address
     this.events = params.events
     this.startDate = params.startDate
+    this.numAttendees = params.numAttendees ?? 0
   }
 
   private checkPreconditions(params: TournamentParams) {
