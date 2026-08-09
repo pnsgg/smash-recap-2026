@@ -99,6 +99,20 @@ export class Player {
   }
 
   /**
+   * Computes the total number of reverse sweeps won and lost by the player across the season.
+   */
+  reverseSweeps(): { won: number; lost: number } {
+    const sets = this.tournaments
+      .flatMap((t) => t.events.flatMap((e) => e.sets))
+      .filter((set) => set.competitors.has(this.id))
+
+    const won = sets.filter((set) => set.isReverseSweepWon(this.id)).length
+    const lost = sets.filter((set) => set.isReverseSweepLost(this.id)).length
+
+    return { won, lost }
+  }
+
+  /**
    * Computes the total number and win rate of sets that went to the last/deciding game.
    * A deciding game is defined as a match ending with a game score difference of exactly 1.
    * Excludes DQ sets.

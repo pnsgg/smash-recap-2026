@@ -896,6 +896,94 @@ describe('Player', () => {
     })
   })
 
+  describe('reverseSweeps', () => {
+    test('should return 0 won and lost if player did not attend any tournament', () => {
+      const player = PlayerFactory.make()
+      expect(player.reverseSweeps()).toEqual({ won: 0, lost: 0 })
+    })
+
+    test('should count won and lost reverse sweeps correctly', () => {
+      const playerId = asPlayerId('1')
+      const opponentId = asPlayerId('2')
+
+      const player1 = new SetPlayer({
+        playerId,
+        seed: SeedFactory.merge({ initialSeed: 1, finalPlacement: 5 }).make(),
+        score: 3,
+        isDisqualified: false,
+      })
+      const player2 = new SetPlayer({
+        playerId: opponentId,
+        seed: SeedFactory.merge({ initialSeed: 2, finalPlacement: 5 }).make(),
+        score: 2,
+        isDisqualified: false,
+      })
+
+      // Set 1: player won reverse sweep
+      const setWon = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player1],
+          [opponentId, player2],
+        ]),
+        winnerId: playerId,
+        games: [
+          GameFactory.merge({ orderNum: 1, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 2, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 3, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 4, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 5, winnerId: playerId }).make(),
+        ],
+      }).make()
+
+      // Set 2: player lost reverse sweep (opponent won reverse sweep)
+      const setLost = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player1],
+          [opponentId, player2],
+        ]),
+        winnerId: opponentId,
+        games: [
+          GameFactory.merge({ orderNum: 1, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 2, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 3, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 4, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 5, winnerId: opponentId }).make(),
+        ],
+      }).make()
+
+      // Set 3: player lost but NOT a reverse sweep
+      const setLostNotReverseSweep = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player1],
+          [opponentId, player2],
+        ]),
+        winnerId: opponentId,
+        games: [
+          GameFactory.merge({ orderNum: 1, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 2, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 3, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 4, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 5, winnerId: opponentId }).make(),
+        ],
+      }).make()
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({
+                sets: [setWon, setLost, setLostNotReverseSweep],
+              }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      expect(player.reverseSweeps()).toEqual({ won: 1, lost: 1 })
+    })
+  })
+
   describe('totalDisqualifications', () => {
     test('should be 0 if the player did not attend any tournaments this year', () => {
       const player = PlayerFactory.make()
