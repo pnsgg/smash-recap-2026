@@ -280,18 +280,6 @@ function mapSet(
     if (mappedGame) games.push(mappedGame)
   }
 
-  games.sort((a, b) => a.orderNum - b.orderNum)
-  const sequentialGames = games.map(
-    (g, idx) =>
-      new Game({
-        id: g.id,
-        orderNum: idx + 1,
-        winnerId: g.winnerId,
-        stage: g.stage,
-        selections: g.selections,
-      }),
-  )
-
   const setId = rawSet.id?.toString()
   if (!setId) throw new Error('Cannot map set. Reason: Set ID is missing')
 
@@ -306,7 +294,7 @@ function mapSet(
     winnerId: finalWinnerId,
     round: rawSet.round || 0,
     fullRoundText,
-    games: sequentialGames,
+    games,
     completedAt: rawSet.completedAt
       ? new Date((rawSet.completedAt as number) * 1000)
       : null,

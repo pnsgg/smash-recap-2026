@@ -65,7 +65,7 @@ export class Set {
     this.winnerId = params.winnerId
     this.round = params.round
     this.fullRoundText = params.fullRoundText
-    this.games = params.games
+    this.games = [...params.games].sort((a, b) => a.orderNum - b.orderNum)
     this.completedAt = params.completedAt
   }
 
@@ -74,14 +74,6 @@ export class Set {
       throw new Error(
         `Invalid parameter full round text: ${params.fullRoundText}. Value cannot be empty.`,
       )
-    }
-    const orderNums = params.games.map((g) => g.orderNum).sort((a, b) => a - b)
-    for (let i = 0; i < orderNums.length; i++) {
-      if (orderNums[i] !== i + 1) {
-        throw new Error(
-          `Invalid parameter games: order numbers must start at 1 and be sequential without gaps.`,
-        )
-      }
     }
   }
 

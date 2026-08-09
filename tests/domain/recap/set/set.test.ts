@@ -36,38 +36,16 @@ describe('Set', () => {
       ).toThrow('Invalid parameter score')
     })
 
-    test('throws error if games list has skips or does not start at 1', () => {
+    test('sorts games automatically by orderNum', () => {
       const game1 = GameFactory.merge({ orderNum: 1 }).make()
       const game2 = GameFactory.merge({ orderNum: 2 }).make()
       const game3 = GameFactory.merge({ orderNum: 3 }).make()
 
-      // Gaps exist
-      expect(() =>
-        SetFactory.merge({
-          games: [game1, game3],
-        }).make(),
-      ).toThrow('Invalid parameter games')
+      const set = SetFactory.merge({
+        games: [game3, game1, game2],
+      }).make()
 
-      // Doesn't start at 1
-      expect(() =>
-        SetFactory.merge({
-          games: [game2, game3],
-        }).make(),
-      ).toThrow('Invalid parameter games')
-
-      // Duplicates exist
-      expect(() =>
-        SetFactory.merge({
-          games: [game1, game1],
-        }).make(),
-      ).toThrow('Invalid parameter games')
-
-      // Valid sequence (even if unsorted in input)
-      expect(() =>
-        SetFactory.merge({
-          games: [game2, game1, game3],
-        }).make(),
-      ).not.toThrow()
+      expect(set.games).toEqual([game1, game2, game3])
     })
   })
 
