@@ -68,7 +68,7 @@ export class TournamentOrganizer {
     const counts = new Map<BracketType, number>()
     for (const t of this.tournaments) {
       for (const e of t.events) {
-        counts.set(e.bracketType, (counts.get(e.bracketType) || 0) + 1)
+        counts.set(e.lastBracketType, (counts.get(e.lastBracketType) || 0) + 1)
       }
     }
     return Array.from(counts.entries())

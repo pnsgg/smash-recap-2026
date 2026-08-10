@@ -38,7 +38,7 @@ export function mapTournamentOrganizer(
           name: e.name ?? 'Unknown Event',
           videogame,
           isOnline: e.isOnline ?? false,
-          bracketType,
+          lastBracketType: bracketType,
           participants: [],
           sets: [],
           numEntrants: e.numEntrants ?? 0,

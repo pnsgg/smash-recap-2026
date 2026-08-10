@@ -934,7 +934,7 @@ const player = new Player({
             'Super Smash Bros. Ultimate',
           ),
           isOnline: false,
-          bracketType: BracketType.DOUBLE_ELIMINATION,
+          lastBracketType: BracketType.DOUBLE_ELIMINATION,
           participants: [
             new Participant({
               id: asParticipantId('participant-licane'),

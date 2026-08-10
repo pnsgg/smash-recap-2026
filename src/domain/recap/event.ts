@@ -11,7 +11,7 @@ export type EventParams = {
   name: string
   videogame: Videogame
   isOnline: boolean
-  bracketType: BracketType
+  lastBracketType: BracketType
   participants: Participant[]
   sets: Set[]
   numEntrants?: number
@@ -22,7 +22,7 @@ export class Event {
   public readonly name: string
   public readonly videogame: Videogame
   public readonly isOnline: boolean
-  public readonly bracketType: BracketType
+  public readonly lastBracketType: BracketType
   public readonly participants: Participant[]
   public readonly sets: Set[]
   public readonly numEntrants: number
@@ -34,7 +34,7 @@ export class Event {
     this.name = params.name
     this.videogame = params.videogame
     this.isOnline = params.isOnline
-    this.bracketType = params.bracketType
+    this.lastBracketType = params.lastBracketType
     this.participants = params.participants
     this.sets = params.sets
     this.numEntrants = params.numEntrants ?? 0
@@ -61,7 +61,7 @@ export class Event {
   getPlayerSPR(playerId: PlayerId): number | null {
     const participant = this.participants.find((p) => p.playerId === playerId)
     if (!participant) return null
-    return participant.seed.seedingPerformanceRating(this.bracketType)
+    return participant.seed.seedingPerformanceRating(this.lastBracketType)
   }
 
   /**

@@ -98,7 +98,7 @@ describe('Event', () => {
         seed: new Seed(8, 5),
       })
       const event = EventFactory.merge({
-        bracketType: BracketType.SINGLE_ELIMINATION,
+        lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p],
       }).make()
       expect(event.getPlayerSPR(playerId)).toBe(0)
