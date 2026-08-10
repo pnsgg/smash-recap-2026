@@ -3,6 +3,9 @@ name: Test
 on:
   pull_request:
     branches: [main]
+  push:
+    branches:
+      - main
 
 jobs:
   test:
@@ -22,6 +25,7 @@ jobs:
       - run: bun install
       - run: bun run lint
       - run: bun run check
+      - run: bun run typecheck
       - run: bun run test:coverage
 
       - name: Report Coverage
