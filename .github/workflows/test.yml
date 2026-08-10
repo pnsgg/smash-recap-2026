@@ -23,11 +23,12 @@ jobs:
           bun-version: latest
 
       - run: bun install
+      - run: bun run paraglide:compile
       - run: bun run lint
       - run: bun run check
       - run: bun run typecheck
-      - run: bun run test:coverage
-
+      - id: test
+        run: bun run test:coverage
       - name: Report Coverage
-        if: always()
+        if: always() && steps.test.outcome == 'success'
         uses: davelosert/vitest-coverage-report-action@v2
