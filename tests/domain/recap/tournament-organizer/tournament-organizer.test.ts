@@ -55,8 +55,12 @@ describe('TournamentOrganizer', () => {
     const event1 = EventFactory.merge({
       lastBracketType: BracketType.DOUBLE_ELIMINATION,
     }).make()
-    const event2 = EventFactory.merge({ lastBracketType: BracketType.SWISS }).make()
-    const event3 = EventFactory.merge({ lastBracketType: BracketType.SWISS }).make()
+    const event2 = EventFactory.merge({
+      lastBracketType: BracketType.SWISS,
+    }).make()
+    const event3 = EventFactory.merge({
+      lastBracketType: BracketType.SWISS,
+    }).make()
 
     const tournament = TournamentFactory.merge({
       events: [event1, event2, event3],

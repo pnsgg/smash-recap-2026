@@ -137,13 +137,20 @@ export function mapEmptyPlayer(
   })
 }
 
-function getEventFinalBracketType(phases: PhasesResult | null | undefined): string | null | undefined {
+function getEventFinalBracketType(
+  phases: PhasesResult | null | undefined,
+): string | null | undefined {
   if (!phases) return null
 
-  const validPhases = phases.filter((phase): phase is NonNullable<typeof phase> => phase != null && phase.phaseOrder != null)
+  const validPhases = phases.filter(
+    (phase): phase is NonNullable<typeof phase> =>
+      phase != null && phase.phaseOrder != null,
+  )
   if (validPhases.length === 0) return null
 
-  const finalPhase = validPhases.reduce((latest, phase) => phase.phaseOrder! > latest.phaseOrder! ? phase : latest)
+  const finalPhase = validPhases.reduce((latest, phase) =>
+    phase.phaseOrder! > latest.phaseOrder! ? phase : latest,
+  )
 
   return finalPhase.phaseGroups?.nodes?.[0]?.bracketType
 }
