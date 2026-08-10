@@ -30,6 +30,7 @@ export type EventResult = Exclude<
   null | undefined
 >
 type EntrantResult = Exclude<EventResult['userEntrant'], null | undefined>
+type PhasesResult = Exclude<EventResult['phases'], null | undefined>
 type PaginatedSets = Exclude<EntrantResult['paginatedSets'], null | undefined>
 type SetResult = Exclude<
   Exclude<PaginatedSets['nodes'], null | undefined>[number],
@@ -136,6 +137,24 @@ export function mapEmptyPlayer(
   })
 }
 
+function getEventFinalBracketType(
+  phases: PhasesResult | null | undefined,
+): string | null | undefined {
+  if (!phases) return null
+
+  const validPhases = phases.filter(
+    (phase): phase is NonNullable<typeof phase> =>
+      phase != null && phase.phaseOrder != null,
+  )
+  if (validPhases.length === 0) return null
+
+  const finalPhase = validPhases.reduce((latest, phase) =>
+    phase.phaseOrder! > latest.phaseOrder! ? phase : latest,
+  )
+
+  return finalPhase.phaseGroups?.nodes?.[0]?.bracketType
+}
+
 // TODO: Prevent throws as it block the entire recap generation
 function mapEvent(
   rawEvent: EventResult,
@@ -156,7 +175,7 @@ function mapEvent(
 
   const videogame = new Videogame(asVideogameId(videogameId), videogameName)
 
-  const rawBracketType = userEntrant.phaseGroups?.[0]?.bracketType
+  const rawBracketType = getEventFinalBracketType(rawEvent.phases)
   const bracketType = mapBracketType(rawBracketType)
   const placement = userEntrant.standing?.placement
   if (placement === null || placement === undefined)
@@ -212,7 +231,7 @@ function mapEvent(
     name: eventName,
     videogame,
     isOnline: !!rawEvent.isOnline,
-    bracketType,
+    lastBracketType: bracketType,
     participants: Array.from(participantsMap.values()),
     sets,
   })
@@ -287,6 +306,8 @@ function mapSet(
   if (!fullRoundText)
     throw new Error('Cannot map set. Reason: Set fullRoundText is missing')
 
+  const bracketType = mapBracketType(rawSet.phaseGroup?.bracketType)
+
   return new Set({
     id: asSetId(setId),
     eventId: asEventId(eventId),
@@ -298,6 +319,7 @@ function mapSet(
     completedAt: rawSet.completedAt
       ? new Date((rawSet.completedAt as number) * 1000)
       : null,
+    bracketType,
   })
 }
 

@@ -242,7 +242,11 @@ export class Player {
       t.events.flatMap((e) => e.getOpponentCharacters(this.id)),
     )
 
-    return new Set(opponentChars)
+    return new Set(
+      new Map(
+        opponentChars.map((character) => [character.id, character]),
+      ).values(),
+    )
   }
 
   /**

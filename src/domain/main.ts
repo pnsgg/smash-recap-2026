@@ -105,6 +105,7 @@ const set1 = new Set({
   winnerId: potichatId,
   round: 5,
   fullRoundText: 'Grand Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785276620 * 1000),
   games: [
     new Game({
@@ -183,6 +184,7 @@ const set2 = new Set({
   winnerId: licaneId,
   round: 5,
   fullRoundText: 'Grand Final Reset',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785328357 * 1000),
   games: [
     new Game({
@@ -251,6 +253,7 @@ const set3 = new Set({
   winnerId: licaneId,
   round: 4,
   fullRoundText: 'Winners Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785272995 * 1000),
   games: [
     new Game({
@@ -319,6 +322,7 @@ const set4 = new Set({
   winnerId: potichatId,
   round: -8,
   fullRoundText: 'Losers Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785274976 * 1000),
   games: [
     new Game({
@@ -377,6 +381,7 @@ const set5 = new Set({
   winnerId: clementId,
   round: -7,
   fullRoundText: 'Losers Semi-Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785273925 * 1000),
   games: [
     new Game({
@@ -435,6 +440,7 @@ const set6 = new Set({
   winnerId: licaneId,
   round: 3,
   fullRoundText: 'Winners Semi-Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785271323 * 1000),
   games: [
     new Game({
@@ -513,6 +519,7 @@ const set7 = new Set({
   winnerId: potichatId,
   round: 3,
   fullRoundText: 'Winners Semi-Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785269410 * 1000),
   games: [
     new Game({
@@ -571,6 +578,7 @@ const set8 = new Set({
   winnerId: mayouId,
   round: -6,
   fullRoundText: 'Losers Quarter-Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785271725 * 1000),
   games: [],
 })
@@ -598,6 +606,7 @@ const set9 = new Set({
   winnerId: clementId,
   round: -6,
   fullRoundText: 'Losers Quarter-Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785272920 * 1000),
   games: [
     new Game({
@@ -676,6 +685,7 @@ const set10 = new Set({
   winnerId: mayouId,
   round: -5,
   fullRoundText: 'Losers Round 2',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785271655 * 1000),
   games: [
     new Game({
@@ -734,6 +744,7 @@ const set11 = new Set({
   winnerId: gastonId,
   round: -5,
   fullRoundText: 'Losers Round 2',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785270904 * 1000),
   games: [
     new Game({
@@ -802,6 +813,7 @@ const set12 = new Set({
   winnerId: licaneId,
   round: 2,
   fullRoundText: 'Winners Quarter-Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785269387 * 1000),
   games: [
     new Game({
@@ -860,6 +872,7 @@ const set13 = new Set({
   winnerId: rouxchovId,
   round: 2,
   fullRoundText: 'Winners Quarter-Final',
+  bracketType: BracketType.DOUBLE_ELIMINATION,
   completedAt: new Date(1785267304 * 1000),
   games: [
     new Game({
@@ -921,7 +934,7 @@ const player = new Player({
             'Super Smash Bros. Ultimate',
           ),
           isOnline: false,
-          bracketType: BracketType.DOUBLE_ELIMINATION,
+          lastBracketType: BracketType.DOUBLE_ELIMINATION,
           participants: [
             new Participant({
               id: asParticipantId('participant-licane'),
@@ -1034,8 +1047,8 @@ console.log('\n--- MATCH UPSETS IN BRACKET ---')
 const event = player.tournaments[0].events[0]
 event.sets.forEach((set) => {
   if (set.competitors.has(player.id)) {
-    const upset = set.isUpset(event.bracketType)
-    const factor = set.upsetFactor(event.bracketType)
+    const upset = set.isUpset()
+    const factor = set.upsetFactor()
     console.log(
       `Match: ${set.fullRoundText} | Upset: ${upset} | Upset Factor: ${factor !== null ? (factor >= 0 ? '+' : '') + factor : 'N/A'}`,
     )

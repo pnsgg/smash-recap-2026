@@ -21,13 +21,18 @@ export const getEvent = graphql(`
         lat
         lng
       }
+      phases {
+        phaseOrder
+        phaseGroups(query: { page: 1, perPage: 50 }) {
+          nodes {
+            id
+            bracketType
+          }
+        }
+      }
       userEntrant(userId: $userId) {
         id
         name
-        phaseGroups {
-          bracketType
-        }
-        isOnline @deprecated(reason: "Use event.isOnline")
         isDisqualified
         initialSeedNum
         players {
@@ -43,6 +48,9 @@ export const getEvent = graphql(`
             fullRoundText
             completedAt
             winnerId
+            phaseGroup {
+              bracketType
+            }
             slots(includeByes: false) {
               entrant {
                 id

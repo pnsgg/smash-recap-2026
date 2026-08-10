@@ -116,7 +116,7 @@ describe('Player', () => {
           TournamentFactory.merge({
             events: [
               EventFactory.merge({
-                bracketType: BracketType.DOUBLE_ELIMINATION,
+                lastBracketType: BracketType.DOUBLE_ELIMINATION,
                 sets: [
                   SetFactory.merge({
                     competitors: new Map([
@@ -222,7 +222,7 @@ describe('Player', () => {
       }).make()
 
       const event = EventFactory.merge({
-        bracketType: BracketType.DOUBLE_ELIMINATION,
+        lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [minorUpsetSet, expectedSet],
       }).make()
 

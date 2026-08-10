@@ -57,7 +57,7 @@ describe('Tournament', () => {
       })
 
       const event = EventFactory.merge({
-        bracketType: BracketType.SINGLE_ELIMINATION,
+        lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [participant],
       }).make()
 
@@ -78,7 +78,7 @@ describe('Tournament', () => {
         seed: new Seed(8, 5),
       })
       const event1 = EventFactory.merge({
-        bracketType: BracketType.SINGLE_ELIMINATION,
+        lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p1],
       }).make()
 
@@ -89,7 +89,7 @@ describe('Tournament', () => {
         seed: new Seed(8, 1),
       })
       const event2 = EventFactory.merge({
-        bracketType: BracketType.SINGLE_ELIMINATION,
+        lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p2],
       }).make()
 
@@ -110,7 +110,7 @@ describe('Tournament', () => {
         seed: new Seed(8, 1),
       })
       const event1 = EventFactory.merge({
-        bracketType: BracketType.SINGLE_ELIMINATION,
+        lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p1],
       }).make()
 
@@ -121,7 +121,7 @@ describe('Tournament', () => {
         seed: new Seed(8, 5),
       })
       const event2 = EventFactory.merge({
-        bracketType: BracketType.SINGLE_ELIMINATION,
+        lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p2],
       }).make()
 
@@ -163,7 +163,7 @@ describe('Tournament', () => {
       }).make()
 
       const event1 = EventFactory.merge({
-        bracketType: BracketType.DOUBLE_ELIMINATION,
+        lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [set1],
       }).make()
 
@@ -192,7 +192,7 @@ describe('Tournament', () => {
       }).make()
 
       const event2 = EventFactory.merge({
-        bracketType: BracketType.DOUBLE_ELIMINATION,
+        lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [set2],
       }).make()
 
@@ -235,7 +235,7 @@ describe('Tournament', () => {
       }).make()
 
       const event1 = EventFactory.merge({
-        bracketType: BracketType.DOUBLE_ELIMINATION,
+        lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [set1],
       }).make()
 
@@ -264,7 +264,7 @@ describe('Tournament', () => {
       }).make()
 
       const event2 = EventFactory.merge({
-        bracketType: BracketType.DOUBLE_ELIMINATION,
+        lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [set2],
       }).make()
 

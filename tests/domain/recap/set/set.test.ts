@@ -88,6 +88,7 @@ describe('Set', () => {
           })
 
           const set = SetFactory.merge({
+            bracketType: bracket,
             competitors: new Map([
               [p1Id, player1],
               [p2Id, player2],
@@ -95,8 +96,8 @@ describe('Set', () => {
             winnerId: p1Id,
           }).make()
 
-          expect(set.isUpset(bracket)).toBe(isUpset)
-          expect(set.upsetFactor(bracket)).toBe(expectedFactor)
+          expect(set.isUpset()).toBe(isUpset)
+          expect(set.upsetFactor()).toBe(expectedFactor)
         },
       )
     })
@@ -120,6 +121,7 @@ describe('Set', () => {
         })
 
         const set = SetFactory.merge({
+          bracketType: BracketType.SWISS,
           competitors: new Map([
             [p1Id, player1],
             [p2Id, player2],
@@ -127,8 +129,8 @@ describe('Set', () => {
           winnerId: p1Id,
         }).make()
 
-        expect(set.isUpset(BracketType.SWISS)).toBe(false)
-        expect(set.upsetFactor(BracketType.SWISS)).toBeNull()
+        expect(set.isUpset()).toBe(false)
+        expect(set.upsetFactor()).toBeNull()
       })
     })
 
@@ -158,8 +160,8 @@ describe('Set', () => {
           winnerId: p1Id,
         }).make()
 
-        expect(set.isUpset(BracketType.DOUBLE_ELIMINATION)).toBe(false)
-        expect(set.upsetFactor(BracketType.DOUBLE_ELIMINATION)).toBeNull()
+        expect(set.isUpset()).toBe(false)
+        expect(set.upsetFactor()).toBeNull()
       })
     })
   })
