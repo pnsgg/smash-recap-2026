@@ -128,6 +128,19 @@ const fetcher = new InMemoryFetcher()
           isOnline: false,
           type: 2,
           videogame: { id: '1386', name: 'Super Smash Bros. Ultimate' },
+          phases: [
+            {
+              phaseOrder: 1,
+              phaseGroups: {
+                nodes: [
+                  {
+                    id: 'phase-group-1',
+                    bracketType: 'DOUBLE_ELIMINATION' as const,
+                  },
+                ],
+              },
+            },
+          ],
           tournament: {
             id: 'tourney-1',
             name: 'Genesis X',
@@ -141,11 +154,6 @@ const fetcher = new InMemoryFetcher()
           userEntrant: {
             id: '1001',
             name: 'Glutonny',
-            phaseGroups: [
-              {
-                bracketType: 'DOUBLE_ELIMINATION' as const,
-              },
-            ],
             isOnline: false,
             isDisqualified: false,
             initialSeedNum: 4,
@@ -240,6 +248,30 @@ const fetcher = new InMemoryFetcher()
           isOnline: false,
           type: 2,
           videogame: { id: '1386', name: 'Super Smash Bros. Ultimate' },
+          phases: [
+            {
+              phaseOrder: 1,
+              phaseGroups: {
+                nodes: [
+                  {
+                    id: 'phase-group-2-swiss',
+                    bracketType: 'SWISS' as const,
+                  },
+                ],
+              },
+            },
+            {
+              phaseOrder: 2,
+              phaseGroups: {
+                nodes: [
+                  {
+                    id: 'phase-group-2-de',
+                    bracketType: 'DOUBLE_ELIMINATION' as const,
+                  },
+                ],
+              },
+            },
+          ],
           tournament: {
             id: 'tourney-1',
             name: 'Genesis X',
@@ -253,11 +285,6 @@ const fetcher = new InMemoryFetcher()
           userEntrant: {
             id: '1003',
             name: 'Glutonny & Partner',
-            phaseGroups: [
-              {
-                bracketType: 'DOUBLE_ELIMINATION' as const,
-              },
-            ],
             isOnline: false,
             isDisqualified: false,
             initialSeedNum: 2,
