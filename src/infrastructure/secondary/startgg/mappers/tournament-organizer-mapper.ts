@@ -25,6 +25,7 @@ export function mapTournamentOrganizer(
   const tournaments = rawTournaments.map((raw) => {
     const events = (raw.events ?? [])
       .filter((e): e is NonNullable<typeof e> => e !== null)
+      .filter((e) => e.phaseGroups !== null && e.phaseGroups.length > 0)
       .map((e) => {
         const videogame = new Videogame(
           asVideogameId(e.videogame?.id?.toString() ?? '0'),
