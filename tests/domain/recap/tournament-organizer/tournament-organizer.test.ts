@@ -211,5 +211,3 @@ describe('TournamentOrganizer', () => {
     })
   })
 })
-
-
