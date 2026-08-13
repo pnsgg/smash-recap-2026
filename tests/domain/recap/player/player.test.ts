@@ -1110,4 +1110,171 @@ describe('Player', () => {
       expect(player.totalSets()).toBe(50)
     })
   })
+
+  describe('headToHead', () => {
+    test('should return empty list if player played no sets', () => {
+      const player = PlayerFactory.make()
+      expect(player.headToHead(10)).toEqual([])
+    })
+
+    test('should aggregate wins and losses against opponents and sort properly', () => {
+      const playerId = asPlayerId('1')
+      const opponent1Id = asPlayerId('2')
+      const opponent2Id = asPlayerId('3')
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({
+                sets: [
+                  SetFactory.merge({
+                    competitors: new Map([
+                      [
+                        playerId,
+                        new SetPlayer({
+                          playerId,
+                          seed: SeedFactory.make(),
+                          score: 2,
+                          isDisqualified: false,
+                        }),
+                      ],
+                      [
+                        opponent1Id,
+                        new SetPlayer({
+                          playerId: opponent1Id,
+                          seed: SeedFactory.make(),
+                          score: 1,
+                          isDisqualified: false,
+                        }),
+                      ],
+                    ]),
+                    winnerId: playerId,
+                  }).make(),
+                  SetFactory.merge({
+                    competitors: new Map([
+                      [
+                        playerId,
+                        new SetPlayer({
+                          playerId,
+                          seed: SeedFactory.make(),
+                          score: 1,
+                          isDisqualified: false,
+                        }),
+                      ],
+                      [
+                        opponent1Id,
+                        new SetPlayer({
+                          playerId: opponent1Id,
+                          seed: SeedFactory.make(),
+                          score: 2,
+                          isDisqualified: false,
+                        }),
+                      ],
+                    ]),
+                    winnerId: opponent1Id,
+                  }).make(),
+                  SetFactory.merge({
+                    competitors: new Map([
+                      [
+                        playerId,
+                        new SetPlayer({
+                          playerId,
+                          seed: SeedFactory.make(),
+                          score: 0,
+                          isDisqualified: false,
+                        }),
+                      ],
+                      [
+                        opponent1Id,
+                        new SetPlayer({
+                          playerId: opponent1Id,
+                          seed: SeedFactory.make(),
+                          score: 2,
+                          isDisqualified: false,
+                        }),
+                      ],
+                    ]),
+                    winnerId: opponent1Id,
+                  }).make(),
+                  SetFactory.merge({
+                    competitors: new Map([
+                      [
+                        playerId,
+                        new SetPlayer({
+                          playerId,
+                          seed: SeedFactory.make(),
+                          score: 2,
+                          isDisqualified: false,
+                        }),
+                      ],
+                      [
+                        opponent2Id,
+                        new SetPlayer({
+                          playerId: opponent2Id,
+                          seed: SeedFactory.make(),
+                          score: 0,
+                          isDisqualified: false,
+                        }),
+                      ],
+                    ]),
+                    winnerId: playerId,
+                  }).make(),
+                  SetFactory.merge({
+                    competitors: new Map([
+                      [
+                        playerId,
+                        new SetPlayer({
+                          playerId,
+                          seed: SeedFactory.make(),
+                          score: 2,
+                          isDisqualified: false,
+                        }),
+                      ],
+                      [
+                        opponent2Id,
+                        new SetPlayer({
+                          playerId: opponent2Id,
+                          seed: SeedFactory.make(),
+                          score: 1,
+                          isDisqualified: false,
+                        }),
+                      ],
+                    ]),
+                    winnerId: playerId,
+                  }).make(),
+                ],
+              }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      const resultTotal = player.headToHead(10, 'total')
+      expect(resultTotal).toHaveLength(2)
+      expect(resultTotal[0]).toEqual({
+        opponentPlayerId: opponent1Id,
+        playerWonSet: 1,
+        opponentWonSet: 2,
+        totalSets: 3,
+        winRate: 1 / 3,
+      })
+      expect(resultTotal[1]).toEqual({
+        opponentPlayerId: opponent2Id,
+        playerWonSet: 2,
+        opponentWonSet: 0,
+        totalSets: 2,
+        winRate: 1.0,
+      })
+
+      const resultWinRate = player.headToHead(10, 'winRate')
+      expect(resultWinRate[0].opponentPlayerId).toBe(opponent2Id)
+      expect(resultWinRate[1].opponentPlayerId).toBe(opponent1Id)
+
+      const resultDiff = player.headToHead(10, 'diff')
+      expect(resultDiff[0].opponentPlayerId).toBe(opponent2Id)
+      expect(resultDiff[1].opponentPlayerId).toBe(opponent1Id)
+    })
+  })
 })

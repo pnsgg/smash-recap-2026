@@ -104,6 +104,26 @@ const outputRecap = async (
     console.log()
 
     console.log('Unique Opponents Faced:', player.uniqueOpponentsFaced().size)
+
+    console.log('Head to head')
+    console.log('\tBy score diff')
+    player.headToHead(5, 'diff').forEach((headToHead) => {
+      console.log(
+        `\t\t- You: ${headToHead.playerWonSet} - ${headToHead.opponentPlayerId}: ${headToHead.opponentWonSet}`,
+      )
+    })
+    console.log('\tBy win rate')
+    player.headToHead(5, 'winRate').forEach((headToHead) => {
+      console.log(
+        `\t\t- You: ${headToHead.playerWonSet} - ${headToHead.opponentPlayerId}: ${headToHead.opponentWonSet}`,
+      )
+    })
+    console.log('\tBy sets played')
+    player.headToHead(5, 'total').forEach((headToHead) => {
+      console.log(
+        `\t\t- You: ${headToHead.playerWonSet} - ${headToHead.opponentPlayerId}: ${headToHead.opponentWonSet}`,
+      )
+    })
   } else {
     console.log(
       'Player has not attended enough tournaments to have a proper recap...',

@@ -12,6 +12,14 @@ export type PlayerParams = {
   tournaments: Tournament[]
 }
 
+type HeadToHeadEntry = {
+  opponentPlayerId: PlayerId
+  playerWonSet: number
+  opponentWonSet: number
+  totalSets: number
+  winRate: number
+}
+
 export class Player {
   public readonly id: PlayerId
   public readonly prefix: string | null
@@ -342,5 +350,75 @@ export class Player {
   uniqueOpponentsFaced(): Set<PlayerId> {
     const ids = this.tournaments.flatMap((t) => t.getOpponentPlayerIds(this.id))
     return new Set(ids)
+  }
+
+  /**
+   * Computes the player's head-to-head records against opponents faced.
+   * Returns a list of opponents, including the number of sets won and lost, total sets played, and win rate.
+   *
+   * @param limit The maximum number of opponents to return.
+   * @param sortBy The criterion to sort the records by:
+   *   - 'total' (default): Sorts by total sets played (descending).
+   *   - 'winRate': Sorts by the player's win rate against the opponent (descending).
+   *   - 'diff': Sorts by the set win difference (player wins - opponent wins) (descending).
+   */
+  headToHead(
+    limit: number,
+    sortBy: 'total' | 'winRate' | 'diff' = 'total',
+  ): HeadToHeadEntry[] {
+    const headToHeadMap = new Map<
+      PlayerId,
+      { playerWonSet: number; opponentWonSet: number }
+    >()
+
+    for (const tournament of this.tournaments) {
+      for (const event of tournament.events) {
+        for (const set of event.sets) {
+          if (!set.competitors.has(this.id)) continue
+
+          const opponentId = Array.from(set.competitors.keys()).find(
+            (id) => id !== this.id,
+          )
+          if (!opponentId) continue
+
+          const record = headToHeadMap.get(opponentId) || {
+            playerWonSet: 0,
+            opponentWonSet: 0,
+          }
+
+          if (set.winnerId === this.id) {
+            record.playerWonSet++
+          } else if (set.winnerId === opponentId) {
+            record.opponentWonSet++
+          }
+
+          headToHeadMap.set(opponentId, record)
+        }
+      }
+    }
+
+    const entries = Array.from(headToHeadMap.entries()).map(
+      ([opponentPlayerId, record]) => {
+        const totalSets = record.playerWonSet + record.opponentWonSet
+        return {
+          opponentPlayerId,
+          playerWonSet: record.playerWonSet,
+          opponentWonSet: record.opponentWonSet,
+          totalSets,
+          winRate: totalSets > 0 ? record.playerWonSet / totalSets : 0,
+        }
+      },
+    )
+
+    const sorters = {
+      total: (a: HeadToHeadEntry, b: HeadToHeadEntry) =>
+        b.totalSets - a.totalSets,
+      winRate: (a: HeadToHeadEntry, b: HeadToHeadEntry) =>
+        b.winRate - a.winRate,
+      diff: (a: HeadToHeadEntry, b: HeadToHeadEntry) =>
+        b.playerWonSet - b.opponentWonSet - (a.playerWonSet - a.opponentWonSet),
+    }
+
+    return entries.sort(sorters[sortBy]).slice(0, limit)
   }
 }
