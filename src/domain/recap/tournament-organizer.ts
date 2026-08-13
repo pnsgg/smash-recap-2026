@@ -75,4 +75,53 @@ export class TournamentOrganizer {
       .map(([type, count]) => ({ type, count }))
       .sort((a, b) => b.count - a.count)
   }
+
+  /**
+   * Computes the tournament activity breakdown by day of the week.
+   */
+  dayOfWeekActivity(): { day: string; count: number }[] {
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const activityMap = new Map<string, number>(dayNames.map((d) => [d, 0]))
+
+    for (const tournament of this.tournaments) {
+      const day = dayNames[tournament.startDate.getDay()]
+      activityMap.set(day, (activityMap.get(day) || 0) + 1)
+    }
+
+    return dayNames.map((day) => ({
+      day,
+      count: activityMap.get(day) || 0,
+    }))
+  }
+
+  /**
+   * Groups the TO's tournaments by their starting month and returns the counts.
+   */
+  tournamentsByMonth(): { month: string; count: number }[] {
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ]
+    const activityMap = new Map<string, number>(monthNames.map((m) => [m, 0]))
+
+    for (const tournament of this.tournaments) {
+      const month = monthNames[tournament.startDate.getMonth()]
+      activityMap.set(month, (activityMap.get(month) || 0) + 1)
+    }
+
+    return monthNames.map((month) => ({
+      month,
+      count: activityMap.get(month) || 0,
+    }))
+  }
 }
