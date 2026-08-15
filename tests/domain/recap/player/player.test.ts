@@ -1296,7 +1296,11 @@ describe('Player', () => {
   describe('decidingGameSets', () => {
     test('should return 0 count and win rate if player played no sets', () => {
       const player = PlayerFactory.make()
-      expect(player.decidingGameSets()).toEqual({ count: 0, winCount: 0, winRate: 0 })
+      expect(player.decidingGameSets()).toEqual({
+        count: 0,
+        winCount: 0,
+        winRate: 0,
+      })
     })
 
     test('should count deciding game sets and calculate win rate correctly', () => {
