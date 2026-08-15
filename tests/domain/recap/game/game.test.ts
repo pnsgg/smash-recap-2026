@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { GameFactory } from '#tests/factories/game-factory'
 import { CharacterFactory } from '#tests/factories/character-factory'
 import { GameSelection } from '#/domain/recap/game'
-import { asPlayerId } from '#/domain/shared-kernel/ids'
+import { asPlayerId, asEntrantId } from '#/domain/shared-kernel/ids'
 
 describe('Game', () => {
   describe('constructor', () => {
@@ -116,42 +116,98 @@ describe('Game', () => {
       expect(game.getPlayerLossAgainstCharacter(playerId)).toBeNull()
     })
 
-    test('returns opponent character and lost true if player lost the game', () => {
-      const playerId = asPlayerId('1')
-      const opponentId = asPlayerId('2')
-      const charOpponent = CharacterFactory.merge({ name: 'Marth' }).make()
+    describe('1v1', () => {
+      test('returns opponent character and lost=true if player lost the game', () => {
+        const playerId = asPlayerId('1')
+        const opponentId = asPlayerId('2')
+        const charOpponent = CharacterFactory.merge({ name: 'Marth' }).make()
 
-      const game = GameFactory.merge({
-        winnerId: opponentId,
-        selections: [
-          new GameSelection(playerId, CharacterFactory.make()),
-          new GameSelection(opponentId, charOpponent),
-        ],
-      }).make()
+        const game = GameFactory.merge({
+          winnerId: opponentId,
+          selections: [
+            new GameSelection(playerId, CharacterFactory.make()),
+            new GameSelection(opponentId, charOpponent),
+          ],
+        }).make()
 
-      const result = game.getPlayerLossAgainstCharacter(playerId)
-      expect(result).not.toBeNull()
-      expect(result!.lost).toBe(true)
-      expect(result!.opponentCharacter).toBe(charOpponent)
+        const result = game.getPlayerLossAgainstCharacter(playerId)
+        expect(result).not.toBeNull()
+        expect(result!.lost).toBe(true)
+        expect(result!.opponentCharacter).toBe(charOpponent)
+      })
+
+      test('returns opponent character and lost=false if player won the game', () => {
+        const playerId = asPlayerId('1')
+        const opponentId = asPlayerId('2')
+        const charOpponent = CharacterFactory.merge({ name: 'Marth' }).make()
+
+        const game = GameFactory.merge({
+          winnerId: playerId,
+          selections: [
+            new GameSelection(playerId, CharacterFactory.make()),
+            new GameSelection(opponentId, charOpponent),
+          ],
+        }).make()
+
+        const result = game.getPlayerLossAgainstCharacter(playerId)
+        expect(result).not.toBeNull()
+        expect(result!.lost).toBe(false)
+        expect(result!.opponentCharacter).toBe(charOpponent)
+      })
     })
 
-    test('returns opponent character and lost false if player won the game', () => {
-      const playerId = asPlayerId('1')
-      const opponentId = asPlayerId('2')
-      const charOpponent = CharacterFactory.merge({ name: 'Marth' }).make()
+    describe('Teams', () => {
+      test('returns opponent character and lost=true if player lost the game, ignoring teammate character', () => {
+        const playerId = asPlayerId('1')
+        const teammateId = asPlayerId('2')
+        const opponentId1 = asPlayerId('3')
+        const opponentId2 = asPlayerId('4')
+        const myEntrantId = asEntrantId('team-1')
+        const opponentEntrantId = asEntrantId('team-2')
 
-      const game = GameFactory.merge({
-        winnerId: playerId,
-        selections: [
-          new GameSelection(playerId, CharacterFactory.make()),
-          new GameSelection(opponentId, charOpponent),
-        ],
-      }).make()
+        const charOpponent = CharacterFactory.merge({ name: 'Fox' }).make()
 
-      const result = game.getPlayerLossAgainstCharacter(playerId)
-      expect(result).not.toBeNull()
-      expect(result!.lost).toBe(false)
-      expect(result!.opponentCharacter).toBe(charOpponent)
+        const game = GameFactory.merge({
+          winnerId: opponentId1,
+          selections: [
+            new GameSelection(playerId, CharacterFactory.make(), myEntrantId),
+            new GameSelection(teammateId, CharacterFactory.make(), myEntrantId),
+            new GameSelection(opponentId1, charOpponent, opponentEntrantId),
+            new GameSelection(opponentId2, CharacterFactory.make(), opponentEntrantId),
+          ],
+        }).make()
+
+        const result = game.getPlayerLossAgainstCharacter(playerId)
+        expect(result).not.toBeNull()
+        expect(result!.lost).toBe(true)
+        expect(result!.opponentCharacter).toBe(charOpponent)
+      })
+
+      test('returns opponent character and lost=false if player won the game, ignoring teammate character', () => {
+        const playerId = asPlayerId('1')
+        const teammateId = asPlayerId('2')
+        const opponentId1 = asPlayerId('3')
+        const opponentId2 = asPlayerId('4')
+        const myEntrantId = asEntrantId('team-1')
+        const opponentEntrantId = asEntrantId('team-2')
+
+        const charOpponent = CharacterFactory.merge({ name: 'Fox' }).make()
+
+        const game = GameFactory.merge({
+          winnerId: playerId,
+          selections: [
+            new GameSelection(playerId, CharacterFactory.make(), myEntrantId),
+            new GameSelection(teammateId, CharacterFactory.make(), myEntrantId),
+            new GameSelection(opponentId1, charOpponent, opponentEntrantId),
+            new GameSelection(opponentId2, CharacterFactory.make(), opponentEntrantId),
+          ],
+        }).make()
+
+        const result = game.getPlayerLossAgainstCharacter(playerId)
+        expect(result).not.toBeNull()
+        expect(result!.lost).toBe(false)
+        expect(result!.opponentCharacter).toBe(charOpponent)
+      })
     })
   })
 })
