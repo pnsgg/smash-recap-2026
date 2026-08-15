@@ -5,12 +5,14 @@ import type { Videogame } from '#/domain/recap/videogame'
 import type { BracketType } from '#/domain/recap/bracket-type'
 import type { Character } from '#/domain/recap/character'
 import type { Stage } from '#/domain/recap/stage'
+import { EventType } from '#/domain/recap/event-type'
 
 export type EventParams = {
   id: EventId
   name: string
   videogame: Videogame
   isOnline: boolean
+  eventType: EventType
   lastBracketType: BracketType
   participants: Participant[]
   sets: Set[]
@@ -22,6 +24,7 @@ export class Event {
   public readonly name: string
   public readonly videogame: Videogame
   public readonly isOnline: boolean
+  public readonly eventType: EventType
   public readonly lastBracketType: BracketType
   public readonly participants: Participant[]
   public readonly sets: Set[]
@@ -34,6 +37,7 @@ export class Event {
     this.name = params.name
     this.videogame = params.videogame
     this.isOnline = params.isOnline
+    this.eventType = params.eventType
     this.lastBracketType = params.lastBracketType
     this.participants = params.participants
     this.sets = params.sets
@@ -46,6 +50,10 @@ export class Event {
         `Invalid parameter name: ${params.name}. Value cannot be empty.`,
       )
     }
+  }
+
+  isTeams(): boolean {
+    return this.eventType !== EventType.SINGLES
   }
 
   getFinalRankingUpTo(upTo: number): Participant[] {
