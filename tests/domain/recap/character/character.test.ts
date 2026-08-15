@@ -22,7 +22,7 @@ describe('Character', () => {
   })
 
   test('factory generates valid instances', () => {
-    const character = CharacterFactory.make()
+    const character = CharacterFactory.build()
     expect(character).toBeInstanceOf(Character)
     expect(typeof character.id).toBe('string')
     expect(typeof character.name).toBe('string')

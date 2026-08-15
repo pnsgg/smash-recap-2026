@@ -16,14 +16,14 @@ import { describe, expect, test } from 'vitest'
 describe('Player', () => {
   describe('constructor', () => {
     test('initializes correctly with valid gamerTag', () => {
-      expect(() => PlayerFactory.make()).not.toThrow()
+      expect(() => PlayerFactory.build()).not.toThrow()
     })
 
     test('throws error if gamerTag is empty or whitespace', () => {
-      expect(() => PlayerFactory.merge({ gamerTag: '' }).make()).toThrow(
+      expect(() => PlayerFactory.build({ gamerTag: '' })).toThrow(
         'Invalid parameter gamer tag',
       )
-      expect(() => PlayerFactory.merge({ gamerTag: '   ' }).make()).toThrow(
+      expect(() => PlayerFactory.build({ gamerTag: '   ' })).toThrow(
         'Invalid parameter gamer tag',
       )
     })
@@ -31,82 +31,82 @@ describe('Player', () => {
 
   describe('equals', () => {
     test('returns true if player IDs are the same', () => {
-      const p1 = PlayerFactory.merge({ id: asPlayerId('1') }).make()
-      const p2 = PlayerFactory.merge({ id: asPlayerId('1') }).make()
+      const p1 = PlayerFactory.build({ id: asPlayerId('1') })
+      const p2 = PlayerFactory.build({ id: asPlayerId('1') })
       expect(p1.equals(p2)).toBe(true)
     })
 
     test('returns false if player IDs are different', () => {
-      const p1 = PlayerFactory.merge({ id: asPlayerId('1') }).make()
-      const p2 = PlayerFactory.merge({ id: asPlayerId('2') }).make()
+      const p1 = PlayerFactory.build({ id: asPlayerId('1') })
+      const p2 = PlayerFactory.build({ id: asPlayerId('2') })
       expect(p1.equals(p2)).toBe(false)
     })
   })
 
   describe('mostPlayedCharacters', () => {
     test('should return empty list if player did not play any games or characters', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.mostPlayedCharacters(3)).toEqual([])
     })
 
     test('should count, sort, and limit character usage', () => {
       const playerId = asPlayerId('1')
-      const charFox = CharacterFactory.merge({ name: 'Fox' }).make()
-      const charMarth = CharacterFactory.merge({ name: 'Marth' }).make()
-      const charFalco = CharacterFactory.merge({ name: 'Falco' }).make()
+      const charFox = CharacterFactory.build({ name: 'Fox' })
+      const charMarth = CharacterFactory.build({ name: 'Marth' })
+      const charFalco = CharacterFactory.build({ name: 'Falco' })
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({
+              EventFactory.build({
                 sets: [
-                  SetFactory.merge({
+                  SetFactory.build({
                     competitors: new Map([
                       [
                         playerId,
                         new SetPlayer({
                           playerId,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 3,
                           isDisqualified: false,
                         }),
                       ],
                     ]),
                     games: [
-                      GameFactory.merge({
+                      GameFactory.build({
                         orderNum: 1,
                         selections: [new GameSelection(playerId, charFox)],
-                      }).make(),
-                      GameFactory.merge({
+                      }),
+                      GameFactory.build({
                         orderNum: 2,
                         selections: [new GameSelection(playerId, charFox)],
-                      }).make(),
-                      GameFactory.merge({
+                      }),
+                      GameFactory.build({
                         orderNum: 3,
                         selections: [new GameSelection(playerId, charFox)],
-                      }).make(),
-                      GameFactory.merge({
+                      }),
+                      GameFactory.build({
                         orderNum: 4,
                         selections: [new GameSelection(playerId, charMarth)],
-                      }).make(),
-                      GameFactory.merge({
+                      }),
+                      GameFactory.build({
                         orderNum: 5,
                         selections: [new GameSelection(playerId, charMarth)],
-                      }).make(),
-                      GameFactory.merge({
+                      }),
+                      GameFactory.build({
                         orderNum: 6,
                         selections: [new GameSelection(playerId, charFalco)],
-                      }).make(),
+                      }),
                     ],
-                  }).make(),
+                  }),
                 ],
-              }).make(),
+              }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       const result = player.mostPlayedCharacters(2)
       expect(result).toHaveLength(2)
@@ -117,7 +117,7 @@ describe('Player', () => {
 
   describe('highestUpset', () => {
     test('should return null if there are no tournaments or sets played', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.highestUpset()).toBeNull()
     })
 
@@ -125,24 +125,24 @@ describe('Player', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({
+              EventFactory.build({
                 lastBracketType: BracketType.DOUBLE_ELIMINATION,
                 sets: [
-                  SetFactory.merge({
+                  SetFactory.build({
                     competitors: new Map([
                       [
                         playerId,
                         new SetPlayer({
                           playerId,
-                          seed: SeedFactory.merge({
+                          seed: SeedFactory.build({
                             initialSeed: 1,
                             finalPlacement: 1,
-                          }).make(),
+                          }),
                           score: 3,
                           isDisqualified: false,
                         }),
@@ -151,23 +151,23 @@ describe('Player', () => {
                         opponentId,
                         new SetPlayer({
                           playerId: opponentId,
-                          seed: SeedFactory.merge({
+                          seed: SeedFactory.build({
                             initialSeed: 2,
                             finalPlacement: 2,
-                          }).make(),
+                          }),
                           score: 0,
                           isDisqualified: false,
                         }),
                       ],
                     ]),
                     winnerId: playerId,
-                  }).make(),
+                  }),
                 ],
-              }).make(),
+              }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       expect(player.highestUpset()).toBeNull()
     })
@@ -176,16 +176,16 @@ describe('Player', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
 
-      const expectedSet = SetFactory.merge({
+      const expectedSet = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.merge({
+              seed: SeedFactory.build({
                 initialSeed: 4,
                 finalPlacement: 1,
-              }).make(),
+              }),
               score: 3,
               isDisqualified: false,
             }),
@@ -194,28 +194,28 @@ describe('Player', () => {
             opponentId,
             new SetPlayer({
               playerId: opponentId,
-              seed: SeedFactory.merge({
+              seed: SeedFactory.build({
                 initialSeed: 2,
                 finalPlacement: 2,
-              }).make(),
+              }),
               score: 0,
               isDisqualified: false,
             }),
           ],
         ]),
         winnerId: playerId,
-      }).make()
+      })
 
-      const minorUpsetSet = SetFactory.merge({
+      const minorUpsetSet = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.merge({
+              seed: SeedFactory.build({
                 initialSeed: 3,
                 finalPlacement: 1,
-              }).make(),
+              }),
               score: 3,
               isDisqualified: false,
             }),
@@ -224,31 +224,31 @@ describe('Player', () => {
             opponentId,
             new SetPlayer({
               playerId: opponentId,
-              seed: SeedFactory.merge({
+              seed: SeedFactory.build({
                 initialSeed: 2,
                 finalPlacement: 2,
-              }).make(),
+              }),
               score: 0,
               isDisqualified: false,
             }),
           ],
         ]),
         winnerId: playerId,
-      }).make()
+      })
 
-      const event = EventFactory.merge({
+      const event = EventFactory.build({
         lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [minorUpsetSet, expectedSet],
-      }).make()
+      })
 
-      const tournament = TournamentFactory.merge({
+      const tournament = TournamentFactory.build({
         events: [event],
-      }).make()
+      })
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [tournament],
-      }).make()
+      })
 
       const upset = player.highestUpset()
       expect(upset).not.toBeNull()
@@ -259,7 +259,7 @@ describe('Player', () => {
 
   describe('encounteredCharacters', () => {
     test('should return empty list if there are no opponent characters encountered', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.encounteredCharacters()).toEqual(new Set())
     })
 
@@ -267,24 +267,24 @@ describe('Player', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
 
-      const myChar = CharacterFactory.merge({ name: 'Marth' }).make()
-      const charFox = CharacterFactory.merge({ name: 'Fox' }).make()
-      const charFalco = CharacterFactory.merge({ name: 'Falco' }).make()
+      const myChar = CharacterFactory.build({ name: 'Marth' })
+      const charFox = CharacterFactory.build({ name: 'Fox' })
+      const charFalco = CharacterFactory.build({ name: 'Falco' })
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({
+              EventFactory.build({
                 sets: [
-                  SetFactory.merge({
+                  SetFactory.build({
                     competitors: new Map([
                       [
                         playerId,
                         new SetPlayer({
                           playerId,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 2,
                           isDisqualified: false,
                         }),
@@ -293,42 +293,42 @@ describe('Player', () => {
                         opponentId,
                         new SetPlayer({
                           playerId: opponentId,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 1,
                           isDisqualified: false,
                         }),
                       ],
                     ]),
                     games: [
-                      GameFactory.merge({
+                      GameFactory.build({
                         orderNum: 1,
                         selections: [
                           new GameSelection(playerId, myChar),
                           new GameSelection(opponentId, charFox),
                         ],
-                      }).make(),
-                      GameFactory.merge({
+                      }),
+                      GameFactory.build({
                         orderNum: 2,
                         selections: [
                           new GameSelection(playerId, myChar),
                           new GameSelection(opponentId, charFox),
                         ],
-                      }).make(),
-                      GameFactory.merge({
+                      }),
+                      GameFactory.build({
                         orderNum: 3,
                         selections: [
                           new GameSelection(playerId, myChar),
                           new GameSelection(opponentId, charFalco),
                         ],
-                      }).make(),
+                      }),
                     ],
-                  }).make(),
+                  }),
                 ],
-              }).make(),
+              }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       const characters = player.encounteredCharacters()
       expect(characters).toHaveLength(2)
@@ -340,7 +340,7 @@ describe('Player', () => {
 
   describe('stageActivity', () => {
     test('should return empty list if there is no stage activity', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.stageActivity()).toEqual([])
     })
 
@@ -348,41 +348,41 @@ describe('Player', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
 
-      const stageBF = StageFactory.merge({ name: 'Battlefield' }).make()
-      const stageFD = StageFactory.merge({ name: 'Final Destination' }).make()
-      const stageSV = StageFactory.merge({ name: 'Smashville' }).make()
+      const stageBF = StageFactory.build({ name: 'Battlefield' })
+      const stageFD = StageFactory.build({ name: 'Final Destination' })
+      const stageSV = StageFactory.build({ name: 'Smashville' })
 
-      const game1 = GameFactory.merge({
+      const game1 = GameFactory.build({
         orderNum: 1,
         stage: stageBF,
         winnerId: playerId,
-      }).make()
+      })
 
-      const game2 = GameFactory.merge({
+      const game2 = GameFactory.build({
         orderNum: 2,
         stage: stageBF,
         winnerId: opponentId,
-      }).make()
+      })
 
-      const game3 = GameFactory.merge({
+      const game3 = GameFactory.build({
         orderNum: 3,
         stage: stageFD,
         winnerId: playerId,
-      }).make()
+      })
 
-      const game4 = GameFactory.merge({
+      const game4 = GameFactory.build({
         orderNum: 1,
         stage: stageSV,
         winnerId: playerId,
-      }).make()
+      })
 
-      const validSet = SetFactory.merge({
+      const validSet = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 2,
               isDisqualified: false,
             }),
@@ -391,22 +391,22 @@ describe('Player', () => {
             opponentId,
             new SetPlayer({
               playerId: opponentId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 1,
               isDisqualified: false,
             }),
           ],
         ]),
         games: [game1, game2, game3],
-      }).make()
+      })
 
-      const dqSet = SetFactory.merge({
+      const dqSet = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 1,
               isDisqualified: true,
             }),
@@ -415,27 +415,27 @@ describe('Player', () => {
             opponentId,
             new SetPlayer({
               playerId: opponentId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 0,
               isDisqualified: false,
             }),
           ],
         ]),
         games: [game4],
-      }).make()
+      })
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({
+              EventFactory.build({
                 sets: [validSet, dqSet],
-              }).make(),
+              }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       const result = player.stageActivity()
       expect(result).toHaveLength(2)
@@ -453,7 +453,7 @@ describe('Player', () => {
   })
   describe('worstMatchups', () => {
     test('should return empty list if there are no matchups', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.worstMatchups(3)).toEqual([])
     })
 
@@ -463,17 +463,17 @@ describe('Player', () => {
       const foxPlayerId = asPlayerId('fox-player')
       const falcoPlayerId = asPlayerId('falco-player')
 
-      const charMarth = CharacterFactory.merge({ name: 'Marth' }).make()
-      const charFox = CharacterFactory.merge({ name: 'Fox' }).make()
-      const charFalco = CharacterFactory.merge({ name: 'Falco' }).make()
+      const charMarth = CharacterFactory.build({ name: 'Marth' })
+      const charFox = CharacterFactory.build({ name: 'Fox' })
+      const charFalco = CharacterFactory.build({ name: 'Falco' })
 
-      const setMarth = SetFactory.merge({
+      const setMarth = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 1,
               isDisqualified: false,
             }),
@@ -482,39 +482,39 @@ describe('Player', () => {
             marthPlayerId,
             new SetPlayer({
               playerId: marthPlayerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 1,
               isDisqualified: false,
             }),
           ],
         ]),
         games: [
-          GameFactory.merge({
+          GameFactory.build({
             orderNum: 1,
             winnerId: playerId,
             selections: [
               new GameSelection(playerId, charFox),
               new GameSelection(marthPlayerId, charMarth),
             ],
-          }).make(),
-          GameFactory.merge({
+          }),
+          GameFactory.build({
             orderNum: 2,
             winnerId: marthPlayerId,
             selections: [
               new GameSelection(playerId, charFox),
               new GameSelection(marthPlayerId, charMarth),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
-      const setFox = SetFactory.merge({
+      const setFox = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 0,
               isDisqualified: false,
             }),
@@ -523,47 +523,47 @@ describe('Player', () => {
             foxPlayerId,
             new SetPlayer({
               playerId: foxPlayerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 3,
               isDisqualified: false,
             }),
           ],
         ]),
         games: [
-          GameFactory.merge({
+          GameFactory.build({
             orderNum: 1,
             winnerId: foxPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
               new GameSelection(foxPlayerId, charFox),
             ],
-          }).make(),
-          GameFactory.merge({
+          }),
+          GameFactory.build({
             orderNum: 2,
             winnerId: foxPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
               new GameSelection(foxPlayerId, charFox),
             ],
-          }).make(),
-          GameFactory.merge({
+          }),
+          GameFactory.build({
             orderNum: 3,
             winnerId: foxPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
               new GameSelection(foxPlayerId, charFox),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
-      const setFalco = SetFactory.merge({
+      const setFalco = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 0,
               isDisqualified: false,
             }),
@@ -572,44 +572,44 @@ describe('Player', () => {
             falcoPlayerId,
             new SetPlayer({
               playerId: falcoPlayerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 2,
               isDisqualified: false,
             }),
           ],
         ]),
         games: [
-          GameFactory.merge({
+          GameFactory.build({
             orderNum: 1,
             winnerId: falcoPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
               new GameSelection(falcoPlayerId, charFalco),
             ],
-          }).make(),
-          GameFactory.merge({
+          }),
+          GameFactory.build({
             orderNum: 2,
             winnerId: falcoPlayerId,
             selections: [
               new GameSelection(playerId, charMarth),
               new GameSelection(falcoPlayerId, charFalco),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({
+              EventFactory.build({
                 sets: [setMarth, setFox, setFalco],
-              }).make(),
+              }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       const result = player.worstMatchups(2)
       expect(result).toHaveLength(2)
@@ -633,7 +633,7 @@ describe('Player', () => {
 
   describe('uniqueOpponentsFaced', () => {
     test('should return empty list if no opponents are faced', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.uniqueOpponentsFaced()).toEqual(new Set())
     })
 
@@ -642,13 +642,13 @@ describe('Player', () => {
       const opponent1Id = asPlayerId('2')
       const opponent2Id = asPlayerId('3')
 
-      const set1 = SetFactory.merge({
+      const set1 = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 2,
               isDisqualified: false,
             }),
@@ -657,21 +657,21 @@ describe('Player', () => {
             opponent1Id,
             new SetPlayer({
               playerId: opponent1Id,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 0,
               isDisqualified: false,
             }),
           ],
         ]),
-      }).make()
+      })
 
-      const set2 = SetFactory.merge({
+      const set2 = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 2,
               isDisqualified: false,
             }),
@@ -680,21 +680,21 @@ describe('Player', () => {
             opponent2Id,
             new SetPlayer({
               playerId: opponent2Id,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 1,
               isDisqualified: false,
             }),
           ],
         ]),
-      }).make()
+      })
 
-      const set3 = SetFactory.merge({
+      const set3 = SetFactory.build({
         competitors: new Map([
           [
             playerId,
             new SetPlayer({
               playerId,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 2,
               isDisqualified: false,
             }),
@@ -703,26 +703,26 @@ describe('Player', () => {
             opponent1Id,
             new SetPlayer({
               playerId: opponent1Id,
-              seed: SeedFactory.make(),
+              seed: SeedFactory.build(),
               score: 1,
               isDisqualified: false,
             }),
           ],
         ]),
-      }).make()
+      })
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({
+              EventFactory.build({
                 sets: [set1, set2, set3],
-              }).make(),
+              }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       const result = player.uniqueOpponentsFaced()
       expect(result).toHaveLength(2)
@@ -733,7 +733,7 @@ describe('Player', () => {
 
   describe('dayOfWeekActivity', () => {
     test('should not contains values if the player did not attend any tournaments this year', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
 
       expect(player.dayOfWeekActivity()).toEqual([
         { count: 0, day: 'Sun' },
@@ -747,31 +747,31 @@ describe('Player', () => {
     })
 
     test('should contains values if the player did attend tournaments this year', () => {
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         tournaments: [
-          ...TournamentFactory.merge({
+          ...TournamentFactory.buildList(100, {
             startDate: new Date('2026-07-25'),
-          }).makeMany(100),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(1, {
             startDate: new Date('2026-07-26'),
-          }).makeMany(1),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(5, {
             startDate: new Date('2026-07-28'),
-          }).makeMany(5),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(3, {
             startDate: new Date('2026-07-29'),
-          }).makeMany(3),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(2, {
             startDate: new Date('2026-07-30'),
-          }).makeMany(2),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(9, {
             startDate: new Date('2026-07-31'),
-          }).makeMany(9),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(6, {
             startDate: new Date('2026-08-03'),
-          }).makeMany(6),
+          }),
         ],
-      }).make()
+      })
 
       expect(player.dayOfWeekActivity()).toEqual([
         { count: 1, day: 'Sun' },
@@ -787,7 +787,7 @@ describe('Player', () => {
 
   describe('tournamentsByMonth', () => {
     test('should not contains values if the player did not attend any tournaments this year', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
 
       expect(player.tournamentsByMonth()).toEqual([
         { count: 0, month: 'Jan' },
@@ -806,46 +806,46 @@ describe('Player', () => {
     })
 
     test('should contains values if the player did attend tournaments this year', () => {
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         tournaments: [
-          ...TournamentFactory.merge({
+          ...TournamentFactory.buildList(100, {
             startDate: new Date('2026-01-01'),
-          }).makeMany(100),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(50, {
             startDate: new Date('2026-02-01'),
-          }).makeMany(50),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(25, {
             startDate: new Date('2026-03-01'),
-          }).makeMany(25),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(17, {
             startDate: new Date('2026-04-01'),
-          }).makeMany(17),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(71, {
             startDate: new Date('2026-05-01'),
-          }).makeMany(71),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(35, {
             startDate: new Date('2026-06-01'),
-          }).makeMany(35),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(70, {
             startDate: new Date('2026-07-01'),
-          }).makeMany(70),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(0, {
             startDate: new Date('2026-08-01'),
-          }).makeMany(0),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(1, {
             startDate: new Date('2026-09-01'),
-          }).makeMany(1),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(2, {
             startDate: new Date('2026-10-01'),
-          }).makeMany(2),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(4, {
             startDate: new Date('2026-11-01'),
-          }).makeMany(4),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(8, {
             startDate: new Date('2026-12-01'),
-          }).makeMany(8),
+          }),
         ],
-      }).make()
+      })
 
       expect(player.tournamentsByMonth()).toEqual([
         { count: 100, month: 'Jan' },
@@ -866,7 +866,7 @@ describe('Player', () => {
 
   describe('cleanSweeps', () => {
     test('should be 0 if the player did not attend any tournament this year', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
 
       expect(player.cleanSweeps()).toBe(0)
     })
@@ -875,12 +875,12 @@ describe('Player', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
-        tournaments: TournamentFactory.merge({
+        tournaments: TournamentFactory.buildList(2, {
           events: [
-            EventFactory.merge({
-              sets: SetFactory.merge({
+            EventFactory.build({
+              sets: SetFactory.buildList(10, {
                 competitors: new Map()
                   .set(
                     playerId,
@@ -888,7 +888,7 @@ describe('Player', () => {
                       isDisqualified: false,
                       playerId,
                       score: 3,
-                      seed: SeedFactory.make(),
+                      seed: SeedFactory.build(),
                     }),
                   )
                   .set(
@@ -897,15 +897,15 @@ describe('Player', () => {
                       isDisqualified: false,
                       playerId: opponentId,
                       score: 0,
-                      seed: SeedFactory.make(),
+                      seed: SeedFactory.build(),
                     }),
                   ),
                 winnerId: playerId,
-              }).makeMany(10),
-            }).make(),
+              }),
+            }),
           ],
-        }).makeMany(2),
-      }).make()
+        }),
+      })
 
       expect(player.cleanSweeps()).toBe(20)
     })
@@ -913,7 +913,7 @@ describe('Player', () => {
 
   describe('reverseSweeps', () => {
     test('should return 0 won and lost if player did not attend any tournament', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.reverseSweeps()).toEqual({ won: 0, lost: 0 })
     })
 
@@ -923,77 +923,77 @@ describe('Player', () => {
 
       const player1 = new SetPlayer({
         playerId,
-        seed: SeedFactory.merge({ initialSeed: 1, finalPlacement: 5 }).make(),
+        seed: SeedFactory.build({ initialSeed: 1, finalPlacement: 5 }),
         score: 3,
         isDisqualified: false,
       })
       const player2 = new SetPlayer({
         playerId: opponentId,
-        seed: SeedFactory.merge({ initialSeed: 2, finalPlacement: 5 }).make(),
+        seed: SeedFactory.build({ initialSeed: 2, finalPlacement: 5 }),
         score: 2,
         isDisqualified: false,
       })
 
       // Set 1: player won reverse sweep
-      const setWon = SetFactory.merge({
+      const setWon = SetFactory.build({
         competitors: new Map([
           [playerId, player1],
           [opponentId, player2],
         ]),
         winnerId: playerId,
         games: [
-          GameFactory.merge({ orderNum: 1, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 2, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 3, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 4, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 5, winnerId: playerId }).make(),
+          GameFactory.build({ orderNum: 1, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 2, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 3, winnerId: playerId }),
+          GameFactory.build({ orderNum: 4, winnerId: playerId }),
+          GameFactory.build({ orderNum: 5, winnerId: playerId }),
         ],
-      }).make()
+      })
 
       // Set 2: player lost reverse sweep (opponent won reverse sweep)
-      const setLost = SetFactory.merge({
+      const setLost = SetFactory.build({
         competitors: new Map([
           [playerId, player1],
           [opponentId, player2],
         ]),
         winnerId: opponentId,
         games: [
-          GameFactory.merge({ orderNum: 1, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 2, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 3, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 4, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 5, winnerId: opponentId }).make(),
+          GameFactory.build({ orderNum: 1, winnerId: playerId }),
+          GameFactory.build({ orderNum: 2, winnerId: playerId }),
+          GameFactory.build({ orderNum: 3, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 4, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 5, winnerId: opponentId }),
         ],
-      }).make()
+      })
 
       // Set 3: player lost but NOT a reverse sweep
-      const setLostNotReverseSweep = SetFactory.merge({
+      const setLostNotReverseSweep = SetFactory.build({
         competitors: new Map([
           [playerId, player1],
           [opponentId, player2],
         ]),
         winnerId: opponentId,
         games: [
-          GameFactory.merge({ orderNum: 1, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 2, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 3, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 4, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 5, winnerId: opponentId }).make(),
+          GameFactory.build({ orderNum: 1, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 2, winnerId: playerId }),
+          GameFactory.build({ orderNum: 3, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 4, winnerId: playerId }),
+          GameFactory.build({ orderNum: 5, winnerId: opponentId }),
         ],
-      }).make()
+      })
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({
+              EventFactory.build({
                 sets: [setWon, setLost, setLostNotReverseSweep],
-              }).make(),
+              }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       expect(player.reverseSweeps()).toEqual({ won: 1, lost: 1 })
     })
@@ -1001,7 +1001,7 @@ describe('Player', () => {
 
   describe('totalDisqualifications', () => {
     test('should be 0 if the player did not attend any tournaments this year', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
 
       expect(player.totalDisqualifications()).toBe(0)
     })
@@ -1010,12 +1010,12 @@ describe('Player', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
-        tournaments: TournamentFactory.merge({
+        tournaments: TournamentFactory.buildList(5, {
           events: [
-            EventFactory.merge({
-              sets: SetFactory.merge({
+            EventFactory.build({
+              sets: SetFactory.buildList(10, {
                 competitors: new Map()
                   .set(
                     playerId,
@@ -1023,7 +1023,7 @@ describe('Player', () => {
                       isDisqualified: false,
                       playerId,
                       score: 0,
-                      seed: SeedFactory.make(),
+                      seed: SeedFactory.build(),
                     }),
                   )
                   .set(
@@ -1032,15 +1032,15 @@ describe('Player', () => {
                       isDisqualified: true,
                       playerId: opponentId,
                       score: 0,
-                      seed: SeedFactory.make(),
+                      seed: SeedFactory.build(),
                     }),
                   ),
                 winnerId: playerId,
-              }).makeMany(10),
-            }).make(),
+              }),
+            }),
           ],
-        }).makeMany(5),
-      }).make()
+        }),
+      })
 
       expect(player.totalDisqualifications()).toBe(0)
     })
@@ -1049,12 +1049,12 @@ describe('Player', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
-        tournaments: TournamentFactory.merge({
+        tournaments: TournamentFactory.buildList(5, {
           events: [
-            EventFactory.merge({
-              sets: SetFactory.merge({
+            EventFactory.build({
+              sets: SetFactory.buildList(10, {
                 competitors: new Map()
                   .set(
                     playerId,
@@ -1062,7 +1062,7 @@ describe('Player', () => {
                       isDisqualified: true,
                       playerId,
                       score: 0,
-                      seed: SeedFactory.make(),
+                      seed: SeedFactory.build(),
                     }),
                   )
                   .set(
@@ -1071,15 +1071,15 @@ describe('Player', () => {
                       isDisqualified: false,
                       playerId: opponentId,
                       score: 0,
-                      seed: SeedFactory.make(),
+                      seed: SeedFactory.build(),
                     }),
                   ),
                 winnerId: playerId,
-              }).makeMany(10),
-            }).make(),
+              }),
+            }),
           ],
-        }).makeMany(5),
-      }).make()
+        }),
+      })
 
       expect(player.totalDisqualifications()).toBe(50)
     })
@@ -1090,12 +1090,12 @@ describe('Player', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
-        tournaments: TournamentFactory.merge({
+        tournaments: TournamentFactory.buildList(5, {
           events: [
-            EventFactory.merge({
-              sets: SetFactory.merge({
+            EventFactory.build({
+              sets: SetFactory.buildList(10, {
                 competitors: new Map()
                   .set(
                     playerId,
@@ -1103,7 +1103,7 @@ describe('Player', () => {
                       isDisqualified: false,
                       playerId,
                       score: 3,
-                      seed: SeedFactory.make(),
+                      seed: SeedFactory.build(),
                     }),
                   )
                   .set(
@@ -1112,15 +1112,15 @@ describe('Player', () => {
                       isDisqualified: false,
                       playerId: opponentId,
                       score: 2,
-                      seed: SeedFactory.make(),
+                      seed: SeedFactory.build(),
                     }),
                   ),
                 winnerId: playerId,
-              }).makeMany(10),
-            }).make(),
+              }),
+            }),
           ],
-        }).makeMany(5),
-      }).make()
+        }),
+      })
 
       expect(player.totalSets()).toBe(50)
     })
@@ -1128,7 +1128,7 @@ describe('Player', () => {
 
   describe('headToHead', () => {
     test('should return empty list if player played no sets', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.headToHead(10)).toEqual([])
     })
 
@@ -1137,20 +1137,20 @@ describe('Player', () => {
       const opponent1Id = asPlayerId('2')
       const opponent2Id = asPlayerId('3')
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({
+              EventFactory.build({
                 sets: [
-                  SetFactory.merge({
+                  SetFactory.build({
                     competitors: new Map([
                       [
                         playerId,
                         new SetPlayer({
                           playerId,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 2,
                           isDisqualified: false,
                         }),
@@ -1159,21 +1159,21 @@ describe('Player', () => {
                         opponent1Id,
                         new SetPlayer({
                           playerId: opponent1Id,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 1,
                           isDisqualified: false,
                         }),
                       ],
                     ]),
                     winnerId: playerId,
-                  }).make(),
-                  SetFactory.merge({
+                  }),
+                  SetFactory.build({
                     competitors: new Map([
                       [
                         playerId,
                         new SetPlayer({
                           playerId,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 1,
                           isDisqualified: false,
                         }),
@@ -1182,21 +1182,21 @@ describe('Player', () => {
                         opponent1Id,
                         new SetPlayer({
                           playerId: opponent1Id,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 2,
                           isDisqualified: false,
                         }),
                       ],
                     ]),
                     winnerId: opponent1Id,
-                  }).make(),
-                  SetFactory.merge({
+                  }),
+                  SetFactory.build({
                     competitors: new Map([
                       [
                         playerId,
                         new SetPlayer({
                           playerId,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 0,
                           isDisqualified: false,
                         }),
@@ -1205,21 +1205,21 @@ describe('Player', () => {
                         opponent1Id,
                         new SetPlayer({
                           playerId: opponent1Id,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 2,
                           isDisqualified: false,
                         }),
                       ],
                     ]),
                     winnerId: opponent1Id,
-                  }).make(),
-                  SetFactory.merge({
+                  }),
+                  SetFactory.build({
                     competitors: new Map([
                       [
                         playerId,
                         new SetPlayer({
                           playerId,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 2,
                           isDisqualified: false,
                         }),
@@ -1228,21 +1228,21 @@ describe('Player', () => {
                         opponent2Id,
                         new SetPlayer({
                           playerId: opponent2Id,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 0,
                           isDisqualified: false,
                         }),
                       ],
                     ]),
                     winnerId: playerId,
-                  }).make(),
-                  SetFactory.merge({
+                  }),
+                  SetFactory.build({
                     competitors: new Map([
                       [
                         playerId,
                         new SetPlayer({
                           playerId,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 2,
                           isDisqualified: false,
                         }),
@@ -1251,20 +1251,20 @@ describe('Player', () => {
                         opponent2Id,
                         new SetPlayer({
                           playerId: opponent2Id,
-                          seed: SeedFactory.make(),
+                          seed: SeedFactory.build(),
                           score: 1,
                           isDisqualified: false,
                         }),
                       ],
                     ]),
                     winnerId: playerId,
-                  }).make(),
+                  }),
                 ],
-              }).make(),
+              }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       const resultTotal = player.headToHead(10, 'total')
       expect(resultTotal).toHaveLength(2)
@@ -1295,7 +1295,7 @@ describe('Player', () => {
 
   describe('decidingGameSets', () => {
     test('should return 0 count and win rate if player played no sets', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.decidingGameSets()).toEqual({
         count: 0,
         winCount: 0,
@@ -1309,98 +1309,98 @@ describe('Player', () => {
 
       const player1Won = new SetPlayer({
         playerId,
-        seed: SeedFactory.make(),
+        seed: SeedFactory.build(),
         score: 3,
         isDisqualified: false,
       })
       const player2Lost = new SetPlayer({
         playerId: opponentId,
-        seed: SeedFactory.make(),
+        seed: SeedFactory.build(),
         score: 2,
         isDisqualified: false,
       })
 
       const player1Lost = new SetPlayer({
         playerId,
-        seed: SeedFactory.make(),
+        seed: SeedFactory.build(),
         score: 2,
         isDisqualified: false,
       })
       const player2Won = new SetPlayer({
         playerId: opponentId,
-        seed: SeedFactory.make(),
+        seed: SeedFactory.build(),
         score: 3,
         isDisqualified: false,
       })
 
       const player1NotDeciding = new SetPlayer({
         playerId,
-        seed: SeedFactory.make(),
+        seed: SeedFactory.build(),
         score: 3,
         isDisqualified: false,
       })
       const player2NotDeciding = new SetPlayer({
         playerId: opponentId,
-        seed: SeedFactory.make(),
+        seed: SeedFactory.build(),
         score: 0,
         isDisqualified: false,
       })
 
-      const setWon = SetFactory.merge({
+      const setWon = SetFactory.build({
         competitors: new Map([
           [playerId, player1Won],
           [opponentId, player2Lost],
         ]),
         winnerId: playerId,
         games: [
-          GameFactory.merge({ orderNum: 1, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 2, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 3, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 4, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 5, winnerId: playerId }).make(),
+          GameFactory.build({ orderNum: 1, winnerId: playerId }),
+          GameFactory.build({ orderNum: 2, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 3, winnerId: playerId }),
+          GameFactory.build({ orderNum: 4, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 5, winnerId: playerId }),
         ],
-      }).make()
+      })
 
-      const setLost = SetFactory.merge({
+      const setLost = SetFactory.build({
         competitors: new Map([
           [playerId, player1Lost],
           [opponentId, player2Won],
         ]),
         winnerId: opponentId,
         games: [
-          GameFactory.merge({ orderNum: 1, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 2, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 3, winnerId: opponentId }).make(),
-          GameFactory.merge({ orderNum: 4, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 5, winnerId: opponentId }).make(),
+          GameFactory.build({ orderNum: 1, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 2, winnerId: playerId }),
+          GameFactory.build({ orderNum: 3, winnerId: opponentId }),
+          GameFactory.build({ orderNum: 4, winnerId: playerId }),
+          GameFactory.build({ orderNum: 5, winnerId: opponentId }),
         ],
-      }).make()
+      })
 
-      const setNotDeciding = SetFactory.merge({
+      const setNotDeciding = SetFactory.build({
         competitors: new Map([
           [playerId, player1NotDeciding],
           [opponentId, player2NotDeciding],
         ]),
         winnerId: playerId,
         games: [
-          GameFactory.merge({ orderNum: 1, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 2, winnerId: playerId }).make(),
-          GameFactory.merge({ orderNum: 3, winnerId: playerId }).make(),
+          GameFactory.build({ orderNum: 1, winnerId: playerId }),
+          GameFactory.build({ orderNum: 2, winnerId: playerId }),
+          GameFactory.build({ orderNum: 3, winnerId: playerId }),
         ],
-      }).make()
+      })
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({
+              EventFactory.build({
                 sets: [setWon, setLost, setNotDeciding],
-              }).make(),
+              }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       expect(player.decidingGameSets()).toEqual({
         count: 2,
@@ -1412,30 +1412,30 @@ describe('Player', () => {
 
   describe('bestPerformances and worstPerformance', () => {
     test('bestPerformances returns empty list if player has no tournaments with valid SPR', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.bestPerformances(5)).toEqual([])
     })
 
     test('worstPerformance returns null if player has no tournaments with valid SPR', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.worstPerformance()).toBeNull()
     })
 
     test('returns correct sorted performances based on SPR', () => {
       const playerId = asPlayerId('player-1')
 
-      const t1 = TournamentFactory.make()
-      const t2 = TournamentFactory.make()
-      const t3 = TournamentFactory.make()
+      const t1 = TournamentFactory.build()
+      const t2 = TournamentFactory.build()
+      const t3 = TournamentFactory.build()
 
       t1.getPlayerSPR = () => 2
       t2.getPlayerSPR = () => 5
       t3.getPlayerSPR = () => -1
 
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         id: playerId,
         tournaments: [t1, t2, t3],
-      }).make()
+      })
 
       const best = player.bestPerformances(5)
       expect(best).toHaveLength(2)
@@ -1455,7 +1455,7 @@ describe('Player', () => {
 
   describe('eventTypeBreakdown', () => {
     test('returns empty counts if player played no tournaments', () => {
-      const player = PlayerFactory.make()
+      const player = PlayerFactory.build()
       expect(player.eventTypeBreakdown()).toEqual({
         [EventType.SINGLES]: 0,
         [EventType.TEAMS]: 0,
@@ -1463,23 +1463,23 @@ describe('Player', () => {
     })
 
     test('correctly counts singles and teams events', () => {
-      const player = PlayerFactory.merge({
+      const player = PlayerFactory.build({
         tournaments: [
-          TournamentFactory.merge({
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({ eventType: EventType.SINGLES }).make(),
-              EventFactory.merge({ eventType: EventType.SINGLES }).make(),
-              EventFactory.merge({ eventType: EventType.TEAMS }).make(),
+              EventFactory.build({ eventType: EventType.SINGLES }),
+              EventFactory.build({ eventType: EventType.SINGLES }),
+              EventFactory.build({ eventType: EventType.TEAMS }),
             ],
-          }).make(),
-          TournamentFactory.merge({
+          }),
+          TournamentFactory.build({
             events: [
-              EventFactory.merge({ eventType: EventType.TEAMS }).make(),
-              EventFactory.merge({ eventType: EventType.SINGLES }).make(),
+              EventFactory.build({ eventType: EventType.TEAMS }),
+              EventFactory.build({ eventType: EventType.SINGLES }),
             ],
-          }).make(),
+          }),
         ],
-      }).make()
+      })
 
       expect(player.eventTypeBreakdown()).toEqual({
         [EventType.SINGLES]: 3,

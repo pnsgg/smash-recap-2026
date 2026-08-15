@@ -22,7 +22,7 @@ describe('Stage', () => {
   })
 
   test('factory generates valid instances', () => {
-    const stage = StageFactory.make()
+    const stage = StageFactory.build()
     expect(stage).toBeInstanceOf(Stage)
     expect(typeof stage.id).toBe('string')
     expect(typeof stage.name).toBe('string')

@@ -12,7 +12,7 @@ describe('Seed', () => {
   })
 
   test('accepts valid values without throwing', () => {
-    expect(() => SeedFactory.make()).not.toThrow()
+    expect(() => SeedFactory.build()).not.toThrow()
   })
 
   describe('roundsFromVictory', () => {

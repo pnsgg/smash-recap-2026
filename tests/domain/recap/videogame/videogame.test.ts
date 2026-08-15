@@ -25,7 +25,7 @@ describe('Videogame', () => {
   })
 
   test('factory generates valid instances', () => {
-    const game = VideogameFactory.make()
+    const game = VideogameFactory.build()
     expect(game).toBeInstanceOf(Videogame)
     expect(typeof game.id).toBe('string')
     expect(typeof game.name).toBe('string')

@@ -69,7 +69,7 @@ describe('Address', () => {
   })
 
   test('factory generates valid instances', () => {
-    const address = AddressFactory.make()
+    const address = AddressFactory.build()
     expect(address).toBeInstanceOf(Address)
   })
 

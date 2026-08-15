@@ -1,90 +1,86 @@
-import { BracketType } from '#/domain/recap/bracket-type'
+import { Factory } from 'fishery'
+import { faker } from '@faker-js/faker'
 import { Set, SetPlayer } from '#/domain/recap/set'
+import { BracketType } from '#/domain/recap/bracket-type'
 import { asSetId, asEventId, asPlayerId } from '#/domain/shared-kernel/ids'
-import type { PlayerId } from '#/domain/shared-kernel/ids'
-import { GameFactory } from './game-factory'
+import type { SetId, EventId, PlayerId } from '#/domain/shared-kernel/ids'
 import { SeedFactory } from './seed-factory'
-import { CharacterFactory } from './character-factory'
-import { Factory } from './factory'
-import { GameSelection } from '#/domain/recap/game'
 import type { Game } from '#/domain/recap/game'
 
-export const SetFactory = Factory.define(
-  ({ faker }) => {
-    const p1Id = asPlayerId(faker.number.int().toString())
-    const p2Id = asPlayerId(faker.number.int().toString())
-    const winnerId = faker.helpers.arrayElement([p1Id, p2Id])
+type SetOverrides = {
+  id?: SetId
+  eventId?: EventId
+  bracketType?: BracketType
+  competitors?: Map<PlayerId, SetPlayer>
+  winnerId?: PlayerId
+  round?: number
+  fullRoundText?: string
+  games?: Game[]
+  completedAt?: Date | null
+}
 
-    const p1 = new SetPlayer({
-      playerId: p1Id,
-      seed: SeedFactory.make(),
-      score: faker.number.int({ min: 0, max: 3 }),
-      isDisqualified: false,
-    })
-    const p2 = new SetPlayer({
-      playerId: p2Id,
-      seed: SeedFactory.make(),
-      score: faker.number.int({ min: 0, max: 3 }),
-      isDisqualified: false,
-    })
-    const competitors = new Map<PlayerId, SetPlayer>([
-      [p1Id, p1],
-      [p2Id, p2],
-    ])
-
-    return {
-      id: faker.number.int().toString(),
-      eventId: faker.number.int().toString(),
-      competitors,
-      winnerId: winnerId,
-      round: faker.number.int({ min: -10, max: 10 }),
-      fullRoundText: faker.helpers.arrayElement([
+export const SetFactory = Factory.define<Set, any, Set, SetOverrides>(
+  ({ sequence, params }) => {
+    const id = params.id ?? asSetId(sequence.toString())
+    const eventId = params.eventId ?? asEventId(faker.number.int().toString())
+    const bracketType = params.bracketType ?? BracketType.DOUBLE_ELIMINATION
+    const round = params.round ?? faker.number.int({ min: -10, max: 10 })
+    const fullRoundText =
+      params.fullRoundText ??
+      faker.helpers.arrayElement([
         'Winners Semis',
         'Losers Quarterfinals',
         'Grand Finals',
-      ]),
-      bracketType: BracketType.DOUBLE_ELIMINATION,
-      games: [] as Game[],
-      completedAt: faker.date.past(),
+      ])
+    const games = params.games ?? ([] as Game[])
+    const completedAt =
+      params.completedAt === undefined ? faker.date.past() : params.completedAt
+
+    let competitors = params.competitors
+    if (competitors === undefined) {
+      const p1Id = asPlayerId(faker.number.int().toString())
+      const p2Id = asPlayerId(faker.number.int().toString())
+      const p1 = new SetPlayer({
+        playerId: p1Id,
+        seed: SeedFactory.build(),
+        score: faker.number.int({ min: 0, max: 3 }),
+        isDisqualified: false,
+      })
+      const p2 = new SetPlayer({
+        playerId: p2Id,
+        seed: SeedFactory.build(),
+        score: faker.number.int({ min: 0, max: 3 }),
+        isDisqualified: false,
+      })
+      competitors = new Map<PlayerId, SetPlayer>([
+        [p1Id, p1],
+        [p2Id, p2],
+      ])
     }
-  },
-  ({
-    id,
-    eventId,
-    bracketType,
-    competitors,
-    winnerId,
-    round,
-    fullRoundText,
-    games,
-    completedAt,
-  }) =>
-    new Set({
-      id: asSetId(id),
-      eventId: asEventId(eventId),
+
+    let winnerId = params.winnerId
+    if (winnerId === undefined) {
+      const playerIds = Array.from(competitors.keys())
+      winnerId =
+        playerIds.length > 0
+          ? faker.helpers.arrayElement(playerIds)
+          : asPlayerId(faker.number.int().toString())
+    }
+
+    return new Set({
+      id,
+      eventId,
+      bracketType,
       competitors,
       winnerId,
       round,
       fullRoundText,
       games,
       completedAt,
-      bracketType,
-    }),
-).state('withGames', (attrs, { faker }) => {
-  const playerIds = Array.from(attrs.competitors.keys())
-  const p1Id = playerIds[0]
-  const p2Id = playerIds[1]
-
-  const games = Array.from({ length: 3 }, (_, i) => {
-    const winnerId = faker.helpers.arrayElement([p1Id, p2Id, null])
-    return GameFactory.merge({
-      orderNum: i + 1,
-      winnerId,
-      selections: [
-        new GameSelection(p1Id, CharacterFactory.make()),
-        new GameSelection(p2Id, CharacterFactory.make()),
-      ],
-    }).make()
-  })
-  return { games }
+    })
+  },
+).afterBuild((set) => {
+  // Sort the games array by orderNum after Fishery's Object.assign overrides
+  ;(set as any).games = [...set.games].sort((a, b) => a.orderNum - b.orderNum)
+  return set
 })

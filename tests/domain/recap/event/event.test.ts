@@ -9,23 +9,23 @@ import { asParticipantId, asPlayerId } from '#/domain/shared-kernel/ids'
 describe('Event', () => {
   describe('constructor', () => {
     test('throws error if name is empty or whitespace', () => {
-      expect(() => EventFactory.merge({ name: '' }).make()).toThrow(
+      expect(() => EventFactory.build({ name: '' })).toThrow(
         'Invalid parameter name',
       )
-      expect(() => EventFactory.merge({ name: '   ' }).make()).toThrow(
+      expect(() => EventFactory.build({ name: '   ' })).toThrow(
         'Invalid parameter name',
       )
     })
 
     test('correctly sets isTeams based on eventType', () => {
-      const singlesEvent = EventFactory.merge({
+      const singlesEvent = EventFactory.build({
         eventType: EventType.SINGLES,
-      }).make()
+      })
       expect(singlesEvent.isTeams()).toBe(false)
 
-      const teamsEvent = EventFactory.merge({
+      const teamsEvent = EventFactory.build({
         eventType: EventType.TEAMS,
-      }).make()
+      })
       expect(teamsEvent.isTeams()).toBe(true)
     })
   })
@@ -56,9 +56,9 @@ describe('Event', () => {
       seed: new Seed(4, 5),
     })
 
-    const event = EventFactory.merge({
+    const event = EventFactory.build({
       participants: [p1, p2, p3, p4],
-    }).make()
+    })
 
     const ranking = event.getFinalRankingUpTo(3)
 
@@ -82,9 +82,9 @@ describe('Event', () => {
       seed: new Seed(2, 1),
     })
 
-    const event = EventFactory.merge({
+    const event = EventFactory.build({
       participants: [p1, p2],
-    }).make()
+    })
 
     expect(event.participants[0].id).toBe(p1.id)
 
@@ -96,9 +96,9 @@ describe('Event', () => {
   describe('getPlayerSPR', () => {
     test('returns null if player did not participate', () => {
       const playerId = asPlayerId('non-existent')
-      const event = EventFactory.merge({
+      const event = EventFactory.build({
         participants: [],
-      }).make()
+      })
       expect(event.getPlayerSPR(playerId)).toBeNull()
     })
 
@@ -110,10 +110,10 @@ describe('Event', () => {
         name: 'Player 1',
         seed: new Seed(8, 5),
       })
-      const event = EventFactory.merge({
+      const event = EventFactory.build({
         lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p],
-      }).make()
+      })
       expect(event.getPlayerSPR(playerId)).toBe(0)
     })
   })

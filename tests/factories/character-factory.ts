@@ -1,11 +1,21 @@
+import { Factory } from 'fishery'
+import { faker } from '@faker-js/faker'
 import { Character } from '#/domain/recap/character'
 import { asCharacterId } from '#/domain/shared-kernel/ids'
-import { Factory } from './factory'
+import type { CharacterId } from '#/domain/shared-kernel/ids'
 
-export const CharacterFactory = Factory.define(
-  ({ faker }) => ({
-    id: faker.number.int().toString(),
-    name: faker.person.firstName(),
-  }),
-  ({ id, name }) => new Character(asCharacterId(id), name),
-)
+type CharacterOverrides = {
+  id?: CharacterId
+  name?: string
+}
+
+export const CharacterFactory = Factory.define<
+  Character,
+  any,
+  Character,
+  CharacterOverrides
+>(({ sequence, params }) => {
+  const id = params.id ?? asCharacterId(sequence.toString())
+  const name = params.name ?? faker.person.firstName()
+  return new Character(id, name)
+})

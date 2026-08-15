@@ -1,6 +1,7 @@
+import { Factory } from 'fishery'
+import { faker } from '@faker-js/faker'
 import { Videogame } from '#/domain/recap/videogame'
 import { asVideogameId } from '#/domain/shared-kernel/ids'
-import { Factory } from './factory'
 
 const GAMES = [
   'Super Smash Bros. Ultimate',
@@ -12,10 +13,9 @@ const GAMES = [
   'Rivals 2',
 ]
 
-export const VideogameFactory = Factory.define(
-  ({ faker }) => ({
-    id: faker.number.int().toString(),
-    name: faker.helpers.arrayElement(GAMES),
-  }),
-  ({ id, name }) => new Videogame(asVideogameId(id), name),
-)
+export const VideogameFactory = Factory.define<Videogame>(({ sequence }) => {
+  return new Videogame(
+    asVideogameId(sequence.toString()),
+    faker.helpers.arrayElement(GAMES),
+  )
+})
