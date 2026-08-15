@@ -30,7 +30,7 @@ export class SearchPlayerResult {
   }
 
   fullName(): string {
-    return this.gamerTag ? `${this.prefix} ${this.gamerTag}` : this.gamerTag
+    return this.prefix ? `${this.prefix} ${this.gamerTag}` : this.gamerTag
   }
 
   /**

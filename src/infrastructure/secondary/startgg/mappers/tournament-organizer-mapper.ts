@@ -11,7 +11,7 @@ import {
 import type { UserSlug } from '#/domain/shared-kernel/ids'
 import type { ResultOf } from 'gql.tada'
 import type { getTournamentDetails } from '../queries/get-tournament-details'
-import { mapBracketType } from './utils'
+import { BracketTypeHelper } from '#/domain/recap/bracket-type'
 
 type TournamentDetailsResult = Exclude<
   ResultOf<typeof getTournamentDetails>['tournament'],
@@ -33,7 +33,9 @@ export function mapTournamentOrganizer(
           e.videogame?.name ?? 'Unknown',
         )
 
-        const bracketType = mapBracketType(e.phaseGroups?.[0]?.bracketType)
+        const bracketType = BracketTypeHelper.fromString(
+          e.phaseGroups?.[0]?.bracketType,
+        )
 
         const rawEventType = e.type
         if (rawEventType === null) {

@@ -10,3 +10,17 @@ export enum BracketType {
   RACE = 'RACE',
   CIRCUIT = 'CIRCUIT',
 }
+
+export class BracketTypeHelper {
+  static fromString(value: string | null | undefined): BracketType {
+    if (!value || !(value in BracketType)) {
+      throw new Error(`Invalid BracketType: ${value}`)
+    }
+
+    return BracketType[value as keyof typeof BracketType]
+  }
+
+  static toString(type: BracketType): string {
+    return type
+  }
+}

@@ -25,7 +25,7 @@ import {
 import type { PlayerId } from '#/domain/shared-kernel/ids'
 import type { ResultOf } from 'gql.tada'
 import type { getEvent } from '../queries/get-event'
-import { mapBracketType } from './utils'
+import { BracketTypeHelper } from '#/domain/recap/bracket-type'
 
 export type EventResult = Exclude<
   ResultOf<typeof getEvent>['event'],
@@ -178,7 +178,7 @@ function mapEvent(
   const videogame = new Videogame(asVideogameId(videogameId), videogameName)
 
   const rawBracketType = getEventFinalBracketType(rawEvent.phases)
-  const bracketType = mapBracketType(rawBracketType)
+  const bracketType = BracketTypeHelper.fromString(rawBracketType)
   const placement = userEntrant.standing?.placement
   if (placement === null || placement === undefined)
     throw new Error(
@@ -343,7 +343,9 @@ function mapSet(
   if (!fullRoundText)
     throw new Error('Cannot map set. Reason: Set fullRoundText is missing')
 
-  const bracketType = mapBracketType(rawSet.phaseGroup?.bracketType)
+  const bracketType = BracketTypeHelper.fromString(
+    rawSet.phaseGroup?.bracketType,
+  )
 
   return new Set({
     id: asSetId(setId),
