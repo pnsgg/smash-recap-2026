@@ -10,6 +10,7 @@ import { GameFactory } from '#tests/factories/game-factory.ts'
 import { GameSelection } from '#/domain/recap/game'
 import { StageFactory } from '#tests/factories/stage-factory.ts'
 import { BracketType } from '#/domain/recap/bracket-type'
+import { EventType } from '#/domain/recap/event-type'
 import { describe, expect, test } from 'vitest'
 
 describe('Player', () => {
@@ -25,6 +26,20 @@ describe('Player', () => {
       expect(() => PlayerFactory.merge({ gamerTag: '   ' }).make()).toThrow(
         'Invalid parameter gamer tag',
       )
+    })
+  })
+
+  describe('equals', () => {
+    test('returns true if player IDs are the same', () => {
+      const p1 = PlayerFactory.merge({ id: asPlayerId('1') }).make()
+      const p2 = PlayerFactory.merge({ id: asPlayerId('1') }).make()
+      expect(p1.equals(p2)).toBe(true)
+    })
+
+    test('returns false if player IDs are different', () => {
+      const p1 = PlayerFactory.merge({ id: asPlayerId('1') }).make()
+      const p2 = PlayerFactory.merge({ id: asPlayerId('2') }).make()
+      expect(p1.equals(p2)).toBe(false)
     })
   })
 
@@ -1275,6 +1290,197 @@ describe('Player', () => {
       const resultDiff = player.headToHead(10, 'diff')
       expect(resultDiff[0].opponentPlayerId).toBe(opponent2Id)
       expect(resultDiff[1].opponentPlayerId).toBe(opponent1Id)
+    })
+  })
+
+  describe('decidingGameSets', () => {
+    test('should return 0 count and win rate if player played no sets', () => {
+      const player = PlayerFactory.make()
+      expect(player.decidingGameSets()).toEqual({ count: 0, winCount: 0, winRate: 0 })
+    })
+
+    test('should count deciding game sets and calculate win rate correctly', () => {
+      const playerId = asPlayerId('1')
+      const opponentId = asPlayerId('2')
+
+      const player1Won = new SetPlayer({
+        playerId,
+        seed: SeedFactory.make(),
+        score: 3,
+        isDisqualified: false,
+      })
+      const player2Lost = new SetPlayer({
+        playerId: opponentId,
+        seed: SeedFactory.make(),
+        score: 2,
+        isDisqualified: false,
+      })
+
+      const player1Lost = new SetPlayer({
+        playerId,
+        seed: SeedFactory.make(),
+        score: 2,
+        isDisqualified: false,
+      })
+      const player2Won = new SetPlayer({
+        playerId: opponentId,
+        seed: SeedFactory.make(),
+        score: 3,
+        isDisqualified: false,
+      })
+
+      const player1NotDeciding = new SetPlayer({
+        playerId,
+        seed: SeedFactory.make(),
+        score: 3,
+        isDisqualified: false,
+      })
+      const player2NotDeciding = new SetPlayer({
+        playerId: opponentId,
+        seed: SeedFactory.make(),
+        score: 0,
+        isDisqualified: false,
+      })
+
+      const setWon = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player1Won],
+          [opponentId, player2Lost],
+        ]),
+        winnerId: playerId,
+        games: [
+          GameFactory.merge({ orderNum: 1, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 2, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 3, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 4, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 5, winnerId: playerId }).make(),
+        ],
+      }).make()
+
+      const setLost = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player1Lost],
+          [opponentId, player2Won],
+        ]),
+        winnerId: opponentId,
+        games: [
+          GameFactory.merge({ orderNum: 1, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 2, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 3, winnerId: opponentId }).make(),
+          GameFactory.merge({ orderNum: 4, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 5, winnerId: opponentId }).make(),
+        ],
+      }).make()
+
+      const setNotDeciding = SetFactory.merge({
+        competitors: new Map([
+          [playerId, player1NotDeciding],
+          [opponentId, player2NotDeciding],
+        ]),
+        winnerId: playerId,
+        games: [
+          GameFactory.merge({ orderNum: 1, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 2, winnerId: playerId }).make(),
+          GameFactory.merge({ orderNum: 3, winnerId: playerId }).make(),
+        ],
+      }).make()
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({
+                sets: [setWon, setLost, setNotDeciding],
+              }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      expect(player.decidingGameSets()).toEqual({
+        count: 2,
+        winCount: 1,
+        winRate: 0.5,
+      })
+    })
+  })
+
+  describe('bestPerformances and worstPerformance', () => {
+    test('bestPerformances returns empty list if player has no tournaments with valid SPR', () => {
+      const player = PlayerFactory.make()
+      expect(player.bestPerformances(5)).toEqual([])
+    })
+
+    test('worstPerformance returns null if player has no tournaments with valid SPR', () => {
+      const player = PlayerFactory.make()
+      expect(player.worstPerformance()).toBeNull()
+    })
+
+    test('returns correct sorted performances based on SPR', () => {
+      const playerId = asPlayerId('player-1')
+
+      const t1 = TournamentFactory.make()
+      const t2 = TournamentFactory.make()
+      const t3 = TournamentFactory.make()
+
+      t1.getPlayerSPR = () => 2
+      t2.getPlayerSPR = () => 5
+      t3.getPlayerSPR = () => -1
+
+      const player = PlayerFactory.merge({
+        id: playerId,
+        tournaments: [t1, t2, t3],
+      }).make()
+
+      const best = player.bestPerformances(5)
+      expect(best).toHaveLength(2)
+      expect(best[0]).toEqual({ tournament: t2, spr: 5 })
+      expect(best[1]).toEqual({ tournament: t1, spr: 2 })
+
+      t1.getPlayerSPR = () => 3
+      t2.getPlayerSPR = () => 1
+      t3.getPlayerSPR = () => 4
+
+      const worst = player.worstPerformance()
+      expect(worst).not.toBeNull()
+      expect(worst?.tournament).toBe(t2)
+      expect(worst?.spr).toBe(1)
+    })
+  })
+
+  describe('eventTypeBreakdown', () => {
+    test('returns empty counts if player played no tournaments', () => {
+      const player = PlayerFactory.make()
+      expect(player.eventTypeBreakdown()).toEqual({
+        [EventType.SINGLES]: 0,
+        [EventType.TEAMS]: 0,
+      })
+    })
+
+    test('correctly counts singles and teams events', () => {
+      const player = PlayerFactory.merge({
+        tournaments: [
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({ eventType: EventType.SINGLES }).make(),
+              EventFactory.merge({ eventType: EventType.SINGLES }).make(),
+              EventFactory.merge({ eventType: EventType.TEAMS }).make(),
+            ],
+          }).make(),
+          TournamentFactory.merge({
+            events: [
+              EventFactory.merge({ eventType: EventType.TEAMS }).make(),
+              EventFactory.merge({ eventType: EventType.SINGLES }).make(),
+            ],
+          }).make(),
+        ],
+      }).make()
+
+      expect(player.eventTypeBreakdown()).toEqual({
+        [EventType.SINGLES]: 3,
+        [EventType.TEAMS]: 2,
+      })
     })
   })
 })
