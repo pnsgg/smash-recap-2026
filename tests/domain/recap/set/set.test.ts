@@ -11,16 +11,16 @@ import { GameSelection } from '#/domain/recap/game'
 describe('Set', () => {
   describe('constructor', () => {
     test('initializes Set correctly with valid attributes', () => {
-      expect(() => SetFactory.make()).not.toThrow()
+      expect(() => SetFactory.build()).not.toThrow()
     })
 
     test('throws error if fullRoundText is empty or whitespace', () => {
-      expect(() =>
-        SetFactory.merge({ fullRoundText: '' as any }).make(),
-      ).toThrow('Invalid parameter full round text')
-      expect(() =>
-        SetFactory.merge({ fullRoundText: '   ' as any }).make(),
-      ).toThrow('Invalid parameter full round text')
+      expect(() => SetFactory.build({ fullRoundText: '' as any })).toThrow(
+        'Invalid parameter full round text',
+      )
+      expect(() => SetFactory.build({ fullRoundText: '   ' as any })).toThrow(
+        'Invalid parameter full round text',
+      )
     })
 
     test('SetPlayer throws error if score is negative', () => {
@@ -37,13 +37,13 @@ describe('Set', () => {
     })
 
     test('sorts games automatically by orderNum', () => {
-      const game1 = GameFactory.merge({ orderNum: 1 }).make()
-      const game2 = GameFactory.merge({ orderNum: 2 }).make()
-      const game3 = GameFactory.merge({ orderNum: 3 }).make()
+      const game1 = GameFactory.build({ orderNum: 1 })
+      const game2 = GameFactory.build({ orderNum: 2 })
+      const game3 = GameFactory.build({ orderNum: 3 })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         games: [game3, game1, game2],
-      }).make()
+      })
 
       expect(set.games).toEqual([game1, game2, game3])
     })
@@ -87,14 +87,14 @@ describe('Set', () => {
             isDisqualified: false,
           })
 
-          const set = SetFactory.merge({
+          const set = SetFactory.build({
             bracketType: bracket,
             competitors: new Map([
               [p1Id, player1],
               [p2Id, player2],
             ]),
             winnerId: p1Id,
-          }).make()
+          })
 
           expect(set.isUpset()).toBe(isUpset)
           expect(set.upsetFactor()).toBe(expectedFactor)
@@ -120,14 +120,14 @@ describe('Set', () => {
           isDisqualified: false,
         })
 
-        const set = SetFactory.merge({
+        const set = SetFactory.build({
           bracketType: BracketType.SWISS,
           competitors: new Map([
             [p1Id, player1],
             [p2Id, player2],
           ]),
           winnerId: p1Id,
-        }).make()
+        })
 
         expect(set.isUpset()).toBe(false)
         expect(set.upsetFactor()).toBeNull()
@@ -152,13 +152,13 @@ describe('Set', () => {
           isDisqualified: true,
         })
 
-        const set = SetFactory.merge({
+        const set = SetFactory.build({
           competitors: new Map([
             [p1Id, player1],
             [p2Id, player2],
           ]),
           winnerId: p1Id,
-        }).make()
+        })
 
         expect(set.isUpset()).toBe(false)
         expect(set.upsetFactor()).toBeNull()
@@ -184,13 +184,13 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
         winnerId: p1Id,
-      }).make()
+      })
 
       expect(set.isCleanSweep()).toBe(true)
 
@@ -200,13 +200,13 @@ describe('Set', () => {
         score: 1,
         isDisqualified: false,
       })
-      const setNotSweep = SetFactory.merge({
+      const setNotSweep = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2WithOne],
         ]),
         winnerId: p1Id,
-      }).make()
+      })
       expect(setNotSweep.isCleanSweep()).toBe(false)
     })
   })
@@ -230,20 +230,20 @@ describe('Set', () => {
       })
 
       // Bo5 Reverse Sweep won by p1
-      const bo5SweepSet = SetFactory.merge({
+      const bo5SweepSet = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
         winnerId: p1Id,
         games: [
-          GameFactory.merge({ orderNum: 1, winnerId: p2Id }).make(),
-          GameFactory.merge({ orderNum: 2, winnerId: p2Id }).make(),
-          GameFactory.merge({ orderNum: 3, winnerId: p1Id }).make(),
-          GameFactory.merge({ orderNum: 4, winnerId: p1Id }).make(),
-          GameFactory.merge({ orderNum: 5, winnerId: p1Id }).make(),
+          GameFactory.build({ orderNum: 1, winnerId: p2Id }),
+          GameFactory.build({ orderNum: 2, winnerId: p2Id }),
+          GameFactory.build({ orderNum: 3, winnerId: p1Id }),
+          GameFactory.build({ orderNum: 4, winnerId: p1Id }),
+          GameFactory.build({ orderNum: 5, winnerId: p1Id }),
         ],
-      }).make()
+      })
 
       expect(bo5SweepSet.isReverseSweepWon(p1Id)).toBe(true)
       expect(bo5SweepSet.isReverseSweepWon(p2Id)).toBe(false)
@@ -251,37 +251,37 @@ describe('Set', () => {
       expect(bo5SweepSet.isReverseSweepLost(p2Id)).toBe(true)
 
       // Bo5 standard win (not reverse sweep)
-      const bo5StandardSet = SetFactory.merge({
+      const bo5StandardSet = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
         winnerId: p1Id,
         games: [
-          GameFactory.merge({ orderNum: 1, winnerId: p2Id }).make(),
-          GameFactory.merge({ orderNum: 2, winnerId: p1Id }).make(),
-          GameFactory.merge({ orderNum: 3, winnerId: p2Id }).make(),
-          GameFactory.merge({ orderNum: 4, winnerId: p1Id }).make(),
-          GameFactory.merge({ orderNum: 5, winnerId: p1Id }).make(),
+          GameFactory.build({ orderNum: 1, winnerId: p2Id }),
+          GameFactory.build({ orderNum: 2, winnerId: p1Id }),
+          GameFactory.build({ orderNum: 3, winnerId: p2Id }),
+          GameFactory.build({ orderNum: 4, winnerId: p1Id }),
+          GameFactory.build({ orderNum: 5, winnerId: p1Id }),
         ],
-      }).make()
+      })
 
       expect(bo5StandardSet.isReverseSweepWon(p1Id)).toBe(false)
       expect(bo5StandardSet.isReverseSweepLost(p2Id)).toBe(false)
 
       // Bo3 Reverse Sweep won by p1
-      const bo3SweepSet = SetFactory.merge({
+      const bo3SweepSet = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
         winnerId: p1Id,
         games: [
-          GameFactory.merge({ orderNum: 1, winnerId: p2Id }).make(),
-          GameFactory.merge({ orderNum: 2, winnerId: p1Id }).make(),
-          GameFactory.merge({ orderNum: 3, winnerId: p1Id }).make(),
+          GameFactory.build({ orderNum: 1, winnerId: p2Id }),
+          GameFactory.build({ orderNum: 2, winnerId: p1Id }),
+          GameFactory.build({ orderNum: 3, winnerId: p1Id }),
         ],
-      }).make()
+      })
 
       expect(bo3SweepSet.isReverseSweepWon(p1Id)).toBe(true)
       expect(bo3SweepSet.isReverseSweepLost(p2Id)).toBe(true)
@@ -306,13 +306,13 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const decidingSet = SetFactory.merge({
+      const decidingSet = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
         winnerId: p1Id,
-      }).make()
+      })
       expect(decidingSet.isDecidingGameSet()).toBe(true)
 
       const player2Zero = new SetPlayer({
@@ -321,13 +321,13 @@ describe('Set', () => {
         score: 0,
         isDisqualified: false,
       })
-      const regularSet = SetFactory.merge({
+      const regularSet = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2Zero],
         ]),
         winnerId: p1Id,
-      }).make()
+      })
       expect(regularSet.isDecidingGameSet()).toBe(false)
     })
 
@@ -339,9 +339,9 @@ describe('Set', () => {
         score: 2,
         isDisqualified: false,
       })
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([[p1Id, player1]]),
-      }).make()
+      })
 
       expect(set.isDecidingGameSet()).toBe(false)
     })
@@ -361,12 +361,12 @@ describe('Set', () => {
         score: 1,
         isDisqualified: false,
       })
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
-      }).make()
+      })
 
       expect(set.isDecidingGameSet()).toBe(false)
     })
@@ -390,13 +390,13 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
         winnerId: p2Id,
-      }).make()
+      })
 
       expect(set.isPlayerDisqualified(p1Id)).toBe(true)
       expect(set.isPlayerDisqualified(p2Id)).toBe(false)
@@ -420,12 +420,12 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
-      }).make()
+      })
 
       expect(set.isPlayerDisqualified(unknownPlayerId)).toBe(false)
     })
@@ -434,21 +434,21 @@ describe('Set', () => {
   describe('getPlayerCharacters', () => {
     test('returns all characters played by the player across games', () => {
       const playerId = asPlayerId('player-1')
-      const fox = CharacterFactory.merge({ name: 'Fox' }).make()
-      const marth = CharacterFactory.merge({ name: 'Marth' }).make()
+      const fox = CharacterFactory.build({ name: 'Fox' })
+      const marth = CharacterFactory.build({ name: 'Marth' })
 
-      const game1 = GameFactory.merge({
+      const game1 = GameFactory.build({
         orderNum: 1,
         selections: [new GameSelection(playerId, fox)],
-      }).make()
-      const game2 = GameFactory.merge({
+      })
+      const game2 = GameFactory.build({
         orderNum: 2,
         selections: [new GameSelection(playerId, marth)],
-      }).make()
+      })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         games: [game1, game2],
-      }).make()
+      })
 
       const characters = set.getPlayerCharacters(playerId)
       expect(characters).toHaveLength(2)
@@ -458,11 +458,11 @@ describe('Set', () => {
 
     test('returns empty array if no characters are found', () => {
       const playerId = asPlayerId('player-1')
-      const game1 = GameFactory.merge({ orderNum: 1, selections: [] }).make()
+      const game1 = GameFactory.build({ orderNum: 1, selections: [] })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         games: [game1],
-      }).make()
+      })
 
       expect(set.getPlayerCharacters(playerId)).toEqual([])
     })
@@ -471,9 +471,9 @@ describe('Set', () => {
   describe('getOpponentCharacters', () => {
     test('returns empty array if player is not in competitors', () => {
       const playerId = asPlayerId('player-1')
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map(),
-      }).make()
+      })
 
       expect(set.getOpponentCharacters(playerId)).toEqual([])
     })
@@ -486,9 +486,9 @@ describe('Set', () => {
         score: 0,
         isDisqualified: false,
       })
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([[playerId, player]]),
-      }).make()
+      })
 
       expect(set.getOpponentCharacters(playerId)).toEqual([])
     })
@@ -496,8 +496,8 @@ describe('Set', () => {
     test('returns all characters played by the opponent player across games', () => {
       const playerId = asPlayerId('player-1')
       const opponentId = asPlayerId('player-2')
-      const fox = CharacterFactory.merge({ name: 'Fox' }).make()
-      const marth = CharacterFactory.merge({ name: 'Marth' }).make()
+      const fox = CharacterFactory.build({ name: 'Fox' })
+      const marth = CharacterFactory.build({ name: 'Marth' })
 
       const player = new SetPlayer({
         playerId,
@@ -512,22 +512,22 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const game1 = GameFactory.merge({
+      const game1 = GameFactory.build({
         orderNum: 1,
         selections: [new GameSelection(opponentId, fox)],
-      }).make()
-      const game2 = GameFactory.merge({
+      })
+      const game2 = GameFactory.build({
         orderNum: 2,
         selections: [new GameSelection(opponentId, marth)],
-      }).make()
+      })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [playerId, player],
           [opponentId, opponent],
         ]),
         games: [game1, game2],
-      }).make()
+      })
 
       const characters = set.getOpponentCharacters(playerId)
       expect(characters).toHaveLength(2)
@@ -539,9 +539,9 @@ describe('Set', () => {
   describe('getStageActivity', () => {
     test('returns empty array if player is not in competitors', () => {
       const playerId = asPlayerId('player-1')
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map(),
-      }).make()
+      })
 
       expect(set.getStageActivity(playerId)).toEqual([])
     })
@@ -563,12 +563,12 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [playerId, player],
           [opponentId, opponent],
         ]),
-      }).make()
+      })
 
       expect(set.getStageActivity(playerId)).toEqual([])
     })
@@ -590,27 +590,27 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const game1 = GameFactory.merge({
+      const game1 = GameFactory.build({
         orderNum: 1,
         winnerId: playerId,
-      }).make()
-      const game2 = GameFactory.merge({
+      })
+      const game2 = GameFactory.build({
         orderNum: 2,
         winnerId: opponentId,
-      }).make()
-      const game3 = GameFactory.merge({
+      })
+      const game3 = GameFactory.build({
         orderNum: 3,
         winnerId: playerId,
         stage: null,
-      }).make()
+      })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [playerId, player],
           [opponentId, opponent],
         ]),
         games: [game1, game2, game3],
-      }).make()
+      })
 
       expect(set.getStageActivity(playerId)).toEqual([
         { stage: game1.stage, won: true },
@@ -622,9 +622,9 @@ describe('Set', () => {
   describe('getPlayerLossesAgainstCharacters', () => {
     test('returns empty array if player is not in competitors', () => {
       const playerId = asPlayerId('player-1')
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map(),
-      }).make()
+      })
 
       expect(set.getPlayerLossesAgainstCharacters(playerId)).toEqual([])
     })
@@ -646,12 +646,12 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [playerId, player],
           [opponentId, opponent],
         ]),
-      }).make()
+      })
 
       expect(set.getPlayerLossesAgainstCharacters(playerId)).toEqual([])
     })
@@ -659,8 +659,8 @@ describe('Set', () => {
     test('returns records of player loss outcomes against opponent characters in the games', () => {
       const playerId = asPlayerId('player-1')
       const opponentId = asPlayerId('player-2')
-      const fox = CharacterFactory.merge({ name: 'Fox' }).make()
-      const marth = CharacterFactory.merge({ name: 'Marth' }).make()
+      const fox = CharacterFactory.build({ name: 'Fox' })
+      const marth = CharacterFactory.build({ name: 'Marth' })
 
       const player = new SetPlayer({
         playerId,
@@ -675,35 +675,35 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const game1 = GameFactory.merge({
+      const game1 = GameFactory.build({
         orderNum: 1,
         winnerId: playerId,
         selections: [
-          new GameSelection(playerId, CharacterFactory.make()),
+          new GameSelection(playerId, CharacterFactory.build()),
           new GameSelection(opponentId, fox),
         ],
-      }).make()
-      const game2 = GameFactory.merge({
+      })
+      const game2 = GameFactory.build({
         orderNum: 2,
         winnerId: opponentId,
         selections: [
-          new GameSelection(playerId, CharacterFactory.make()),
+          new GameSelection(playerId, CharacterFactory.build()),
           new GameSelection(opponentId, marth),
         ],
-      }).make()
-      const game3 = GameFactory.merge({
+      })
+      const game3 = GameFactory.build({
         orderNum: 3,
         winnerId: opponentId,
         selections: [],
-      }).make()
+      })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [playerId, player],
           [opponentId, opponent],
         ]),
         games: [game1, game2, game3],
-      }).make()
+      })
 
       expect(set.getPlayerLossesAgainstCharacters(playerId)).toEqual([
         { opponentCharacter: fox, lost: false },
@@ -730,12 +730,12 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
-      }).make()
+      })
 
       expect(set.getOpponentPlayerIds(p1Id)).toEqual([p2Id])
     })
@@ -758,12 +758,12 @@ describe('Set', () => {
         isDisqualified: false,
       })
 
-      const set = SetFactory.merge({
+      const set = SetFactory.build({
         competitors: new Map([
           [p1Id, player1],
           [p2Id, player2],
         ]),
-      }).make()
+      })
 
       expect(set.getOpponentPlayerIds(otherId)).toEqual([])
     })

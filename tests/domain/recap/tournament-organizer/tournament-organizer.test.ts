@@ -6,20 +6,20 @@ import { VideogameFactory } from '#tests/factories/videogame-factory'
 
 describe('TournamentOrganizer', () => {
   test('totalTournaments returns correct count', () => {
-    const tournaments = TournamentFactory.makeMany(3)
-    const to = TournamentOrganizerFactory.merge({ tournaments }).make()
+    const tournaments = TournamentFactory.buildList(3)
+    const to = TournamentOrganizerFactory.build({ tournaments })
 
     expect(to.totalTournaments()).toBe(3)
   })
 
   test('biggestTournaments sorts by attendee count and respects limit', () => {
-    const tournamentA = TournamentFactory.merge({ numAttendees: 50 }).make()
-    const tournamentB = TournamentFactory.merge({ numAttendees: 30 }).make()
-    const tournamentC = TournamentFactory.merge({ numAttendees: 100 }).make()
+    const tournamentA = TournamentFactory.build({ numAttendees: 50 })
+    const tournamentB = TournamentFactory.build({ numAttendees: 30 })
+    const tournamentC = TournamentFactory.build({ numAttendees: 100 })
 
-    const to = TournamentOrganizerFactory.merge({
+    const to = TournamentOrganizerFactory.build({
       tournaments: [tournamentA, tournamentB, tournamentC],
-    }).make()
+    })
 
     const results = to.biggestTournaments(2)
     expect(results).toHaveLength(2)
@@ -28,21 +28,21 @@ describe('TournamentOrganizer', () => {
   })
 
   test('gamesOrganized aggregates unique games sorted by frequency', () => {
-    const gameMelee = VideogameFactory.merge({ name: 'Melee' }).make()
-    const gameUltimate = VideogameFactory.merge({ name: 'Ultimate' }).make()
+    const gameMelee = VideogameFactory.build({ name: 'Melee' })
+    const gameUltimate = VideogameFactory.build({ name: 'Ultimate' })
 
-    const event1 = EventFactory.merge({ videogame: gameMelee }).make()
-    const event2 = EventFactory.merge({ videogame: gameUltimate }).make()
-    const event3 = EventFactory.merge({ videogame: gameUltimate }).make()
+    const event1 = EventFactory.build({ videogame: gameMelee })
+    const event2 = EventFactory.build({ videogame: gameUltimate })
+    const event3 = EventFactory.build({ videogame: gameUltimate })
 
-    const tournament1 = TournamentFactory.merge({
+    const tournament1 = TournamentFactory.build({
       events: [event1, event2],
-    }).make()
-    const tournament2 = TournamentFactory.merge({ events: [event3] }).make()
+    })
+    const tournament2 = TournamentFactory.build({ events: [event3] })
 
-    const to = TournamentOrganizerFactory.merge({
+    const to = TournamentOrganizerFactory.build({
       tournaments: [tournament1, tournament2],
-    }).make()
+    })
 
     const games = to.gamesOrganized()
     expect(games).toHaveLength(2)
@@ -52,7 +52,7 @@ describe('TournamentOrganizer', () => {
 
   describe('dayOfWeekActivity', () => {
     test('should not contain values if the TO did not organize any tournaments this year', () => {
-      const to = TournamentOrganizerFactory.make()
+      const to = TournamentOrganizerFactory.build()
 
       expect(to.dayOfWeekActivity()).toEqual([
         { count: 0, day: 'Sun' },
@@ -66,31 +66,31 @@ describe('TournamentOrganizer', () => {
     })
 
     test('should contain values if the TO did organize tournaments this year', () => {
-      const to = TournamentOrganizerFactory.merge({
+      const to = TournamentOrganizerFactory.build({
         tournaments: [
-          ...TournamentFactory.merge({
+          ...TournamentFactory.buildList(10, {
             startDate: new Date('2026-07-25'),
-          }).makeMany(10),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(1, {
             startDate: new Date('2026-07-26'),
-          }).makeMany(1),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(5, {
             startDate: new Date('2026-07-28'),
-          }).makeMany(5),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(3, {
             startDate: new Date('2026-07-29'),
-          }).makeMany(3),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(2, {
             startDate: new Date('2026-07-30'),
-          }).makeMany(2),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(9, {
             startDate: new Date('2026-07-31'),
-          }).makeMany(9),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(6, {
             startDate: new Date('2026-08-03'),
-          }).makeMany(6),
+          }),
         ],
-      }).make()
+      })
 
       expect(to.dayOfWeekActivity()).toEqual([
         { count: 1, day: 'Sun' },
@@ -106,7 +106,7 @@ describe('TournamentOrganizer', () => {
 
   describe('tournamentsByMonth', () => {
     test('should not contain values if the TO did not organize any tournaments this year', () => {
-      const to = TournamentOrganizerFactory.make()
+      const to = TournamentOrganizerFactory.build()
 
       expect(to.tournamentsByMonth()).toEqual([
         { count: 0, month: 'Jan' },
@@ -125,46 +125,46 @@ describe('TournamentOrganizer', () => {
     })
 
     test('should contain values if the TO did organize tournaments this year', () => {
-      const to = TournamentOrganizerFactory.merge({
+      const to = TournamentOrganizerFactory.build({
         tournaments: [
-          ...TournamentFactory.merge({
+          ...TournamentFactory.buildList(100, {
             startDate: new Date('2026-01-01'),
-          }).makeMany(100),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(50, {
             startDate: new Date('2026-02-01'),
-          }).makeMany(50),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(25, {
             startDate: new Date('2026-03-01'),
-          }).makeMany(25),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(17, {
             startDate: new Date('2026-04-01'),
-          }).makeMany(17),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(71, {
             startDate: new Date('2026-05-01'),
-          }).makeMany(71),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(35, {
             startDate: new Date('2026-06-01'),
-          }).makeMany(35),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(70, {
             startDate: new Date('2026-07-01'),
-          }).makeMany(70),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(0, {
             startDate: new Date('2026-08-01'),
-          }).makeMany(0),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(1, {
             startDate: new Date('2026-09-01'),
-          }).makeMany(1),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(2, {
             startDate: new Date('2026-10-01'),
-          }).makeMany(2),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(4, {
             startDate: new Date('2026-11-01'),
-          }).makeMany(4),
-          ...TournamentFactory.merge({
+          }),
+          ...TournamentFactory.buildList(8, {
             startDate: new Date('2026-12-01'),
-          }).makeMany(8),
+          }),
         ],
-      }).make()
+      })
 
       expect(to.tournamentsByMonth()).toEqual([
         { count: 100, month: 'Jan' },

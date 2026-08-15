@@ -11,14 +11,14 @@ import { asParticipantId, asPlayerId } from '#/domain/shared-kernel/ids'
 describe('Tournament', () => {
   describe('constructor', () => {
     test('initializes correctly with valid name', () => {
-      expect(() => TournamentFactory.make()).not.toThrow()
+      expect(() => TournamentFactory.build()).not.toThrow()
     })
 
     test('throws error if name is empty or whitespace', () => {
-      expect(() => TournamentFactory.merge({ name: '' }).make()).toThrow(
+      expect(() => TournamentFactory.build({ name: '' })).toThrow(
         'Invalid parameter name',
       )
-      expect(() => TournamentFactory.merge({ name: '   ' }).make()).toThrow(
+      expect(() => TournamentFactory.build({ name: '   ' })).toThrow(
         'Invalid parameter name',
       )
     })
@@ -28,7 +28,7 @@ describe('Tournament', () => {
     test('returns null if player did not participate in any event', () => {
       const playerId = asPlayerId('target-player')
 
-      const event = EventFactory.merge({
+      const event = EventFactory.build({
         participants: [
           new Participant({
             id: asParticipantId('1'),
@@ -37,11 +37,11 @@ describe('Tournament', () => {
             seed: new Seed(1, 1),
           }),
         ],
-      }).make()
+      })
 
-      const tournament = TournamentFactory.merge({
+      const tournament = TournamentFactory.build({
         events: [event],
-      }).make()
+      })
 
       expect(tournament.getPlayerSPR(playerId)).toBeNull()
     })
@@ -56,14 +56,14 @@ describe('Tournament', () => {
         seed: new Seed(8, 5),
       })
 
-      const event = EventFactory.merge({
+      const event = EventFactory.build({
         lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [participant],
-      }).make()
+      })
 
-      const tournament = TournamentFactory.merge({
+      const tournament = TournamentFactory.build({
         events: [event],
-      }).make()
+      })
 
       expect(tournament.getPlayerSPR(playerId)).toBe(0)
     })
@@ -77,10 +77,10 @@ describe('Tournament', () => {
         name: 'Target',
         seed: new Seed(8, 5),
       })
-      const event1 = EventFactory.merge({
+      const event1 = EventFactory.build({
         lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p1],
-      }).make()
+      })
 
       const p2 = new Participant({
         id: asParticipantId('2'),
@@ -88,14 +88,14 @@ describe('Tournament', () => {
         name: 'Target',
         seed: new Seed(8, 1),
       })
-      const event2 = EventFactory.merge({
+      const event2 = EventFactory.build({
         lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p2],
-      }).make()
+      })
 
-      const tournament = TournamentFactory.merge({
+      const tournament = TournamentFactory.build({
         events: [event1, event2],
-      }).make()
+      })
 
       expect(tournament.getPlayerSPR(playerId)).toBe(3)
     })
@@ -109,10 +109,10 @@ describe('Tournament', () => {
         name: 'Target',
         seed: new Seed(8, 1),
       })
-      const event1 = EventFactory.merge({
+      const event1 = EventFactory.build({
         lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p1],
-      }).make()
+      })
 
       const p2 = new Participant({
         id: asParticipantId('2'),
@@ -120,14 +120,14 @@ describe('Tournament', () => {
         name: 'Target',
         seed: new Seed(8, 5),
       })
-      const event2 = EventFactory.merge({
+      const event2 = EventFactory.build({
         lastBracketType: BracketType.SINGLE_ELIMINATION,
         participants: [p2],
-      }).make()
+      })
 
-      const tournament = TournamentFactory.merge({
+      const tournament = TournamentFactory.build({
         events: [event1, event2],
-      }).make()
+      })
 
       expect(tournament.getPlayerSPR(playerId)).toBe(3)
     })
@@ -138,7 +138,7 @@ describe('Tournament', () => {
       const playerId = asPlayerId('target-player')
       const opponentId = asPlayerId('opponent')
 
-      const set1 = SetFactory.merge({
+      const set1 = SetFactory.build({
         competitors: new Map([
           [
             playerId,
@@ -160,14 +160,14 @@ describe('Tournament', () => {
           ],
         ]),
         winnerId: playerId,
-      }).make()
+      })
 
-      const event1 = EventFactory.merge({
+      const event1 = EventFactory.build({
         lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [set1],
-      }).make()
+      })
 
-      const set2 = SetFactory.merge({
+      const set2 = SetFactory.build({
         competitors: new Map([
           [
             playerId,
@@ -189,16 +189,16 @@ describe('Tournament', () => {
           ],
         ]),
         winnerId: playerId,
-      }).make()
+      })
 
-      const event2 = EventFactory.merge({
+      const event2 = EventFactory.build({
         lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [set2],
-      }).make()
+      })
 
-      const tournament = TournamentFactory.merge({
+      const tournament = TournamentFactory.build({
         events: [event1, event2],
-      }).make()
+      })
 
       const bestUpset = tournament.getPlayerHighestUpset(playerId)
       expect(bestUpset).not.toBeNull()
@@ -210,7 +210,7 @@ describe('Tournament', () => {
       const playerId = asPlayerId('target-player')
       const opponentId = asPlayerId('opponent')
 
-      const set1 = SetFactory.merge({
+      const set1 = SetFactory.build({
         competitors: new Map([
           [
             playerId,
@@ -232,14 +232,14 @@ describe('Tournament', () => {
           ],
         ]),
         winnerId: playerId,
-      }).make()
+      })
 
-      const event1 = EventFactory.merge({
+      const event1 = EventFactory.build({
         lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [set1],
-      }).make()
+      })
 
-      const set2 = SetFactory.merge({
+      const set2 = SetFactory.build({
         competitors: new Map([
           [
             playerId,
@@ -261,16 +261,16 @@ describe('Tournament', () => {
           ],
         ]),
         winnerId: playerId,
-      }).make()
+      })
 
-      const event2 = EventFactory.merge({
+      const event2 = EventFactory.build({
         lastBracketType: BracketType.DOUBLE_ELIMINATION,
         sets: [set2],
-      }).make()
+      })
 
-      const tournament = TournamentFactory.merge({
+      const tournament = TournamentFactory.build({
         events: [event1, event2],
-      }).make()
+      })
 
       const bestUpset = tournament.getPlayerHighestUpset(playerId)
       expect(bestUpset).not.toBeNull()

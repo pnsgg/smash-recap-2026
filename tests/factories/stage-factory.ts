@@ -1,6 +1,7 @@
+import { Factory } from 'fishery'
+import { faker } from '@faker-js/faker'
 import { Stage } from '#/domain/recap/stage'
 import { asStageId } from '#/domain/shared-kernel/ids'
-import { Factory } from './factory'
 
 const SMASH_STAGES = [
   'Battlefield',
@@ -14,10 +15,9 @@ const SMASH_STAGES = [
   'Lylat Cruise',
 ]
 
-export const StageFactory = Factory.define(
-  ({ faker }) => ({
-    id: faker.number.int().toString(),
-    name: faker.helpers.arrayElement(SMASH_STAGES),
-  }),
-  ({ id, name }) => new Stage(asStageId(id), name),
-)
+export const StageFactory = Factory.define<Stage>(({ sequence }) => {
+  return new Stage(
+    asStageId(sequence.toString()),
+    faker.helpers.arrayElement(SMASH_STAGES),
+  )
+})

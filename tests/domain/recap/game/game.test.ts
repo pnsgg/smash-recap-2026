@@ -7,14 +7,14 @@ import { asPlayerId, asEntrantId } from '#/domain/shared-kernel/ids'
 describe('Game', () => {
   describe('constructor', () => {
     test('initializes correctly with valid orderNum', () => {
-      expect(() => GameFactory.merge({ orderNum: 1 }).make()).not.toThrow()
+      expect(() => GameFactory.build({ orderNum: 1 })).not.toThrow()
     })
 
     test('throws error if orderNum is zero or negative', () => {
-      expect(() => GameFactory.merge({ orderNum: 0 }).make()).toThrow(
+      expect(() => GameFactory.build({ orderNum: 0 })).toThrow(
         'Invalid parameter order num',
       )
-      expect(() => GameFactory.merge({ orderNum: -1 }).make()).toThrow(
+      expect(() => GameFactory.build({ orderNum: -1 })).toThrow(
         'Invalid parameter order num',
       )
     })
@@ -22,19 +22,19 @@ describe('Game', () => {
   describe('getPlayerCharacter', () => {
     test('returns character if player has a selection', () => {
       const playerId = asPlayerId('1')
-      const character = CharacterFactory.merge({ name: 'Fox' }).make()
-      const game = GameFactory.merge({
+      const character = CharacterFactory.build({ name: 'Fox' })
+      const game = GameFactory.build({
         selections: [new GameSelection(playerId, character)],
-      }).make()
+      })
 
       expect(game.getPlayerCharacter(playerId)).toBe(character)
     })
 
     test('returns null if player does not have a selection', () => {
       const playerId = asPlayerId('1')
-      const game = GameFactory.merge({
+      const game = GameFactory.build({
         selections: [],
-      }).make()
+      })
 
       expect(game.getPlayerCharacter(playerId)).toBeNull()
     })
@@ -43,27 +43,27 @@ describe('Game', () => {
   describe('getStageActivity', () => {
     test('returns null if stage is null', () => {
       const playerId = asPlayerId('1')
-      const game = GameFactory.merge({
+      const game = GameFactory.build({
         stage: null,
-      }).make()
+      })
 
       expect(game.getStageActivity(playerId)).toBeNull()
     })
 
     test('returns null if winnerId is null', () => {
       const playerId = asPlayerId('1')
-      const game = GameFactory.merge({
+      const game = GameFactory.build({
         winnerId: null,
-      }).make()
+      })
 
       expect(game.getStageActivity(playerId)).toBeNull()
     })
 
     test('returns stage activity with won true if winnerId matches playerId', () => {
       const playerId = asPlayerId('1')
-      const game = GameFactory.merge({
+      const game = GameFactory.build({
         winnerId: playerId,
-      }).make()
+      })
 
       const result = game.getStageActivity(playerId)
       expect(result).not.toBeNull()
@@ -74,9 +74,9 @@ describe('Game', () => {
     test('returns stage activity with won false if winnerId does not match playerId', () => {
       const playerId = asPlayerId('1')
       const opponentId = asPlayerId('2')
-      const game = GameFactory.merge({
+      const game = GameFactory.build({
         winnerId: opponentId,
-      }).make()
+      })
 
       const result = game.getStageActivity(playerId)
       expect(result).not.toBeNull()
@@ -88,30 +88,30 @@ describe('Game', () => {
   describe('getPlayerLossAgainstCharacter', () => {
     test('returns null if winnerId is null', () => {
       const playerId = asPlayerId('1')
-      const game = GameFactory.merge({
+      const game = GameFactory.build({
         winnerId: null,
-      }).make()
+      })
 
       expect(game.getPlayerLossAgainstCharacter(playerId)).toBeNull()
     })
 
     test('returns null if player has no selection', () => {
       const playerId = asPlayerId('1')
-      const game = GameFactory.merge({
+      const game = GameFactory.build({
         winnerId: playerId,
         selections: [],
-      }).make()
+      })
 
       expect(game.getPlayerLossAgainstCharacter(playerId)).toBeNull()
     })
 
     test('returns null if opponent has no selection', () => {
       const playerId = asPlayerId('1')
-      const selection = new GameSelection(playerId, CharacterFactory.make())
-      const game = GameFactory.merge({
+      const selection = new GameSelection(playerId, CharacterFactory.build())
+      const game = GameFactory.build({
         winnerId: playerId,
         selections: [selection],
-      }).make()
+      })
 
       expect(game.getPlayerLossAgainstCharacter(playerId)).toBeNull()
     })
@@ -120,15 +120,15 @@ describe('Game', () => {
       test('returns opponent character and lost=true if player lost the game', () => {
         const playerId = asPlayerId('1')
         const opponentId = asPlayerId('2')
-        const charOpponent = CharacterFactory.merge({ name: 'Marth' }).make()
+        const charOpponent = CharacterFactory.build({ name: 'Marth' })
 
-        const game = GameFactory.merge({
+        const game = GameFactory.build({
           winnerId: opponentId,
           selections: [
-            new GameSelection(playerId, CharacterFactory.make()),
+            new GameSelection(playerId, CharacterFactory.build()),
             new GameSelection(opponentId, charOpponent),
           ],
-        }).make()
+        })
 
         const result = game.getPlayerLossAgainstCharacter(playerId)
         expect(result).not.toBeNull()
@@ -139,15 +139,15 @@ describe('Game', () => {
       test('returns opponent character and lost=false if player won the game', () => {
         const playerId = asPlayerId('1')
         const opponentId = asPlayerId('2')
-        const charOpponent = CharacterFactory.merge({ name: 'Marth' }).make()
+        const charOpponent = CharacterFactory.build({ name: 'Marth' })
 
-        const game = GameFactory.merge({
+        const game = GameFactory.build({
           winnerId: playerId,
           selections: [
-            new GameSelection(playerId, CharacterFactory.make()),
+            new GameSelection(playerId, CharacterFactory.build()),
             new GameSelection(opponentId, charOpponent),
           ],
-        }).make()
+        })
 
         const result = game.getPlayerLossAgainstCharacter(playerId)
         expect(result).not.toBeNull()
@@ -165,21 +165,25 @@ describe('Game', () => {
         const myEntrantId = asEntrantId('team-1')
         const opponentEntrantId = asEntrantId('team-2')
 
-        const charOpponent = CharacterFactory.merge({ name: 'Fox' }).make()
+        const charOpponent = CharacterFactory.build({ name: 'Fox' })
 
-        const game = GameFactory.merge({
+        const game = GameFactory.build({
           winnerId: opponentId1,
           selections: [
-            new GameSelection(playerId, CharacterFactory.make(), myEntrantId),
-            new GameSelection(teammateId, CharacterFactory.make(), myEntrantId),
+            new GameSelection(playerId, CharacterFactory.build(), myEntrantId),
+            new GameSelection(
+              teammateId,
+              CharacterFactory.build(),
+              myEntrantId,
+            ),
             new GameSelection(opponentId1, charOpponent, opponentEntrantId),
             new GameSelection(
               opponentId2,
-              CharacterFactory.make(),
+              CharacterFactory.build(),
               opponentEntrantId,
             ),
           ],
-        }).make()
+        })
 
         const result = game.getPlayerLossAgainstCharacter(playerId)
         expect(result).not.toBeNull()
@@ -195,21 +199,25 @@ describe('Game', () => {
         const myEntrantId = asEntrantId('team-1')
         const opponentEntrantId = asEntrantId('team-2')
 
-        const charOpponent = CharacterFactory.merge({ name: 'Fox' }).make()
+        const charOpponent = CharacterFactory.build({ name: 'Fox' })
 
-        const game = GameFactory.merge({
+        const game = GameFactory.build({
           winnerId: playerId,
           selections: [
-            new GameSelection(playerId, CharacterFactory.make(), myEntrantId),
-            new GameSelection(teammateId, CharacterFactory.make(), myEntrantId),
+            new GameSelection(playerId, CharacterFactory.build(), myEntrantId),
+            new GameSelection(
+              teammateId,
+              CharacterFactory.build(),
+              myEntrantId,
+            ),
             new GameSelection(opponentId1, charOpponent, opponentEntrantId),
             new GameSelection(
               opponentId2,
-              CharacterFactory.make(),
+              CharacterFactory.build(),
               opponentEntrantId,
             ),
           ],
-        }).make()
+        })
 
         const result = game.getPlayerLossAgainstCharacter(playerId)
         expect(result).not.toBeNull()

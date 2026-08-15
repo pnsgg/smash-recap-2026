@@ -48,6 +48,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^9.20.0",
+    "fishery": "^2.4.0",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.1.18",
     "typescript": "^6.0.2",
