@@ -3,20 +3,19 @@ export enum EventType {
   TEAMS = 5,
 }
 
-
 export class EventTypeHelper {
   static fromNumber(value: number): EventType {
     if (!(value in EventType)) {
-      throw new Error(`Invalid EventType: ${value}`);
+      throw new Error(`Invalid EventType: ${value}`)
     }
-    return value;
+    return value
   }
 
   static toNumber(type: EventType): number {
-    return type;
+    return type
   }
 
   static toString(type: EventType): string {
-    return EventType[type];
+    return EventType[type]
   }
 }

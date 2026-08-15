@@ -4,6 +4,7 @@ import type { Character } from '#/domain/recap/character'
 import type { Event } from '#/domain/recap/event'
 import type { Set as EventSet } from '#/domain/recap/set'
 import type { Stage } from '#/domain/recap/stage'
+import { EventType } from '#/domain/recap/event-type'
 
 export type PlayerParams = {
   id: PlayerId
@@ -420,5 +421,23 @@ export class Player {
     }
 
     return entries.sort(sorters[sortBy]).slice(0, limit)
+  }
+
+  /**
+   * Returns a breakdown of event types (singles vs. teams) played by this player.
+   */
+  eventTypeBreakdown(): Record<EventType, number> {
+    const counts: Record<EventType, number> = {
+      [EventType.SINGLES]: 0,
+      [EventType.TEAMS]: 0,
+    }
+
+    for (const tournament of this.tournaments) {
+      for (const event of tournament.events) {
+        counts[event.eventType]++
+      }
+    }
+
+    return counts
   }
 }

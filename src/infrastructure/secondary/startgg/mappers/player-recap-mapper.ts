@@ -226,7 +226,9 @@ function mapEvent(
   } else if (rawEventType === 2 || rawEventType === 5) {
     eventType = EventType.TEAMS
   } else {
-    throw new Error(`Cannot map event. Reason: Unsupported event type code: ${rawEventType}`)
+    throw new Error(
+      `Cannot map event. Reason: Unsupported event type code: ${rawEventType}`,
+    )
   }
 
   const sets: Set[] = []
@@ -271,11 +273,17 @@ function mapSet(
 
     const players = entrant.players
     const hasTargetPlayer = players.some(
-      (player) => player?.id !== undefined && player.id !== null && asPlayerId(player.id.toString()) === targetPlayerId
+      (player) =>
+        player?.id !== undefined &&
+        player.id !== null &&
+        asPlayerId(player.id.toString()) === targetPlayerId,
     )
     const activePlayer = hasTargetPlayer
       ? players.find(
-          (player) => player?.id !== undefined && player.id !== null && asPlayerId(player.id.toString()) === targetPlayerId
+          (player) =>
+            player?.id !== undefined &&
+            player.id !== null &&
+            asPlayerId(player.id.toString()) === targetPlayerId,
         )
       : players.find((player) => player?.id !== undefined && player.id !== null)
 
@@ -373,7 +381,13 @@ function mapGame(
 
   const selections: GameSelection[] = []
   for (const selection of rawGame.selections || []) {
-    if (!selection || !selection.entrant || !selection.character || !selection.entrant.id) continue
+    if (
+      !selection ||
+      !selection.entrant ||
+      !selection.character ||
+      !selection.entrant.id
+    )
+      continue
 
     let playerId: PlayerId | undefined = undefined
     if (selection.participant?.player?.id) {

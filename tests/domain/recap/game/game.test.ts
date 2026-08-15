@@ -173,7 +173,11 @@ describe('Game', () => {
             new GameSelection(playerId, CharacterFactory.make(), myEntrantId),
             new GameSelection(teammateId, CharacterFactory.make(), myEntrantId),
             new GameSelection(opponentId1, charOpponent, opponentEntrantId),
-            new GameSelection(opponentId2, CharacterFactory.make(), opponentEntrantId),
+            new GameSelection(
+              opponentId2,
+              CharacterFactory.make(),
+              opponentEntrantId,
+            ),
           ],
         }).make()
 
@@ -199,7 +203,11 @@ describe('Game', () => {
             new GameSelection(playerId, CharacterFactory.make(), myEntrantId),
             new GameSelection(teammateId, CharacterFactory.make(), myEntrantId),
             new GameSelection(opponentId1, charOpponent, opponentEntrantId),
-            new GameSelection(opponentId2, CharacterFactory.make(), opponentEntrantId),
+            new GameSelection(
+              opponentId2,
+              CharacterFactory.make(),
+              opponentEntrantId,
+            ),
           ],
         }).make()
 

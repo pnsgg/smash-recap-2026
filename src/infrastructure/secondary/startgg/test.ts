@@ -124,6 +124,14 @@ const outputRecap = async (
         `\t\t- You: ${headToHead.playerWonSet} - ${headToHead.opponentPlayerId}: ${headToHead.opponentWonSet}`,
       )
     })
+    console.log()
+
+    console.log('Event type breakdown:')
+    const eventTypeCounts = player.eventTypeBreakdown()
+    for (const [type, count] of Object.entries(eventTypeCounts)) {
+      console.log(` - ${type}: ${count}`)
+    }
+    console.log()
   } else {
     console.log(
       'Player has not attended enough tournaments to have a proper recap...',

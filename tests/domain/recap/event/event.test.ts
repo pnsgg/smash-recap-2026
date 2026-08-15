@@ -18,10 +18,14 @@ describe('Event', () => {
     })
 
     test('correctly sets isTeams based on eventType', () => {
-      const singlesEvent = EventFactory.merge({ eventType: EventType.SINGLES }).make()
+      const singlesEvent = EventFactory.merge({
+        eventType: EventType.SINGLES,
+      }).make()
       expect(singlesEvent.isTeams()).toBe(false)
 
-      const teamsEvent = EventFactory.merge({ eventType: EventType.TEAMS }).make()
+      const teamsEvent = EventFactory.merge({
+        eventType: EventType.TEAMS,
+      }).make()
       expect(teamsEvent.isTeams()).toBe(true)
     })
   })

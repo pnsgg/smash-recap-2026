@@ -17,7 +17,9 @@ export const EventFactory = Factory.define(
     name: faker.company.buzzNoun(),
     videogame: VideogameFactory.make(),
     isOnline: faker.datatype.boolean(),
-    eventType: faker.helpers.arrayElement(Object.values(EventType)) as EventType,
+    eventType: faker.helpers.arrayElement(
+      Object.values(EventType),
+    ) as EventType,
     lastBracketType: faker.helpers.arrayElement(Object.values(BracketType)),
     participants: [] as Participant[],
     sets: [] as Set[],

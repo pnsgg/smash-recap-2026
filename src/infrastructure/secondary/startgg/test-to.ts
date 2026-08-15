@@ -1,6 +1,7 @@
 import { StartggClient } from './startgg-client'
 import { StartggTournamentOrganizerRepository } from './tournament-organizer-repository'
 import { asUserSlug } from '#/domain/shared-kernel/ids'
+import { EventTypeHelper } from '#/domain/recap/event-type'
 
 const client = new StartggClient()
 const sgg = new StartggTournamentOrganizerRepository(client)
@@ -33,9 +34,9 @@ const outputToRecap = async (
       console.log(` - ${videogame.name}: ${count} times`)
     })
 
-    console.log('\nEvent Types:')
-    to.eventTypeDistribution().forEach(({ type, count }) => {
-      console.log(` - ${type}: ${count} events`)
+    console.log('\nEvent Type:')
+    to.eventTypeBreakdown().forEach(({ type, count }) => {
+      console.log(` - ${EventTypeHelper.toString(type)}: ${count} events`)
     })
   } else {
     console.log('This user did not organize any tournaments this year.')

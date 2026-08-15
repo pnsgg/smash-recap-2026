@@ -45,7 +45,9 @@ export function mapTournamentOrganizer(
         } else if (rawEventType === 2 || rawEventType === 5) {
           eventType = EventType.TEAMS
         } else {
-          throw new Error(`Cannot map event. Reason: Unsupported event type code: ${rawEventType}`)
+          throw new Error(
+            `Cannot map event. Reason: Unsupported event type code: ${rawEventType}`,
+          )
         }
 
         return new Event({
