@@ -13,7 +13,7 @@ import type { ResultOf } from 'gql.tada'
 import type { getTournamentDetails } from '../queries/get-tournament-details'
 import { BracketTypeHelper } from '#/domain/recap/bracket-type'
 
-type TournamentDetailsResult = Exclude<
+export type TournamentDetailsResult = Exclude<
   ResultOf<typeof getTournamentDetails>['tournament'],
   null | undefined
 >
