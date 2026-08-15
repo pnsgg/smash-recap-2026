@@ -5,6 +5,7 @@ import { getPlayerEventIds } from '#/infrastructure/secondary/startgg/queries/ge
 import { getEvent } from '#/infrastructure/secondary/startgg/queries/get-event'
 import { InMemoryFetcher } from '#tests/infrastructure/secondary/startgg/in-memory-fetcher'
 import { asUserSlug } from '#/domain/shared-kernel/ids'
+import { EventType } from '#/domain/recap/event-type'
 import { describe, expect, test } from 'vitest'
 
 const isSortedDesc = <T>(array: T[]): boolean =>
@@ -204,11 +205,13 @@ const fetcher = new InMemoryFetcher()
                         {
                           entrant: { id: '1001' },
                           character: { id: '1313', name: 'Wario' },
+                          participant: null,
                           selectionType: 'CHARACTER' as const,
                         },
                         {
                           entrant: { id: '1002' },
                           character: { id: '1275', name: 'Byleth' },
+                          participant: null,
                           selectionType: 'CHARACTER' as const,
                         },
                       ],
@@ -375,6 +378,13 @@ describe('Searching for players', () => {
       const setPlayer = set?.competitors.get(player.id)
       expect(setPlayer?.score).toBe(3)
       expect(setPlayer?.isDisqualified).toBe(false)
+
+      const eventDoubles = tournament.events.find(
+        (e) => e.name === 'Genesis X Doubles',
+      )
+      expect(eventDoubles).toBeDefined()
+      expect(eventDoubles?.eventType).toBe(EventType.TEAMS)
+      expect(eventDoubles?.isTeams()).toBe(true)
     })
   })
 })
