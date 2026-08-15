@@ -9,6 +9,7 @@ export const getTournamentDetails = graphql(`
       events {
         id
         name
+        type
         videogame {
           id
           name

@@ -90,6 +90,11 @@ export const getEvent = graphql(`
                   id
                   name
                 }
+                participant {
+                  player {
+                    id
+                  }
+                }
                 selectionType
               }
             }

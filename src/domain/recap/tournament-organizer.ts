@@ -1,7 +1,7 @@
 import type { UserSlug } from '#/domain/shared-kernel/ids'
 import type { Tournament } from '#/domain/recap/tournament'
 import type { Videogame } from '#/domain/recap/videogame'
-import type { BracketType } from '#/domain/recap/bracket-type'
+import { EventType, EventTypeHelper } from './event-type'
 
 export type TournamentOrganizerParams = {
   id: UserSlug
@@ -62,21 +62,6 @@ export class TournamentOrganizer {
   }
 
   /**
-   * Distribution of bracket types across the events in all organized tournaments.
-   */
-  eventTypeDistribution(): { type: BracketType; count: number }[] {
-    const counts = new Map<BracketType, number>()
-    for (const t of this.tournaments) {
-      for (const e of t.events) {
-        counts.set(e.lastBracketType, (counts.get(e.lastBracketType) || 0) + 1)
-      }
-    }
-    return Array.from(counts.entries())
-      .map(([type, count]) => ({ type, count }))
-      .sort((a, b) => b.count - a.count)
-  }
-
-  /**
    * Computes the tournament activity breakdown by day of the week.
    */
   dayOfWeekActivity(): { day: string; count: number }[] {
@@ -122,6 +107,24 @@ export class TournamentOrganizer {
     return monthNames.map((month) => ({
       month,
       count: activityMap.get(month) || 0,
+    }))
+  }
+
+  eventTypeBreakdown(): { type: EventType; count: number }[] {
+    const counts: Record<EventType, number> = {
+      [EventType.SINGLES]: 0,
+      [EventType.TEAMS]: 0,
+    }
+
+    for (const tournament of this.tournaments) {
+      for (const event of tournament.events) {
+        counts[event.eventType]++
+      }
+    }
+
+    return Object.entries(counts).map(([type, count]) => ({
+      type: EventTypeHelper.fromNumber(Number(type)),
+      count,
     }))
   }
 }

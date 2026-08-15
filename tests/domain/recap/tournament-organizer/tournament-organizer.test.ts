@@ -3,7 +3,6 @@ import { TournamentOrganizerFactory } from '#tests/factories/tournament-organize
 import { TournamentFactory } from '#tests/factories/tournament-factory'
 import { EventFactory } from '#tests/factories/event-factory'
 import { VideogameFactory } from '#tests/factories/videogame-factory'
-import { BracketType } from '#/domain/recap/bracket-type'
 
 describe('TournamentOrganizer', () => {
   test('totalTournaments returns correct count', () => {
@@ -49,33 +48,6 @@ describe('TournamentOrganizer', () => {
     expect(games).toHaveLength(2)
     expect(games[0]).toEqual({ videogame: gameUltimate, count: 2 })
     expect(games[1]).toEqual({ videogame: gameMelee, count: 1 })
-  })
-
-  test('eventTypeDistribution aggregates event bracket types sorted by frequency', () => {
-    const event1 = EventFactory.merge({
-      lastBracketType: BracketType.DOUBLE_ELIMINATION,
-    }).make()
-    const event2 = EventFactory.merge({
-      lastBracketType: BracketType.SWISS,
-    }).make()
-    const event3 = EventFactory.merge({
-      lastBracketType: BracketType.SWISS,
-    }).make()
-
-    const tournament = TournamentFactory.merge({
-      events: [event1, event2, event3],
-    }).make()
-    const to = TournamentOrganizerFactory.merge({
-      tournaments: [tournament],
-    }).make()
-
-    const distribution = to.eventTypeDistribution()
-    expect(distribution).toHaveLength(2)
-    expect(distribution[0]).toEqual({ type: BracketType.SWISS, count: 2 })
-    expect(distribution[1]).toEqual({
-      type: BracketType.DOUBLE_ELIMINATION,
-      count: 1,
-    })
   })
 
   describe('dayOfWeekActivity', () => {
