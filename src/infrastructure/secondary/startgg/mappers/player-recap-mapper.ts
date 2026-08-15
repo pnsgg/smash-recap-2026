@@ -9,6 +9,7 @@ import { Game, GameSelection } from '#/domain/recap/game'
 import { Character } from '#/domain/recap/character'
 import { Stage } from '#/domain/recap/stage'
 import { Videogame } from '#/domain/recap/videogame'
+import { EventType } from '#/domain/recap/event-type'
 import {
   asPlayerId,
   asTournamentId,
@@ -19,6 +20,7 @@ import {
   asCharacterId,
   asStageId,
   asVideogameId,
+  asEntrantId,
 } from '#/domain/shared-kernel/ids'
 import type { PlayerId } from '#/domain/shared-kernel/ids'
 import type { ResultOf } from 'gql.tada'
@@ -213,6 +215,20 @@ function mapEvent(
   if (!eventName)
     throw new Error('Cannot map event. Reason: Event name is missing')
 
+  const rawEventType = rawEvent.type
+  if (rawEventType === null) {
+    throw new Error('Cannot map event. Reason: Event type is missing')
+  }
+
+  let eventType: EventType
+  if (rawEventType === 1) {
+    eventType = EventType.SINGLES
+  } else if (rawEventType === 2 || rawEventType === 5) {
+    eventType = EventType.TEAMS
+  } else {
+    throw new Error(`Cannot map event. Reason: Unsupported event type code: ${rawEventType}`)
+  }
+
   const sets: Set[] = []
   const rawSets = userEntrant.paginatedSets?.nodes || []
   for (const rawSet of rawSets) {
@@ -222,6 +238,7 @@ function mapEvent(
       eventId,
       entrantIdToPlayerId,
       participantsMap,
+      targetPlayerId,
     )
     if (mappedSet) sets.push(mappedSet)
   }
@@ -231,6 +248,7 @@ function mapEvent(
     name: eventName,
     videogame,
     isOnline: !!rawEvent.isOnline,
+    eventType,
     lastBracketType: bracketType,
     participants: Array.from(participantsMap.values()),
     sets,
@@ -242,6 +260,7 @@ function mapSet(
   eventId: string,
   entrantIdToPlayerId: Map<string, PlayerId>,
   participantsMap: Map<string, Participant>,
+  targetPlayerId: PlayerId,
 ): Set | null {
   const competitors = new Map<PlayerId, SetPlayer>()
 
@@ -249,9 +268,19 @@ function mapSet(
     if (!slot || !slot.entrant) continue
     const entrant = slot.entrant
     if (!entrant.id || !entrant.players) continue
-    const firstPlayer = entrant.players[0]
-    if (!firstPlayer || !firstPlayer.id) continue
-    const playerId = asPlayerId(firstPlayer.id.toString())
+
+    const players = entrant.players
+    const hasTargetPlayer = players.some(
+      (player) => player?.id !== undefined && player.id !== null && asPlayerId(player.id.toString()) === targetPlayerId
+    )
+    const activePlayer = hasTargetPlayer
+      ? players.find(
+          (player) => player?.id !== undefined && player.id !== null && asPlayerId(player.id.toString()) === targetPlayerId
+        )
+      : players.find((player) => player?.id !== undefined && player.id !== null)
+
+    if (!activePlayer || !activePlayer.id) continue
+    const playerId = asPlayerId(activePlayer.id.toString())
 
     entrantIdToPlayerId.set(entrant.id.toString(), playerId)
 
@@ -343,21 +372,28 @@ function mapGame(
   }
 
   const selections: GameSelection[] = []
-  for (const sel of rawGame.selections || []) {
-    if (!sel || !sel.entrant || !sel.character || !sel.entrant.id) continue
-    const playerId = entrantIdToPlayerId.get(sel.entrant.id.toString())
+  for (const selection of rawGame.selections || []) {
+    if (!selection || !selection.entrant || !selection.character || !selection.entrant.id) continue
+
+    let playerId: PlayerId | undefined = undefined
+    if (selection.participant?.player?.id) {
+      playerId = asPlayerId(selection.participant.player.id.toString())
+    } else {
+      playerId = entrantIdToPlayerId.get(selection.entrant.id.toString())
+    }
     if (!playerId) continue
 
-    const characterId = sel.character.id?.toString()
+    const characterId = selection.character.id?.toString()
     if (!characterId) throw new Error('Character ID is missing')
 
-    const characterName = sel.character.name
+    const characterName = selection.character.name
     if (!characterName) throw new Error('Character name is missing')
 
     selections.push(
       new GameSelection(
         playerId,
         new Character(asCharacterId(characterId), characterName),
+        asEntrantId(selection.entrant.id.toString()),
       ),
     )
   }
