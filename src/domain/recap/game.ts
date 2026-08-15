@@ -1,4 +1,4 @@
-import type { GameId, PlayerId } from '#/domain/shared-kernel/ids'
+import type { GameId, PlayerId, EntrantId } from '#/domain/shared-kernel/ids'
 import type { Character } from '#/domain/recap/character'
 import type { Stage } from '#/domain/recap/stage'
 
@@ -22,7 +22,7 @@ export class GameSelection {
   constructor(
     public readonly playerId: PlayerId,
     public readonly character: Character,
-    public readonly entrantId?: string,
+    public readonly entrantId?: EntrantId,
   ) {}
 }
 
