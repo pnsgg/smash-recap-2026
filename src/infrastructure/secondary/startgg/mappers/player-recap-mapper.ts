@@ -88,6 +88,25 @@ export function mapPlayerRecap(
     const rawTournamentName = rawTournament.name
     if (!rawTournamentName) throw new Error('Tournament name is missing')
 
+    const rawTournamentSlug = rawTournament.slug
+    if (!rawTournamentSlug) throw new Error('Tournament slug is missing')
+
+    const rawTournamentStartAt = rawTournament.startAt
+    if (rawTournamentStartAt === null)
+      throw new Error('Tournament startAt is missing')
+
+    const rawTournamentOwner = rawTournament.owner
+    if (!rawTournamentOwner) throw new Error('Tournament owner is missing')
+
+    const rawTournamentOwnerId = rawTournamentOwner.id?.toString()
+    if (!rawTournamentOwnerId) throw new Error('Tournament owner ID is missing')
+
+    const rawTournamentOwnerName = rawTournamentOwner.name
+
+    const rawTournamentOwnerSlug = rawTournamentOwner.slug
+    if (!rawTournamentOwnerSlug)
+      throw new Error('Tournament owner slug is missing')
+
     tournaments.push(
       new Tournament({
         id: asTournamentId(rawTournamentId),
@@ -110,8 +129,15 @@ export function mapPlayerRecap(
                   : null,
               })
             : null,
-        startDate: new Date(((rawTournament.startAt as number) || 0) * 1000),
+        startDate: new Date(rawTournamentStartAt * 1000),
         events,
+        slug: rawTournamentSlug,
+        shortSlug: rawTournament.shortSlug,
+        owner: {
+          id: rawTournamentOwnerId,
+          name: rawTournamentOwnerName,
+          slug: rawTournamentOwnerSlug,
+        },
       }),
     )
   }
@@ -356,7 +382,7 @@ function mapSet(
     fullRoundText,
     games,
     completedAt: rawSet.completedAt
-      ? new Date((rawSet.completedAt as number) * 1000)
+      ? new Date(rawSet.completedAt * 1000)
       : null,
     bracketType,
   })

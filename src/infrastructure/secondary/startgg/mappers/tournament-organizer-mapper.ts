@@ -65,13 +65,45 @@ export function mapTournamentOrganizer(
         })
       })
 
+    const rawTournamentId = raw.id?.toString()
+    if (!rawTournamentId) throw new Error('Tournament ID is missing')
+
+    const rawTournamentName = raw.name
+    if (!rawTournamentName) throw new Error('Tournament name is missing')
+
+    const rawTournamentSlug = raw.slug
+    if (!rawTournamentSlug) throw new Error('Tournament slug is missing')
+
+    const rawTournamentStartAt = raw.startAt
+    if (rawTournamentStartAt === null)
+      throw new Error('Tournament startAt is missing')
+
+    const rawTournamentOwner = raw.owner
+    if (!rawTournamentOwner) throw new Error('Tournament owner is missing')
+
+    const rawTournamentOwnerId = rawTournamentOwner.id?.toString()
+    if (!rawTournamentOwnerId) throw new Error('Tournament owner ID is missing')
+
+    const rawTournamentOwnerName = rawTournamentOwner.name
+
+    const rawTournamentOwnerSlug = rawTournamentOwner.slug
+    if (!rawTournamentOwnerSlug)
+      throw new Error('Tournament owner slug is missing')
+
     return new Tournament({
-      id: asTournamentId(raw.id?.toString() ?? ''),
-      name: raw.name ?? 'Unknown Tournament',
+      id: asTournamentId(rawTournamentId),
+      name: rawTournamentName,
       address: null,
-      startDate: new Date(),
+      startDate: new Date(rawTournamentStartAt * 1000),
       events,
       numAttendees: raw.numAttendees ?? 0,
+      slug: rawTournamentSlug,
+      shortSlug: raw.shortSlug,
+      owner: {
+        id: rawTournamentOwnerId,
+        name: rawTournamentOwnerName,
+        slug: rawTournamentOwnerSlug,
+      },
     })
   })
 
