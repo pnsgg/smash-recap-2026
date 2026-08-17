@@ -1,4 +1,4 @@
-import { graphql } from 'gql.tada'
+import { graphql } from '#/graphql'
 
 export const searchPlayerByGamerTag = graphql(`
   query SearchPlayerByGamerTag($query: PlayerQuery!) {

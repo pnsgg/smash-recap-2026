@@ -7,7 +7,7 @@ const client = new StartggClient()
 const sgg = new StartggTournamentOrganizerRepository(client)
 
 const DISCRIMINATORS = {
-  CLEMBS: 'user/a922f126',
+  CLEMBS: 'user/e3a5b49b',
   MASKIME: 'user/3d2f6e89',
   ROUXCHOV: 'user/89723908',
 } as const
@@ -37,6 +37,11 @@ const outputToRecap = async (
     console.log('\nEvent Type:')
     to.eventTypeBreakdown().forEach(({ type, count }) => {
       console.log(` - ${EventTypeHelper.toString(type)}: ${count} events`)
+    })
+
+    console.log('\nSeries Organized:')
+    to.seriesOrganized(3).forEach((series) => {
+      console.log(` - ${series.seriesName}: ${series.count()} tournaments`)
     })
   } else {
     console.log('This user did not organize any tournaments this year.')

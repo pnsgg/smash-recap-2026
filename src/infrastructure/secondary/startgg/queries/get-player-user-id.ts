@@ -1,4 +1,4 @@
-import { graphql } from 'gql.tada'
+import { graphql } from '#/graphql'
 
 export const getPlayerUserId = graphql(`
   query GetPlayerUserId($slug: String!) {

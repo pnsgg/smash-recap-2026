@@ -14,6 +14,9 @@ type TournamentOverrides = {
   events?: Event[]
   startDate?: Date
   numAttendees?: number | null
+  slug?: string | null
+  shortSlug?: string | null
+  owner?: { id: string; name: string; slug: string }
 }
 
 export const TournamentFactory = Factory.define<
@@ -32,6 +35,14 @@ export const TournamentFactory = Factory.define<
     params.numAttendees === undefined
       ? faker.number.int({ min: 50, max: 500 })
       : params.numAttendees
+  const slug =
+    params.slug ?? `tournament/${faker.helpers.slugify(name).toLowerCase()}`
+  const shortSlug = params.shortSlug ?? null
+  const owner = params.owner ?? {
+    id: `user-${sequence}`,
+    name: faker.person.fullName(),
+    slug: `user/${faker.internet.username().toLowerCase()}`,
+  }
 
   return new Tournament({
     id,
@@ -40,5 +51,8 @@ export const TournamentFactory = Factory.define<
     events,
     startDate,
     numAttendees,
+    slug,
+    shortSlug,
+    owner,
   })
 })

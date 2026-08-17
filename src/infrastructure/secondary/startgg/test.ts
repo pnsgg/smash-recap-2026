@@ -132,6 +132,12 @@ const outputRecap = async (
       console.log(` - ${type}: ${count}`)
     }
     console.log()
+
+    console.log('Most played series:')
+    player.seriesPlayed(3).forEach((series) => {
+      console.log(` - ${series.seriesName}: ${series.count()} tournaments`)
+    })
+    console.log()
   } else {
     console.log(
       'Player has not attended enough tournaments to have a proper recap...',

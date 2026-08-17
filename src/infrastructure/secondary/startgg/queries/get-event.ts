@@ -1,4 +1,4 @@
-import { graphql } from 'gql.tada'
+import { graphql } from '#/graphql'
 
 export const getEvent = graphql(`
   query GetEvent($eventId: ID!, $userId: ID!) {
@@ -14,6 +14,13 @@ export const getEvent = graphql(`
       tournament {
         id
         name
+        slug
+        shortSlug
+        owner {
+          id
+          name
+          slug
+        }
         startAt
         city
         addrState
