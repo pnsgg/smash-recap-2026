@@ -80,7 +80,7 @@ export class SeriesClustering {
       clean = clean.substring('tournament/'.length)
     }
     return clean
-      .replace(/[_\-\/\\:#]/g, ' ') // Replace special characters with space
+      .replace(/[_\-/\\:#]/g, ' ') // Replace special characters with space
       .replace(/\s+/g, ' ') // Replace multiple spaces with single space
       .trim()
   }
@@ -172,7 +172,7 @@ export class SeriesClustering {
   private getCleanLabel(name: string): string {
     return (
       name
-        .replace(/\s*[#\-]?\s*(?:\d+|[ivx]+)\s*$/gi, '') // Remove #, -, numbers, and roman numerals at the end of the string
+        .replace(/\s*[#-]?\s*(?:\d+|[ivx]+)\s*$/gi, '') // Remove #, -, numbers, and roman numerals at the end of the string
         .trim() || name
     )
   }
