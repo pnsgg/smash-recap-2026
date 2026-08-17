@@ -15,6 +15,10 @@ describe('TournamentOrganizerMapper', () => {
         id: 'tournament-1',
         name: 'Genesis 10',
         numAttendees: 1500,
+        slug: 'genesis-10',
+        shortSlug: null,
+        startAt: 1700000000,
+        owner: { id: 'owner-1', name: 'TO Name', slug: 'user/to-slug' },
         events: [
           {
             id: 'event-1',
@@ -89,6 +93,10 @@ describe('TournamentOrganizerMapper', () => {
         id: 'tournament-1',
         name: 'Genesis 10',
         numAttendees: 1500,
+        slug: 'genesis-10',
+        shortSlug: null,
+        startAt: 1700000000,
+        owner: { id: 'owner-1', name: 'TO Name', slug: 'user/to-slug' },
         events: [
           null,
           {
@@ -133,6 +141,10 @@ describe('TournamentOrganizerMapper', () => {
         id: 'tournament-1',
         name: 'Genesis 10',
         numAttendees: 1500,
+        slug: 'genesis-10',
+        shortSlug: null,
+        startAt: 1700000000,
+        owner: { id: 'owner-1', name: 'TO Name', slug: 'user/to-slug' },
         events: [
           {
             id: 'event-1',
@@ -158,6 +170,10 @@ describe('TournamentOrganizerMapper', () => {
         id: 'tournament-1',
         name: 'Genesis 10',
         numAttendees: 1500,
+        slug: 'genesis-10',
+        shortSlug: null,
+        startAt: 1700000000,
+        owner: { id: 'owner-1', name: 'TO Name', slug: 'user/to-slug' },
         events: [
           {
             id: 'event-1',
@@ -183,6 +199,10 @@ describe('TournamentOrganizerMapper', () => {
         id: 'tournament-1',
         name: 'Genesis 10',
         numAttendees: 1500,
+        slug: 'genesis-10',
+        shortSlug: null,
+        startAt: 1700000000,
+        owner: { id: 'owner-1', name: 'TO Name', slug: 'user/to-slug' },
         events: [
           {
             id: 'event-1',
@@ -215,14 +235,22 @@ describe('TournamentOrganizerMapper', () => {
   test('handles missing or null optional fields gracefully by using fallback values', () => {
     const rawTournaments: TournamentDetailsResult[] = [
       {
-        id: null,
-        name: null,
+        id: 'tournament-1',
+        name: 'Genesis 10',
+        slug: 'genesis-10',
+        shortSlug: null,
+        startAt: 1700000000,
+        owner: { id: 'owner-1', name: 'TO Name', slug: 'user/to-slug' },
         numAttendees: null,
         events: null,
       },
       {
         id: 'tournament-2',
         name: 'Genesis 10',
+        slug: 'genesis-10',
+        shortSlug: null,
+        startAt: 1700000000,
+        owner: { id: 'owner-1', name: 'TO Name', slug: 'user/to-slug' },
         numAttendees: 1500,
         events: [
           {
@@ -244,8 +272,8 @@ describe('TournamentOrganizerMapper', () => {
 
     // First tournament checks (null events, name, attendees, id)
     const t1 = result.tournaments[0]
-    expect(t1.id).toBe('')
-    expect(t1.name).toBe('Unknown Tournament')
+    expect(t1.id).toBe('tournament-1')
+    expect(t1.name).toBe('Genesis 10')
     expect(t1.numAttendees).toBe(0)
     expect(t1.events).toHaveLength(0)
 

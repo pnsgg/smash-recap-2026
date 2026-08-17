@@ -151,6 +151,13 @@ const fetcher = new InMemoryFetcher()
             countryCode: 'US',
             lat: 37.3382,
             lng: -121.8863,
+            slug: 'tournament/genesis-x',
+            shortSlug: 'genesis-x',
+            owner: {
+              id: 'owner-123',
+              name: 'TO',
+              slug: 'user/to-slug',
+            },
           },
           userEntrant: {
             id: '1001',
@@ -284,6 +291,13 @@ const fetcher = new InMemoryFetcher()
             countryCode: 'US',
             lat: 37.3382,
             lng: -121.8863,
+            slug: 'tournament/genesis-x',
+            shortSlug: 'genesis-x',
+            owner: {
+              id: 'owner-123',
+              name: 'TO',
+              slug: 'user/to-slug',
+            },
           },
           userEntrant: {
             id: '1003',

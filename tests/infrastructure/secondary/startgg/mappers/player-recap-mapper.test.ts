@@ -56,6 +56,13 @@ describe('PlayerRecapMapper', () => {
           addrState: 'Occitanie',
           countryCode: 'FR',
           startAt: 1783188000,
+          slug: 'tournament/pns-bloombagarre',
+          shortSlug: 'bloombagarre',
+          owner: {
+            id: 'owner-123',
+            name: 'Clembs',
+            slug: 'user/clembs',
+          },
         },
         userEntrant: {
           id: 'entrant-1',
@@ -250,6 +257,13 @@ describe('PlayerRecapMapper', () => {
           addrState: null,
           countryCode: null,
           startAt: 1783188000,
+          slug: 'tournament/pns-bloombagarre',
+          shortSlug: 'bloombagarre',
+          owner: {
+            id: 'owner-123',
+            name: 'Clembs',
+            slug: 'user/clembs',
+          },
         },
         userEntrant: {
           id: 'entrant-1',
@@ -298,6 +312,13 @@ describe('PlayerRecapMapper', () => {
           addrState: null,
           countryCode: null,
           startAt: 0,
+          slug: 'tournament/t1',
+          shortSlug: 't1',
+          owner: {
+            id: 'owner-123',
+            name: 'Clembs',
+            slug: 'user/clembs',
+          },
         },
         userEntrant: {
           id: 'entrant-1',
@@ -333,6 +354,13 @@ describe('PlayerRecapMapper', () => {
           addrState: null,
           countryCode: null,
           startAt: 0,
+          slug: 'tournament/t1',
+          shortSlug: 't1',
+          owner: {
+            id: 'owner-123',
+            name: 'Clembs',
+            slug: 'user/clembs',
+          },
         },
         userEntrant: null,
       },
@@ -372,6 +400,13 @@ describe('PlayerRecapMapper', () => {
           addrState: null,
           countryCode: null,
           startAt: 0,
+          slug: 'tournament/t1',
+          shortSlug: 't1',
+          owner: {
+            id: 'owner-123',
+            name: 'Clembs',
+            slug: 'user/clembs',
+          },
         },
         userEntrant: {
           id: 'entrant-1',
@@ -432,6 +467,13 @@ describe('PlayerRecapMapper', () => {
           addrState: null,
           countryCode: null,
           startAt: 0,
+          slug: 'tournament/t1',
+          shortSlug: 't1',
+          owner: {
+            id: 'owner-123',
+            name: 'Clembs',
+            slug: 'user/clembs',
+          },
         },
         userEntrant: {
           id: 'entrant-1',
@@ -523,6 +565,13 @@ describe('PlayerRecapMapper', () => {
       addrState?: string | null
       countryCode?: string | null
       startAt?: number | null
+      slug?: string | null
+      shortSlug?: string | null
+      owner?: {
+        id?: string | null
+        name?: string | null
+        slug?: string | null
+      } | null
     } | null
     userEntrant: {
       id?: string | null
@@ -630,6 +679,12 @@ describe('PlayerRecapMapper', () => {
         addrState: null,
         countryCode: null,
         startAt: 0,
+        slug: 'tournament/t1',
+        owner: {
+          id: 'owner-123',
+          name: 'Clembs',
+          slug: 'user/clembs',
+        },
       },
       userEntrant: {
         id: 'entrant-1',
