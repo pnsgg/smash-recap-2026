@@ -5,6 +5,10 @@ import type { Event } from '#/domain/recap/event'
 import type { Set as EventSet } from '#/domain/recap/set'
 import type { Stage } from '#/domain/recap/stage'
 import { EventType } from '#/domain/recap/event-type'
+import {
+  SeriesClustering,
+  ClusteredSeries,
+} from '#/domain/recap/clustering/series-clustering'
 
 export type PlayerParams = {
   id: PlayerId
@@ -439,5 +443,25 @@ export class Player {
     }
 
     return counts
+  }
+
+  /**
+   * Identifies recurring series played by the player, sorted by count descending.
+   */
+  seriesPlayed(limit?: number): ClusteredSeries[] {
+    const clustering = new SeriesClustering(0.5)
+    const clusters = clustering.cluster(this.tournaments)
+    const sorted = clusters
+      .map(
+        (c) =>
+          new ClusteredSeries(
+            c.seriesName,
+            c.tournaments.sort(
+              (a, b) => b.startDate.getTime() - a.startDate.getTime(),
+            ),
+          ),
+      )
+      .sort((a, b) => b.count() - a.count())
+    return limit !== undefined ? sorted.slice(0, limit) : sorted
   }
 }

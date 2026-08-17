@@ -2,6 +2,10 @@ import type { UserSlug } from '#/domain/shared-kernel/ids'
 import type { Tournament } from '#/domain/recap/tournament'
 import type { Videogame } from '#/domain/recap/videogame'
 import { EventType, EventTypeHelper } from './event-type'
+import {
+  SeriesClustering,
+  ClusteredSeries,
+} from '#/domain/recap/clustering/series-clustering'
 
 export type TournamentOrganizerParams = {
   id: UserSlug
@@ -126,5 +130,25 @@ export class TournamentOrganizer {
       type: EventTypeHelper.fromNumber(Number(type)),
       count,
     }))
+  }
+
+  /**
+   * Identifies recurring series organized by the TO, sorted by count descending.
+   */
+  seriesOrganized(limit?: number): ClusteredSeries[] {
+    const clustering = new SeriesClustering(0.5)
+    const clusters = clustering.cluster(this.tournaments)
+    const sorted = clusters
+      .map(
+        (c) =>
+          new ClusteredSeries(
+            c.seriesName,
+            c.tournaments.sort(
+              (a, b) => b.startDate.getTime() - a.startDate.getTime(),
+            ),
+          ),
+      )
+      .sort((a, b) => b.count() - a.count())
+    return limit !== undefined ? sorted.slice(0, limit) : sorted
   }
 }

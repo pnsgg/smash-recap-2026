@@ -1487,4 +1487,49 @@ describe('Player', () => {
       })
     })
   })
+
+  describe('seriesPlayed', () => {
+    test('correctly groups attended series and sorts them by frequency', () => {
+      const tournaments = [
+        TournamentFactory.build({
+          name: 'PNS BloomBagarre #1',
+          slug: 'tournament/pns-bloombagarre-1',
+          startDate: new Date('2026-01-10'),
+        }),
+        TournamentFactory.build({
+          name: 'PNS BloomBagarre #2',
+          slug: 'tournament/pns-bloombagarre-2',
+          startDate: new Date('2026-01-24'),
+        }),
+        TournamentFactory.build({
+          name: 'BloomBagarre Rose',
+          slug: 'tournament/bloombagarre-rose',
+          startDate: new Date('2026-02-14'),
+        }),
+        TournamentFactory.build({
+          name: 'PNS KanD.I. #1',
+          slug: 'tournament/pns-kand-i-1',
+          startDate: new Date('2026-01-15'),
+        }),
+        TournamentFactory.build({
+          name: 'PNS KanD.I. #2',
+          slug: 'tournament/pns-kand-i-2',
+          startDate: new Date('2026-02-20'),
+        }),
+      ]
+
+      const player = PlayerFactory.build({ tournaments })
+      const series = player.seriesPlayed()
+
+      expect(series).toHaveLength(2)
+
+      expect(series[0].seriesName).toBe('PNS BloomBagarre')
+      expect(series[0].count()).toBe(3)
+      expect(series[0].tournaments).toHaveLength(3)
+
+      expect(series[1].seriesName).toBe('PNS KanD.I.')
+      expect(series[1].count()).toBe(2)
+      expect(series[1].tournaments).toHaveLength(2)
+    })
+  })
 })

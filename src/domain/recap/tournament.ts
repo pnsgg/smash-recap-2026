@@ -5,6 +5,12 @@ import type { Set } from '#/domain/recap/set'
 import type { Stage } from '#/domain/recap/stage'
 import type { Character } from '#/domain/recap/character'
 
+export type TournamentOwner = {
+  id: string
+  name: string | null
+  slug: string
+}
+
 export type TournamentParams = {
   id: TournamentId
   name: string
@@ -12,6 +18,9 @@ export type TournamentParams = {
   events: Event[]
   startDate: Date
   numAttendees?: number | null
+  slug: string
+  shortSlug?: string | null
+  owner: TournamentOwner
 }
 
 export class Tournament {
@@ -21,6 +30,9 @@ export class Tournament {
   public readonly events: Event[]
   public readonly startDate: Date
   public readonly numAttendees: number
+  public readonly slug: string
+  public readonly shortSlug: string | null
+  public readonly owner: TournamentOwner
 
   constructor(params: TournamentParams) {
     this.checkPreconditions(params)
@@ -30,12 +42,20 @@ export class Tournament {
     this.events = params.events
     this.startDate = params.startDate
     this.numAttendees = params.numAttendees ?? 0
+    this.slug = params.slug
+    this.shortSlug = params.shortSlug ?? null
+    this.owner = params.owner
   }
 
   private checkPreconditions(params: TournamentParams) {
     if (!params.name || params.name.trim() === '') {
       throw new Error(
         `Invalid parameter name: ${params.name}. Value cannot be empty.`,
+      )
+    }
+    if (!params.slug || params.slug.trim() === '') {
+      throw new Error(
+        `Invalid parameter slug: ${params.slug}. Value cannot be empty.`,
       )
     }
   }
