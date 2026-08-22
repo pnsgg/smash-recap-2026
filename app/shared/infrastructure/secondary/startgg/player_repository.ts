@@ -1,19 +1,19 @@
-import type { PlayerRepository } from '#recap/domain/ports/player_repository'
 import type { Player } from '#recap/domain/player'
+import type { PlayerRepository } from '#recap/domain/ports/player_repository'
 import { SearchPlayerResult } from '#search/domain/player_search_result'
 import { asPlayerId } from '#shared/domain/ids'
 import type { UserSlug } from '#shared/domain/ids'
-import type { StartggClientInterface } from '#shared/infrastructure/secondary/startgg/startgg_client'
-import { mapSearchPlayerResult } from '#shared/infrastructure/secondary/startgg/mappers/search_player_result_mapper'
-import { searchPlayerByGamerTag } from '#shared/infrastructure/secondary/startgg/queries/search_player_by_gamertag'
-import { getPlayerUserId } from '#shared/infrastructure/secondary/startgg/queries/get_player_user_id'
-import { getPlayerEventIds } from '#shared/infrastructure/secondary/startgg/queries/get_player_event_ids'
-import { getEvent } from '#shared/infrastructure/secondary/startgg/queries/get_event'
 import {
-  mapPlayerRecap,
   mapEmptyPlayer,
+  mapPlayerRecap,
 } from '#shared/infrastructure/secondary/startgg/mappers/player_recap_mapper'
 import type { EventResult } from '#shared/infrastructure/secondary/startgg/mappers/player_recap_mapper'
+import { mapSearchPlayerResult } from '#shared/infrastructure/secondary/startgg/mappers/search_player_result_mapper'
+import { getEvent } from '#shared/infrastructure/secondary/startgg/queries/get_event'
+import { getPlayerEventIds } from '#shared/infrastructure/secondary/startgg/queries/get_player_event_ids'
+import { getPlayerUserId } from '#shared/infrastructure/secondary/startgg/queries/get_player_user_id'
+import { searchPlayerByGamerTag } from '#shared/infrastructure/secondary/startgg/queries/search_player_by_gamertag'
+import type { StartggClientInterface } from '#shared/infrastructure/secondary/startgg/startgg_client'
 
 type StartggPlayerRepositoryConfig = {
   videogameIds: number[]

@@ -1,5 +1,5 @@
-import type { UserSlug } from '#shared/domain/ids'
 import type { TournamentOrganizer } from '#recap/domain/tournament_organizer'
+import type { UserSlug } from '#shared/domain/ids'
 
 export interface TournamentOrganizerRepository {
   /**

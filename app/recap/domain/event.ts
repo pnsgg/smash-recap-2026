@@ -1,11 +1,11 @@
-import type { EventId, PlayerId } from '#shared/domain/ids'
-import type { Participant } from '#recap/domain/participant'
-import type { Set } from '#recap/domain/set'
-import type { Videogame } from '#recap/domain/videogame'
 import type { BracketType } from '#recap/domain/bracket_type'
 import type { Character } from '#recap/domain/character'
-import type { Stage } from '#recap/domain/stage'
 import { EventType } from '#recap/domain/event_type'
+import type { Participant } from '#recap/domain/participant'
+import type { Set } from '#recap/domain/set'
+import type { Stage } from '#recap/domain/stage'
+import type { Videogame } from '#recap/domain/videogame'
+import type { EventId, PlayerId } from '#shared/domain/ids'
 
 export type EventParams = {
   id: EventId

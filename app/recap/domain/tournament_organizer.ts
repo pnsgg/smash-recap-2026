@@ -1,7 +1,7 @@
-import type { UserSlug } from '#shared/domain/ids'
+import { EventType, EventTypeHelper } from '#recap/domain/event_type'
 import type { Tournament } from '#recap/domain/tournament'
 import type { Videogame } from '#recap/domain/videogame'
-import { EventType, EventTypeHelper } from './event_type'
+import type { UserSlug } from '#shared/domain/ids'
 
 export type TournamentOrganizerParams = {
   id: UserSlug

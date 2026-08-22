@@ -8,7 +8,6 @@
 | command to run this file and monitor file changes
 |
 */
-
 import 'reflect-metadata'
 import { Ignitor, prettyPrintError } from '@adonisjs/core'
 

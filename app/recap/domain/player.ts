@@ -1,10 +1,10 @@
-import type { PlayerId } from '#shared/domain/ids'
-import type { Tournament } from '#recap/domain/tournament'
 import type { Character } from '#recap/domain/character'
 import type { Event } from '#recap/domain/event'
+import { EventType } from '#recap/domain/event_type'
 import type { Set as EventSet } from '#recap/domain/set'
 import type { Stage } from '#recap/domain/stage'
-import { EventType } from '#recap/domain/event_type'
+import type { Tournament } from '#recap/domain/tournament'
+import type { PlayerId } from '#shared/domain/ids'
 
 export type PlayerParams = {
   id: PlayerId

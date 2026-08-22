@@ -1,31 +1,31 @@
-import { Player } from '#recap/domain/player'
-import { Tournament } from '#recap/domain/tournament'
+import type { ResultOf } from 'gql.tada'
 import { Address } from '#recap/domain/address'
+import { BracketTypeHelper } from '#recap/domain/bracket_type'
+import { Character } from '#recap/domain/character'
 import { Event } from '#recap/domain/event'
+import { EventType } from '#recap/domain/event_type'
+import { Game, GameSelection } from '#recap/domain/game'
 import { Participant } from '#recap/domain/participant'
+import { Player } from '#recap/domain/player'
 import { Seed } from '#recap/domain/seed'
 import { Set, SetPlayer } from '#recap/domain/set'
-import { Game, GameSelection } from '#recap/domain/game'
-import { Character } from '#recap/domain/character'
 import { Stage } from '#recap/domain/stage'
+import { Tournament } from '#recap/domain/tournament'
 import { Videogame } from '#recap/domain/videogame'
-import { EventType } from '#recap/domain/event_type'
 import {
-  asPlayerId,
-  asTournamentId,
-  asEventId,
-  asParticipantId,
-  asSetId,
-  asGameId,
   asCharacterId,
-  asStageId,
-  asVideogameId,
   asEntrantId,
+  asEventId,
+  asGameId,
+  asParticipantId,
+  asPlayerId,
+  asSetId,
+  asStageId,
+  asTournamentId,
+  asVideogameId,
 } from '#shared/domain/ids'
 import type { PlayerId } from '#shared/domain/ids'
-import type { ResultOf } from 'gql.tada'
-import type { getEvent } from '../queries/get_event'
-import { BracketTypeHelper } from '#recap/domain/bracket_type'
+import type { getEvent } from '#shared/infrastructure/secondary/startgg/queries/get_event.js'
 
 export type EventResult = Exclude<ResultOf<typeof getEvent>['event'], null | undefined>
 type EntrantResult = Exclude<EventResult['userEntrant'], null | undefined>

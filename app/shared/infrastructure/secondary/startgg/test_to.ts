@@ -1,7 +1,7 @@
+import { EventTypeHelper } from '#recap/domain/event_type'
+import { asUserSlug } from '#shared/domain/ids'
 import { StartggClient } from '#shared/infrastructure/secondary/startgg/startgg_client'
 import { StartggTournamentOrganizerRepository } from '#shared/infrastructure/secondary/startgg/tournament_organizer_repository'
-import { asUserSlug } from '#shared/domain/ids'
-import { EventTypeHelper } from '#recap/domain/event_type'
 
 const client = new StartggClient()
 const sgg = new StartggTournamentOrganizerRepository(client)

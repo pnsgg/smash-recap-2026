@@ -1,6 +1,6 @@
-import { StartggClient } from '#shared/infrastructure/secondary/startgg/startgg_client'
-import { StartggPlayerRepository } from '#shared/infrastructure/secondary/startgg/player_repository'
 import { asUserSlug } from '#shared/domain/ids'
+import { StartggPlayerRepository } from '#shared/infrastructure/secondary/startgg/player_repository'
+import { StartggClient } from '#shared/infrastructure/secondary/startgg/startgg_client'
 
 const sgg = new StartggPlayerRepository(new StartggClient(), {
   videogameIds: [1386],

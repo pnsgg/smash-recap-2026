@@ -1,6 +1,6 @@
-import type { GameId, PlayerId, EntrantId } from '#shared/domain/ids'
 import type { Character } from '#recap/domain/character'
 import type { Stage } from '#recap/domain/stage'
+import type { EntrantId, GameId, PlayerId } from '#shared/domain/ids'
 
 export type GameSelectionParams = {
   playerId: PlayerId

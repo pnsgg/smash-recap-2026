@@ -1,13 +1,13 @@
-import { Tournament } from '#recap/domain/tournament'
-import { Event } from '#recap/domain/event'
-import { Videogame } from '#recap/domain/videogame'
-import { TournamentOrganizer } from '#recap/domain/tournament_organizer'
-import { EventType } from '#recap/domain/event_type'
-import { asTournamentId, asEventId, asVideogameId } from '#shared/domain/ids'
-import type { UserSlug } from '#shared/domain/ids'
 import type { ResultOf } from 'gql.tada'
-import type { getTournamentDetails } from '#shared/infrastructure/secondary/startgg/queries/get_tournament_details'
 import { BracketTypeHelper } from '#recap/domain/bracket_type'
+import { Event } from '#recap/domain/event'
+import { EventType } from '#recap/domain/event_type'
+import { Tournament } from '#recap/domain/tournament'
+import { TournamentOrganizer } from '#recap/domain/tournament_organizer'
+import { Videogame } from '#recap/domain/videogame'
+import { asEventId, asTournamentId, asVideogameId } from '#shared/domain/ids'
+import type { UserSlug } from '#shared/domain/ids'
+import type { getTournamentDetails } from '#shared/infrastructure/secondary/startgg/queries/get_tournament_details'
 
 export type TournamentDetailsResult = Exclude<
   ResultOf<typeof getTournamentDetails>['tournament'],

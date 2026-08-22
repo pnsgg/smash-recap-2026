@@ -1,5 +1,5 @@
-import type { ParticipantId, PlayerId } from '#shared/domain/ids'
 import type { Seed } from '#recap/domain/seed'
+import type { ParticipantId, PlayerId } from '#shared/domain/ids'
 
 export type ParticipantParams = {
   id: ParticipantId
