@@ -1,28 +1,32 @@
-.DS_Store
-dist
-dist-ssr
-*.local
-.wrangler
-.vinxi
-__unconfig*
-todos.json
+# AdonisJS
+.adonisjs
 
-# Docker stuff
-.dockerignore
-Dockerfile
+# Test and coverage
+coverage
 
-# Editor config
-.vscode
+# Dependencies and AdonisJS build
+node_modules
+build
+
+
+# Secrets
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# Frontend assets compiled code
+public/assets
+
+# Build tools specific
+npm-debug.log
+yarn-error.log
+
+# Editors specific
+.fleet
 .idea
+.vscode
 .zed
 
-# Temp files
-.tanstack
-
-# Build outputs
-node_modules
-.output
-.nitro
-
-# Env files
-.env
+# Platform specific
+.DS_Store
