@@ -34,7 +34,10 @@ test.group('StartggClient', (group) => {
     const result = await client.fetch(mockDocument, mockVariables)
 
     assert.equal(mockFetch.mock.calls.length, 1)
-    const [calledUrl, calledInit] = mockFetch.mock.calls[0].arguments as unknown as [string, RequestInit]
+    const [calledUrl, calledInit] = mockFetch.mock.calls[0].arguments as unknown as [
+      string,
+      RequestInit,
+    ]
 
     const url = new URL(calledUrl)
     assert.equal(url.origin, 'https://www.start.gg')
