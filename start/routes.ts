@@ -6,6 +6,7 @@
 | The routes file is used for defining the HTTP routes.
 |
 */
+import '#start/routes/api'
 import router from '@adonisjs/core/services/router'
 
 router.get('/', async () => 'It works!')
