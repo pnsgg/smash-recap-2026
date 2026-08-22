@@ -35,7 +35,7 @@ test.group('Players search', (group) => {
 
     const response = await client.get('/api/v1/players/search?gamertag=Glutonny')
 
-    response.assertStatus(200)
+    response.assertStatus(404)
     response.assertBodyContains([
       {
         id: '123',

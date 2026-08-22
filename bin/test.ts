@@ -47,6 +47,12 @@ new Ignitor(APP_ROOT, { importer: IMPORTER })
     const { runnerHooks, ...config } = await import('../tests/bootstrap.js')
 
     processCLIArgs(process.argv.splice(2))
+
+    const activatedReporters = ['spec']
+    if (process.env.GITHUB_ACTIONS === 'true') {
+      activatedReporters.push('github')
+    }
+
     configure({
       ...app.rcFile.tests,
       ...config,
@@ -55,7 +61,7 @@ new Ignitor(APP_ROOT, { importer: IMPORTER })
         teardown: runnerHooks.teardown.concat([() => app.terminate()]),
       },
       reporters: {
-        activated: ['spec'],
+        activated: activatedReporters,
         list: [reporters.spec(), reporters.ndjson(), reporters.dot(), reporters.github()],
       },
     })
