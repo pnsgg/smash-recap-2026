@@ -1,0 +1,25 @@
+Smash Recap Todo / Reminder Checklist:
+
+- [ ] Implement longestWinStreak domain metric (consecutive chronological set wins)
+- [ ] Implement biggestUpsetSuffered domain metric (largest negative upset factor loss)
+- [x] Implement reverseSweeps domain metric (sets won after being down 0-2 or 0-1)
+- [ ] Implement characterPerformance domain metric (win rate for each character played)
+- [ ] Implement seedingAccuracy domain metric (percentage of sets won as higher seed)
+- [ ] Achievement: "Seed Defender" / "Gatekeeper" (e.g. placed at or above projected seed (SPR >= 0) or won all matches where player was the higher seed)
+- [ ] Ultimate Rival: Head-to-head records against the player faced the most times
+- [ ] Nemesis: The opponent who defeated you the most times
+- [ ] Counterpick Success: Win rate on stage/character counterpicks (games played immediately after a game loss)
+- [ ] Held Your Ground: Number of lower-seeded players who tried to upset you but failed
+- [ ] Bracket Buster: Highest-seeded player defeated in the bracket (biggest upset achieved)
+- [ ] Reverse Sweep: Number of sets won after being down 0-2 (or 0-1) / suffered reverse sweeps
+- [ ] Gatekeeper: The player who stopped you from reaching top placement milestones
+- [ ] Clutch Factor: Win rate in deciding final games of a set (e.g. game 3 in Bo3, game 5 in Bo5)
+- [ ] Look at tournament tier (in gql schema) as `competitionTier`
+- [ ] Count the number of eventType attended => 3 DOUBLE ELIM, 1 SWISS ...
+- [ ] Afficher les positions dans les leagues
+- [ ] You met or exceeded your seed X% of the time and your mean seed is Y.
+
+Future Ideas & Ideas to Think About:
+- [ ] Tournament Organizer (TO) Recap:
+  - [ ] Seeding Accuracy: Percentage of matches won by the higher-seeded player across all your events (evaluating if the seeding was accurate).
+  - [ ] Tournament Duration: Compare estimated duration (endAt - startAt) with actual duration (based on completion timestamps of final sets) to see if tournaments ran on schedule.

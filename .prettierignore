@@ -1,3 +1,6 @@
+# AdonisJS
+.adonisjs
+
 # Lock files
 package-lock.json
 pnpm-lock.yaml
@@ -13,6 +16,7 @@ yarn.lock
 
 # Build
 .output/
+build
 
 # Paraglide
 project.inlang/

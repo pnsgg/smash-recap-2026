@@ -1,0 +1,7 @@
+- question: Question: How do we counts tournaments attended ?
+- propositions:
+    - `.tournaments.length` regardeless of the number of events
+    - tournaments x events like sgg does here: https://www.start.gg/user/7611d833/results?page=1&filter={%22videogameId%22%3A[1386]}
+
+
+- filtrer par jeu + sort par entrant DESC => Events[0]
