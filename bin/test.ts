@@ -1,4 +1,5 @@
 import { configure, processCLIArgs, run } from '@japa/runner'
+import * as reporters from '@japa/runner/reporters'
 import 'reflect-metadata'
 import { Ignitor, prettyPrintError } from '@adonisjs/core'
 
@@ -52,6 +53,10 @@ new Ignitor(APP_ROOT, { importer: IMPORTER })
       ...{
         setup: runnerHooks.setup,
         teardown: runnerHooks.teardown.concat([() => app.terminate()]),
+      },
+      reporters: {
+        activated: ['spec'],
+        list: [reporters.spec(), reporters.ndjson(), reporters.dot(), reporters.github()],
       },
     })
   })
