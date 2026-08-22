@@ -31,7 +31,11 @@
     "#start/*": "./start/*.js",
     "#tests/*": "./tests/*.js",
     "#transformers/*": "./app/transformers/*.js",
-    "#config/*": "./config/*.js"
+    "#config/*": "./config/*.js",
+    "#app/*": "./app/*.js",
+    "#recap/*": "./app/recap/*.js",
+    "#search/*": "./app/search/*.js",
+    "#shared/*": "./app/shared/*.js"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^8.4.0",

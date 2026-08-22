@@ -1,0 +1,133 @@
+import type { EventId, PlayerId } from '#shared/domain/ids'
+import type { Participant } from '#recap/domain/participant'
+import type { Set } from '#recap/domain/set'
+import type { Videogame } from '#recap/domain/videogame'
+import type { BracketType } from '#recap/domain/bracket-type'
+import type { Character } from '#recap/domain/character'
+import type { Stage } from '#recap/domain/stage'
+import { EventType } from '#recap/domain/event-type'
+
+export type EventParams = {
+  id: EventId
+  name: string
+  videogame: Videogame
+  isOnline: boolean
+  eventType: EventType
+  lastBracketType: BracketType
+  participants: Participant[]
+  sets: Set[]
+  numEntrants?: number
+}
+
+export class Event {
+  public readonly id: EventId
+  public readonly name: string
+  public readonly videogame: Videogame
+  public readonly isOnline: boolean
+  public readonly eventType: EventType
+  public readonly lastBracketType: BracketType
+  public readonly participants: Participant[]
+  public readonly sets: Set[]
+  public readonly numEntrants: number
+
+  constructor(params: EventParams) {
+    this.checkPreconditions(params)
+
+    this.id = params.id
+    this.name = params.name
+    this.videogame = params.videogame
+    this.isOnline = params.isOnline
+    this.eventType = params.eventType
+    this.lastBracketType = params.lastBracketType
+    this.participants = params.participants
+    this.sets = params.sets
+    this.numEntrants = params.numEntrants ?? 0
+  }
+
+  private checkPreconditions(params: EventParams) {
+    if (!params.name || params.name.trim() === '') {
+      throw new Error(`Invalid parameter name: ${params.name}. Value cannot be empty.`)
+    }
+  }
+
+  isTeams(): boolean {
+    return this.eventType !== EventType.SINGLES
+  }
+
+  getFinalRankingUpTo(upTo: number): Participant[] {
+    return [...this.participants]
+      .sort((p1, p2) => p1.seed.finalPlacement - p2.seed.finalPlacement)
+      .slice(0, upTo)
+  }
+
+  /**
+   * Computes the Seeding Performance Rating (SPR) of a player in this event.
+   * Returns null if the player was not a participant or the bracket format is unsupported.
+   */
+  getPlayerSPR(playerId: PlayerId): number | null {
+    const participant = this.participants.find((p) => p.playerId === playerId)
+    if (!participant) return null
+    return participant.seed.seedingPerformanceRating(this.lastBracketType)
+  }
+
+  /**
+   * Retrieves characters played by a player in this event.
+   */
+  getPlayerCharacters(playerId: PlayerId): Character[] {
+    return this.sets.flatMap((set) => set.getPlayerCharacters(playerId))
+  }
+
+  /**
+   * Retrieves characters played by a player's opponents in this event.
+   */
+  getOpponentCharacters(playerId: PlayerId): Character[] {
+    return this.sets.flatMap((set) => set.getOpponentCharacters(playerId))
+  }
+
+  /**
+   * Finds the player's highest upset (win against a higher seeded player) in this event.
+   */
+  getPlayerHighestUpset(playerId: PlayerId): { set: Set; factor: number } | null {
+    let bestSet: { set: Set; factor: number } | null = null
+    for (const set of this.sets) {
+      if (set.winnerId !== playerId) continue
+      const factor = set.upsetFactor()
+      if (factor !== null && factor > 0) {
+        if (bestSet === null || factor > bestSet.factor) {
+          bestSet = { set, factor }
+        }
+      }
+    }
+    return bestSet
+  }
+
+  /**
+   * Aggregates stage activity outcomes for a player in this event.
+   */
+  getStageActivity(playerId: PlayerId): { stage: Stage; won: boolean }[] {
+    return this.sets.flatMap((set) => set.getStageActivity(playerId))
+  }
+
+  /**
+   * Counts total sets played by a player in this event.
+   */
+  getPlayerSetsCount(playerId: PlayerId): number {
+    return this.sets.filter((set) => set.competitors.has(playerId)).length
+  }
+
+  /**
+   * Aggregates losses against characters for a player in this event.
+   */
+  getPlayerLossesAgainstCharacters(
+    playerId: PlayerId
+  ): { opponentCharacter: Character; lost: boolean }[] {
+    return this.sets.flatMap((set) => set.getPlayerLossesAgainstCharacters(playerId))
+  }
+
+  /**
+   * Aggregates opponent player IDs faced in this event.
+   */
+  getOpponentPlayerIds(playerId: PlayerId): PlayerId[] {
+    return this.sets.flatMap((set) => set.getOpponentPlayerIds(playerId))
+  }
+}
