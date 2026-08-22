@@ -7,7 +7,9 @@
       "#app/*": ["./app/*"],
       "#recap/*": ["./app/recap/*"],
       "#search/*": ["./app/search/*"],
-      "#shared/*": ["./app/shared/*"]
+      "#shared/*": ["./app/shared/*"],
+      "#/graphql": ["./app/shared/infrastructure/secondary/startgg/graphql.ts"],
+      "#/graphql-env": ["./app/shared/infrastructure/secondary/startgg/graphql-env.d.ts"]
     }
   }
 }
