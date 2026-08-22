@@ -424,6 +424,60 @@ export class Player {
   }
 
   /**
+   * Find the nemesis of the player: the opponent against whom he has the worst win rate,
+   * among those he has played at least `minSets` times.
+   */
+  nemesis(minSets = 3): HeadToHeadEntry | null {
+    const headToHeadMap = new Map<
+      PlayerId,
+      { playerWonSet: number; opponentWonSet: number }
+    >()
+
+    for (const tournament of this.tournaments) {
+      for (const event of tournament.events) {
+        for (const set of event.sets) {
+          if (!set.competitors.has(this.id)) continue
+
+          const opponentId = Array.from(set.competitors.keys()).find(
+            (id) => id !== this.id,
+          )
+          if (!opponentId) continue
+
+          const record = headToHeadMap.get(opponentId) || {
+            playerWonSet: 0,
+            opponentWonSet: 0,
+          }
+
+          if (set.winnerId === this.id) {
+            record.playerWonSet++
+          } else if (set.winnerId === opponentId) {
+            record.opponentWonSet++
+          }
+
+          headToHeadMap.set(opponentId, record)
+        }
+      }
+    }
+
+    const entries = Array.from(headToHeadMap.entries())
+      .map(([opponentPlayerId, record]) => {
+        const totalSets = record.playerWonSet + record.opponentWonSet
+        return {
+          opponentPlayerId,
+          playerWonSet: record.playerWonSet,
+          opponentWonSet: record.opponentWonSet,
+          totalSets,
+          winRate: totalSets > 0 ? record.playerWonSet / totalSets : 0,
+        }
+      })
+      .filter((entry) => entry.totalSets >= minSets)
+
+    if (entries.length === 0) return null
+
+    return entries.sort((a, b) => a.winRate - b.winRate)[0]
+  }
+
+  /**
    * Returns a breakdown of event types (singles vs. teams) played by this player.
    */
   eventTypeBreakdown(): Record<EventType, number> {

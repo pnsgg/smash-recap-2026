@@ -81,6 +81,8 @@ export const SetFactory = Factory.define<Set, any, Set, SetOverrides>(
   },
 ).afterBuild((set) => {
   // Sort the games array by orderNum after Fishery's Object.assign overrides
-  ;(set as any).games = [...set.games].sort((a, b) => a.orderNum - b.orderNum)
+  ;(set as unknown as any).games = [...set.games].sort(
+    (a, b) => a.orderNum - b.orderNum,
+  )
   return set
 })

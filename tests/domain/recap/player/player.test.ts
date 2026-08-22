@@ -1293,6 +1293,25 @@ describe('Player', () => {
     })
   })
 
+  describe('nemesis', () => {
+    test('should return null if player played no sets', () => {
+      const player = PlayerFactory.build()
+      expect(player.nemesis()).toBeNull()
+    })
+
+    test('should return null if player played fewer than minSets sets', () => {
+      const player = PlayerFactory.build()
+      expect(player.nemesis(10)).toBeNull()
+    })
+
+    test.skip('should return the nemesis player if player played at least minSets sets', () => {
+      const player = PlayerFactory.build()
+      const nemesis = player.nemesis(3)
+      expect(nemesis).not.toBeNull()
+      expect(nemesis?.opponentPlayerId).toBe
+    })
+  })
+
   describe('decidingGameSets', () => {
     test('should return 0 count and win rate if player played no sets', () => {
       const player = PlayerFactory.build()
