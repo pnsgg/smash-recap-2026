@@ -1,6 +1,9 @@
 # AdonisJS
 .adonisjs
 
+# Test and coverage
+coverage
+
 # Dependencies and AdonisJS build
 node_modules
 build
