@@ -1,4 +1,4 @@
-import { BracketType } from '#recap/domain/bracket-type'
+import { BracketType } from '#recap/domain/bracket_type'
 
 export type SeedParams = {
   initialSeed: number

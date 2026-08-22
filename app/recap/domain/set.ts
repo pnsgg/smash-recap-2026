@@ -1,7 +1,7 @@
 import type { SetId, EventId, PlayerId } from '#shared/domain/ids'
 import type { Game } from '#recap/domain/game'
 import { Seed } from '#recap/domain/seed'
-import type { BracketType } from '#recap/domain/bracket-type'
+import type { BracketType } from '#recap/domain/bracket_type'
 import type { Character } from '#recap/domain/character'
 import type { Stage } from '#recap/domain/stage'
 

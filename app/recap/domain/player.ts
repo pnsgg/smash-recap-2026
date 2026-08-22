@@ -4,7 +4,7 @@ import type { Character } from '#recap/domain/character'
 import type { Event } from '#recap/domain/event'
 import type { Set as EventSet } from '#recap/domain/set'
 import type { Stage } from '#recap/domain/stage'
-import { EventType } from '#recap/domain/event-type'
+import { EventType } from '#recap/domain/event_type'
 
 export type PlayerParams = {
   id: PlayerId

@@ -1,5 +1,5 @@
-import { StartggClient } from './startgg-client'
-import { StartggPlayerRepository } from './player-repository'
+import { StartggClient } from '#shared/infrastructure/secondary/startgg/startgg_client'
+import { StartggPlayerRepository } from '#shared/infrastructure/secondary/startgg/player_repository'
 import { asUserSlug } from '#shared/domain/ids'
 
 const sgg = new StartggPlayerRepository(new StartggClient(), {
