@@ -1,27 +1,28 @@
-FROM oven/bun:1.3.14-debian AS base
+FROM oven/bun:1-slim AS base
 
+# ----------------------------
+# Stage 1: Install all dependencies
+# ----------------------------
 FROM base AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
-RUN bun ci
+RUN bun install --frozen-lockfile
 
-FROM base AS production-deps
+# ----------------------------
+# Stage 2: Build the application
+# ----------------------------
+FROM deps AS build
 WORKDIR /app
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production
-
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN bun run build
+RUN bun ace build
 
-FROM base AS runner
+# ----------------------------
+# Stage 3: Production runtime
+# ----------------------------
+FROM base AS production
 WORKDIR /app
 ENV NODE_ENV=production
-USER bun
-COPY --from=production-deps /app/node_modules /app/node_modules
-COPY --from=builder /app/.output /app/.output
-COPY --from=builder /app/package.json /app/package.json
-EXPOSE 3000
-CMD [ "bun", "start" ]
+COPY --from=build /app/build ./
+RUN bun install --production --frozen-lockfile
+EXPOSE 3333
+CMD ["bun", "bin/server.js"]

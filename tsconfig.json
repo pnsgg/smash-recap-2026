@@ -1,45 +1,15 @@
 {
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "eslint.config.js",
-    "prettier.config.js",
-    "vite.config.js",
-    ".scripts/**/*.ts"
-  ],
-
+  "extends": "@adonisjs/tsconfig/tsconfig.app.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "jsx": "react-jsx",
-    "module": "ESNext",
+    "rootDir": "./",
+    "outDir": "./build",
     "paths": {
-      "#/*": ["./src/*"],
-      "@/*": ["./src/*"],
-      "#tests/*": ["./tests/*"]
-    },
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
-    "plugins": [
-      {
-        "name": "gql.tada/ts-plugin",
-        "schema": "schema.graphql",
-        "tadaOutputLocation": "src/graphql-env.d.ts"
-      }
-    ],
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "allowJs": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
-
-    /* Linting */
-    "skipLibCheck": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+      "#app/*": ["./app/*"],
+      "#recap/*": ["./app/recap/*"],
+      "#search/*": ["./app/search/*"],
+      "#shared/*": ["./app/shared/*"],
+      "#/graphql": ["./app/shared/infrastructure/secondary/startgg/graphql.ts"],
+      "#/graphql-env": ["./app/shared/infrastructure/secondary/startgg/graphql-env.d.ts"]
+    }
   }
 }
