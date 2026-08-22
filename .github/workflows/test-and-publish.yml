@@ -14,6 +14,12 @@ jobs:
   test:
     name: Run Tests, Checks, and Build
     runs-on: ubuntu-latest
+    env:
+      APP_KEY: 47ce2ffc3a82d30b9e4ff31cff60498a08e0782bc37ac0e2dfa725c1aa0560a0
+      APP_URL: http://localhost:3333
+      HOST: localhost
+      LOG_LEVEL: info
+      NODE_ENV: test
     permissions:
       contents: read
       pull-requests: write
