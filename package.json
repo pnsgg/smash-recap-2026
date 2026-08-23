@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node bin/server.js",
     "build": "node ace build",
+    "codegen": "node ace codegen",
     "dev": "node ace serve --hmr",
     "test": "node ace test",
     "test:coverage": "bun x c8 node ace test",
@@ -62,6 +63,7 @@
   },
   "dependencies": {
     "@adonisjs/core": "^7.3.5",
+    "@tuyau/core": "^1.2.2",
     "@vinejs/vine": "^4.4.0",
     "gql.tada": "^1.11.3",
     "graphql": "^17.0.2",
