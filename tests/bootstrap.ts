@@ -4,6 +4,14 @@ import { pluginAdonisJS } from '@japa/plugin-adonisjs'
 import type { Config } from '@japa/runner/types'
 import app from '@adonisjs/core/services/app'
 import testUtils from '@adonisjs/core/services/test_utils'
+import type { Registry } from '../.adonisjs/client/registry/schema.d.ts'
+
+/**
+ * This file is imported by the "bin/test.ts" entrypoint file
+ */
+declare module '@japa/api-client/types' {
+  interface RoutesRegistry extends Registry {}
+}
 
 /**
  * This file is imported by the "bin/test.ts" entrypoint file
