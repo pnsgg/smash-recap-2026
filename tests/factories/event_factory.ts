@@ -1,3 +1,4 @@
+import { VideogameFactory } from '#tests/factories/videogame_factory'
 import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import { BracketType } from '#recap/domain/bracket_type'
@@ -8,7 +9,6 @@ import type { Set } from '#recap/domain/set'
 import type { Videogame } from '#recap/domain/videogame'
 import { asEventId } from '#shared/domain/ids'
 import type { EventId } from '#shared/domain/ids'
-import { VideogameFactory } from './videogame_factory.js'
 
 type EventOverrides = {
   id?: EventId

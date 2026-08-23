@@ -1,3 +1,4 @@
+import { SeedFactory } from '#tests/factories/seed_factory'
 import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import { BracketType } from '#recap/domain/bracket_type'
@@ -5,7 +6,6 @@ import type { Game } from '#recap/domain/game'
 import { Set, SetPlayer } from '#recap/domain/set'
 import { asEventId, asPlayerId, asSetId } from '#shared/domain/ids'
 import type { EventId, PlayerId, SetId } from '#shared/domain/ids'
-import { SeedFactory } from './seed_factory.js'
 
 type SetOverrides = {
   id?: SetId

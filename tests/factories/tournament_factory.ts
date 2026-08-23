@@ -1,3 +1,4 @@
+import { AddressFactory } from '#tests/factories/address_factory'
 import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import type { Address } from '#recap/domain/address'
@@ -5,7 +6,6 @@ import type { Event } from '#recap/domain/event'
 import { Tournament } from '#recap/domain/tournament'
 import { asTournamentId } from '#shared/domain/ids'
 import type { TournamentId } from '#shared/domain/ids'
-import { AddressFactory } from './address_factory.js'
 
 type TournamentOverrides = {
   id?: TournamentId

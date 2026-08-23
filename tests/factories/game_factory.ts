@@ -1,11 +1,11 @@
+import { CharacterFactory } from '#tests/factories/character_factory'
+import { StageFactory } from '#tests/factories/stage_factory'
 import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import { Game, GameSelection } from '#recap/domain/game'
 import type { Stage } from '#recap/domain/stage'
 import { asGameId, asPlayerId } from '#shared/domain/ids'
 import type { GameId, PlayerId } from '#shared/domain/ids'
-import { CharacterFactory } from './character_factory.js'
-import { StageFactory } from './stage_factory.js'
 
 type GameOverrides = {
   id?: GameId
