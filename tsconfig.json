@@ -12,5 +12,10 @@
       "#/graphql": ["./app/shared/infrastructure/secondary/startgg/graphql.ts"],
       "#/graphql-env": ["./app/shared/infrastructure/secondary/startgg/graphql-env.d.ts"]
     }
-  }
+  },
+  "exclude": [
+    "tests",
+    "build",
+    "node_modules"
+  ]
 }
