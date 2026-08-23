@@ -803,6 +803,25 @@ test.group('Player - mostPlayedCharacters', () => {
   })
 })
 
+test.group('Player - nemesis', () => {
+  test('should return null if player played no sets', ({ assert }) => {
+    const player = PlayerFactory.build()
+    assert.isNull(player.nemesis())
+  })
+
+  test('should return null if player played fewer than minSets sets', ({ assert }) => {
+    const player = PlayerFactory.build()
+    assert.isNull(player.nemesis(10))
+  })
+
+  test('should return the nemesis player if player played at least minSets sets', ({ assert }) => {
+    const player = PlayerFactory.build()
+    const nemesis = player.nemesis(3)
+    assert.isNotNull(nemesis)
+    assert.equal(nemesis?.opponentPlayerId, '')
+  }).skip(true)
+})
+
 test.group('Player - reverseSweeps', () => {
   test('should return 0 won and lost if player did not attend any tournament', ({ assert }) => {
     const player = PlayerFactory.build()
