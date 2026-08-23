@@ -25,7 +25,7 @@ import {
   asVideogameId,
 } from '#shared/domain/ids'
 import type { PlayerId } from '#shared/domain/ids'
-import type { getEvent } from '#shared/infrastructure/secondary/startgg/queries/get_event.js'
+import type { getEvent } from '#shared/infrastructure/secondary/startgg/queries/get_event'
 
 export type EventResult = Exclude<ResultOf<typeof getEvent>['event'], null | undefined>
 type EntrantResult = Exclude<EventResult['userEntrant'], null | undefined>

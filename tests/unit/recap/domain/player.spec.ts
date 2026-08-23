@@ -803,6 +803,59 @@ test.group('Player - mostPlayedCharacters', () => {
   })
 })
 
+test.group('Player - nemesis', () => {
+  test('should return null if player played no sets', ({ assert }) => {
+    const player = PlayerFactory.build()
+    assert.isNull(player.nemesis())
+  })
+
+  test('should return null if player played fewer than minSets sets', ({ assert }) => {
+    const player = PlayerFactory.build()
+    assert.isNull(player.nemesis(10))
+  })
+
+  test('should return the nemesis player if player played at least minSets sets', ({ assert }) => {
+    const playerId = asPlayerId('1')
+    const nemesisId = asPlayerId('2')
+
+    const player = PlayerFactory.build({
+      id: playerId,
+      tournaments: TournamentFactory.buildList(1, {
+        events: EventFactory.buildList(1, {
+          sets: SetFactory.buildList(3, {
+            competitors: new Map()
+              .set(
+                playerId,
+                new SetPlayer({
+                  isDisqualified: false,
+                  playerId,
+                  score: 0,
+                  seed: SeedFactory.build(),
+                })
+              )
+              .set(
+                nemesisId,
+                new SetPlayer({
+                  isDisqualified: false,
+                  playerId: nemesisId,
+                  score: 3,
+                  seed: SeedFactory.build(),
+                })
+              ),
+            winnerId: nemesisId,
+          }),
+        }),
+      }),
+    })
+
+    const nemesis = player.nemesis(3)
+    assert.isNotNull(nemesis)
+    assert.equal(nemesis?.opponentPlayerId, nemesisId)
+    assert.equal(nemesis?.winRate, 0)
+    assert.equal(nemesis?.totalSets, 3)
+  })
+})
+
 test.group('Player - reverseSweeps', () => {
   test('should return 0 won and lost if player did not attend any tournament', ({ assert }) => {
     const player = PlayerFactory.build()
