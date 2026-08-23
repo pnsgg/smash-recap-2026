@@ -20,6 +20,8 @@ jobs:
       HOST: localhost
       LOG_LEVEL: info
       NODE_ENV: test
+      PORT: 3333
+      RECAP_YEAR: 2026
     permissions:
       contents: read
       pull-requests: write
@@ -30,6 +32,8 @@ jobs:
           bun-version: latest
       - name: Install dependencies
         run: bun install
+      - name: Generate code
+        run: bun run codegen
       - name: Lint
         run: bun run lint
       - name: Typecheck
