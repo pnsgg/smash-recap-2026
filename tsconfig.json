@@ -8,6 +8,7 @@
       "#recap/*": ["./app/recap/*"],
       "#search/*": ["./app/search/*"],
       "#shared/*": ["./app/shared/*"],
+      "#tests/*": ["./tests/*"],
       "#/graphql": ["./app/shared/infrastructure/secondary/startgg/graphql.ts"],
       "#/graphql-env": ["./app/shared/infrastructure/secondary/startgg/graphql-env.d.ts"]
     }
