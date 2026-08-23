@@ -15,4 +15,5 @@ export default {
   ],
   importOrderSeparation: false,
   importOrderSortSpecifiers: true,
+  importOrderParserPlugins: ['typescript', 'decorators-legacy', 'classProperties'],
 }

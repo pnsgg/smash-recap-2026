@@ -43,6 +43,7 @@ export default defineConfig({
       environment: ['repl', 'test'],
     },
     () => import('#providers/api_provider'),
+    () => import('#providers/startgg_provider'),
   ],
 
   /*
