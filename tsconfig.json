@@ -3,6 +3,8 @@
   "compilerOptions": {
     "rootDir": "./",
     "outDir": "./build",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "#app/*": ["./app/*"],
       "#recap/*": ["./app/recap/*"],
@@ -13,10 +15,5 @@
       "#/graphql-env": ["./app/shared/infrastructure/secondary/startgg/graphql-env.d.ts"]
     }
   },
-  "exclude": [
-    "tests/**",
-    "build/**",
-    "node_modules/**",
-    "bin/test.ts"
-  ]
+  "exclude": ["tests/**", "build/**", "node_modules/**", "bin/test.ts"]
 }

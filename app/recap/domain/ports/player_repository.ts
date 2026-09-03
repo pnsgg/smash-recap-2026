@@ -1,6 +1,6 @@
 import type { Player } from '#recap/domain/player'
 import type { SearchPlayerResult } from '#search/domain/player_search_result'
-import type { UserSlug } from '#shared/domain/ids'
+import type { UserSlug, VideogameId } from '#shared/domain/ids'
 
 export interface PlayerRepository {
   /**
@@ -16,5 +16,5 @@ export interface PlayerRepository {
    * @param year The year of the recap to generate
    * @returns A promise that resolves to the player
    */
-  getPlayerRecap: (slug: UserSlug, year: Date) => Promise<Player>
+  getPlayerRecap: (slug: UserSlug, year: Date, videoGameId: VideogameId) => Promise<Player>
 }
