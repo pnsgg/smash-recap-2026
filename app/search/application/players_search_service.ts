@@ -8,9 +8,7 @@ export default class PlayersSearchService {
   constructor(private client: StartggClient) {}
 
   async searchPlayerByGamerTag(gamertag: string): Promise<SearchPlayerResult[]> {
-    const repository = new StartggPlayerRepository(this.client, {
-      videogameIds: [1386], // Super Smash Bros. Ultimate
-    })
+    const repository = new StartggPlayerRepository(this.client, {})
     return repository.searchPlayerByGamerTag(gamertag)
   }
 }

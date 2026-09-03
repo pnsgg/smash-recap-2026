@@ -1,10 +1,8 @@
-import { asUserSlug } from '#shared/domain/ids'
+import { asUserSlug, asVideogameId } from '#shared/domain/ids'
 import { StartggPlayerRepository } from '#shared/infrastructure/secondary/startgg/player_repository'
 import { StartggClient } from '#shared/infrastructure/secondary/startgg/startgg_client'
 
-const sgg = new StartggPlayerRepository(new StartggClient(), {
-  videogameIds: [1386],
-})
+const sgg = new StartggPlayerRepository(new StartggClient(), {})
 const DISCRIMINATORS = {
   BLOU: 'user/a922f126',
   GLUTONNY: 'user/7611d833',
@@ -21,7 +19,11 @@ const outputRecap = async (
   discriminator: (typeof DISCRIMINATORS)[keyof typeof DISCRIMINATORS]
 ): Promise<void> => {
   console.log('*********************************************')
-  const player = await sgg.getPlayerRecap(asUserSlug(discriminator), new Date('2026-12-31'))
+  const player = await sgg.getPlayerRecap(
+    asUserSlug(discriminator),
+    new Date('2026-12-31'),
+    asVideogameId('1386')
+  )
   console.log(`Fetching player recap for ${player.gamerTag}...`)
 
   console.log('Tournaments attended:', player.tournaments.length)

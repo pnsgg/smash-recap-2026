@@ -2,7 +2,7 @@ import type { Player } from '#recap/domain/player'
 import type { PlayerRepository } from '#recap/domain/ports/player_repository'
 import { SearchPlayerResult } from '#search/domain/player_search_result'
 import { asPlayerId } from '#shared/domain/ids'
-import type { UserSlug } from '#shared/domain/ids'
+import type { UserSlug, VideogameId } from '#shared/domain/ids'
 import {
   mapEmptyPlayer,
   mapPlayerRecap,
@@ -16,7 +16,6 @@ import { searchPlayerByGamerTag } from '#shared/infrastructure/secondary/startgg
 import type { StartggClientInterface } from '#shared/infrastructure/secondary/startgg/startgg_client'
 
 type StartggPlayerRepositoryConfig = {
-  videogameIds: number[]
   eventType?: number
 }
 
@@ -78,7 +77,7 @@ export class StartggPlayerRepository implements PlayerRepository {
    * @param year The target year for the recap
    * @returns A promise that resolves to the hydrated Player domain entity
    */
-  async getPlayerRecap(slug: UserSlug, year: Date): Promise<Player> {
+  async getPlayerRecap(slug: UserSlug, year: Date, videoGameId: VideogameId): Promise<Player> {
     // Phase 0 — resolve slug → user.id + player header
     const { data } = await this.fetcher.fetch(getPlayerUserId, {
       slug,
@@ -100,7 +99,7 @@ export class StartggPlayerRepository implements PlayerRepository {
     const playerId = asPlayerId(playerGlobalId.toString())
 
     // Phase 1 — collect event IDs for the year (sequential pagination, early stop)
-    const eventIds = await this.fetchEventIdsForYear(slug, year)
+    const eventIds = await this.fetchEventIdsForYear(slug, year, videoGameId)
     if (eventIds.length === 0) {
       return mapEmptyPlayer(playerId, { gamerTag, prefix })
     }
@@ -126,7 +125,11 @@ export class StartggPlayerRepository implements PlayerRepository {
    * @param year The target year
    * @returns A promise resolving to an array of event IDs
    */
-  private async fetchEventIdsForYear(slug: UserSlug, year: Date): Promise<string[]> {
+  private async fetchEventIdsForYear(
+    slug: UserSlug,
+    year: Date,
+    videoGameId: VideogameId
+  ): Promise<string[]> {
     const targetYear = year.getFullYear()
     const ids: string[] = []
     let page = 1
@@ -135,7 +138,7 @@ export class StartggPlayerRepository implements PlayerRepository {
       const { data } = await this.fetcher.fetch(getPlayerEventIds, {
         slug,
         page,
-        videogameIds: this.config.videogameIds.map((id) => id.toString()),
+        videogameIds: [videoGameId],
         eventType: this.config.eventType,
       })
 
