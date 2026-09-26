@@ -21,7 +21,7 @@ export const createRecapModule = (
   playerService: PlayerRecapService = playerRecapService,
   tournamentOrganizerService: TournamentOrganizerRecapService = tournamentOrganizerRecapService
 ) =>
-  new Elysia()
+  new Elysia({ tags: ['Recap'] })
     .use(envPlugin)
     .get(
       '/players/:slug/recap',
@@ -31,7 +31,15 @@ export const createRecapModule = (
         const player = await playerService.getRecap(asUserSlug(params.slug), year, videogameId)
         return presentPlayerRecap(player)
       },
-      { params: playerRecapParamsSchema, query: playerRecapQuerySchema }
+      {
+        params: playerRecapParamsSchema,
+        query: playerRecapQuerySchema,
+        detail: {
+          summary: 'Get a player recap',
+          description:
+            "Fetches a player's yearly recap stats by their start.gg user slug and an optional videogame ID (defaults to Super Smash Bros. Ultimate).",
+        },
+      }
     )
     .get(
       '/tournament-organizers/:slug/recap',
@@ -40,7 +48,14 @@ export const createRecapModule = (
         const recap = await tournamentOrganizerService.getRecap(asUserSlug(params.slug), year)
         return presentTournamentOrganizerRecap(recap)
       },
-      { params: tournamentOrganizerRecapParamsSchema }
+      {
+        params: tournamentOrganizerRecapParamsSchema,
+        detail: {
+          summary: 'Get a tournament organizer recap',
+          description:
+            "Fetches a tournament organizer's yearly recap stats by their start.gg user slug.",
+        },
+      }
     )
 
 export const recapModule = createRecapModule()

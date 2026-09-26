@@ -1,3 +1,4 @@
+import { openapi } from '@elysiajs/openapi'
 import { Elysia } from 'elysia'
 import { envPlugin } from '#config/env'
 import { recapModule } from '#recap/index'
@@ -7,7 +8,23 @@ const apiV1 = new Elysia({ prefix: '/api/v1' }).use(recapModule).use(searchModul
 
 const app = new Elysia()
   .use(envPlugin)
-  .get('/health', () => ({ status: 'ok' }))
+  .use(
+    openapi({
+      documentation: {
+        info: {
+          title: 'Smash Recap API',
+          version: '0.0.1',
+          description:
+            'Yearly recap stats for Smash players and tournament organizers, sourced from start.gg.',
+        },
+        tags: [
+          { name: 'Recap', description: 'Player and tournament organizer yearly recap stats' },
+          { name: 'Search', description: 'Player search' },
+        ],
+      },
+    })
+  )
+  .get('/health', () => ({ status: 'ok' }), { detail: { hide: true } })
   .use(apiV1)
   .listen(envPlugin.decorator.env.PORT)
 

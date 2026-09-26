@@ -5,6 +5,7 @@
     "": {
       "name": "elysia",
       "dependencies": {
+        "@elysiajs/openapi": "^1.4.16",
         "@yolk-oss/elysia-env": "^3.0.1",
         "elysia": "latest",
         "gql.tada": "^1.11.3",
@@ -24,6 +25,8 @@
     "@0no-co/graphqlsp": ["@0no-co/graphqlsp@1.17.5", "", { "dependencies": { "@gql.tada/internal": "^1.2.1", "graphql": "^15.5.0 || ^16.0.0 || ^17.0.0" }, "peerDependencies": { "typescript": "^5.0.0 || ^6.0.0" } }, "sha512-wsygfTO3pdkz4idDw8BxdMdgB9AB8nuJDJTUwYy87BiZEZRXS4bEfn4oNl9VtxTo6j2lzX/gED+IvOgxsSy2Jg=="],
 
     "@borewit/text-codec": ["@borewit/text-codec@0.2.2", "", {}, "sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ=="],
+
+    "@elysiajs/openapi": ["@elysiajs/openapi@1.4.16", "", { "peerDependencies": { "@sinclair/typebox": ">= 0.34.0 < 1", "elysia": ">= 1.4.0", "typescript": ">= 5.0.0" } }, "sha512-kj8RBffE4J6myjm7nPPj6Dw1ujWt45NkdGW5sG9u3T0OfUzKN71s630/LEjajGo5jRZqFF3VHyk40lwXH2AbmQ=="],
 
     "@faker-js/faker": ["@faker-js/faker@10.6.0", "", {}, "sha512-3RQHgEtvL1Frl/d1cSreo7qhJ3Gk1OdNUai/CtZ8G+wYeRQnJih3s9xJ9/kgYekPQRdwgh0HXRPqMlzWGwivIQ=="],
 
