@@ -1,6 +1,7 @@
 import type { ResultOf } from 'gql.tada'
 import type { TournamentOrganizerRepository } from '#recap/domain/ports/tournament_organizer_repository'
 import type { TournamentOrganizer } from '#recap/domain/tournament_organizer'
+import { UserNotFoundError } from '#recap/domain/user_not_found_error'
 import type { UserSlug } from '#shared/ids'
 import { mapTournamentOrganizer } from '#shared/startgg/mappers/tournament_organizer_mapper'
 import { getPlayerUserId } from '#shared/startgg/queries/get_player_user_id'
@@ -33,7 +34,7 @@ export class StartggTournamentOrganizerRepository implements TournamentOrganizer
     })
     const gamerTag = userData.user?.player?.gamerTag
 
-    if (!gamerTag) throw new Error('Gamer tag is missing')
+    if (!gamerTag) throw new UserNotFoundError(slug)
 
     // Phase 1 — paginate to collect all tournament IDs for the target year
     const tournamentIds = await this.fetchTournamentIdsForYear(slug, year)

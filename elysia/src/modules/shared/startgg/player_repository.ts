@@ -1,5 +1,6 @@
 import type { Player } from '#recap/domain/player'
 import type { PlayerRepository } from '#recap/domain/ports/player_repository'
+import { UserNotFoundError } from '#recap/domain/user_not_found_error'
 import { SearchPlayerResult } from '#search/domain/player_search_result'
 import { asPlayerId } from '#shared/ids'
 import type { UserSlug, VideogameId } from '#shared/ids'
@@ -85,7 +86,7 @@ export class StartggPlayerRepository implements PlayerRepository {
 
     const user = data.user
     if (!user || !user.id) {
-      throw new Error(`User not found for slug: ${slug}`)
+      throw new UserNotFoundError(slug)
     }
 
     const userId = user.id
@@ -94,7 +95,7 @@ export class StartggPlayerRepository implements PlayerRepository {
 
     const playerGlobalId = user.player?.id
     if (!playerGlobalId) {
-      throw new Error(`Player ID not found for user slug: ${slug}`)
+      throw new UserNotFoundError(slug)
     }
     const playerId = asPlayerId(playerGlobalId.toString())
 

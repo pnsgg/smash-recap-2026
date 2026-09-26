@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia'
 import { envPlugin } from '#config/env'
+import { UserNotFoundError } from '#recap/domain/user_not_found_error'
 import { asUserSlug, asVideogameId } from '#shared/ids'
 import {
   playerRecapParamsSchema,
@@ -23,6 +24,12 @@ export const createRecapModule = (
 ) =>
   new Elysia({ tags: ['Recap'] })
     .use(envPlugin)
+    .onError(({ error, set }) => {
+      if (error instanceof UserNotFoundError) {
+        set.status = 404
+        return { error: 'not_found', message: error.message }
+      }
+    })
     .get(
       '/players/:slug/recap',
       async ({ params, query, env }) => {
