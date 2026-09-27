@@ -1,0 +1,19 @@
+# dependencies
+node_modules
+
+# env
+.env
+.env.local
+.env.*.local
+
+# build output
+dist
+build
+*.tsbuildinfo
+
+# remotion
+apps/remotion/out
+
+# misc
+.DS_Store
+*.log

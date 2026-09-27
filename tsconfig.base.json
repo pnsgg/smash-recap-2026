@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@api": ["apps/api/src/index.ts"],
+      "@api/*": ["apps/api/src/*"],
+      "@shared": ["packages/shared/src/index.ts"],
+      "@shared/*": ["packages/shared/src/*"],
+
+      /* apps/api's own internal aliases — re-declared here so that any package
+       * pulling in its source through the @api/* alias above (e.g. packages/shared
+       * importing type { presentPlayerRecap } from '@api/modules/recap/model') can
+       * still resolve them. Package-local paths in apps/api/tsconfig.json only
+       * apply when tsc runs *from* apps/api itself. */
+      "#config/*": ["apps/api/src/config/*"],
+      "#recap/*": ["apps/api/src/modules/recap/*"],
+      "#search/*": ["apps/api/src/modules/search/*"],
+      "#shared/*": ["apps/api/src/modules/shared/*"],
+      "#/graphql": ["apps/api/src/modules/shared/startgg/graphql.ts"],
+      "#/graphql-env": ["apps/api/src/modules/shared/startgg/graphql-env.d.ts"]
+    }
+  }
+}

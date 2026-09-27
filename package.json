@@ -1,0 +1,11 @@
+{
+  "name": "smash-recap",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "bun run --filter='*' dev",
+    "typecheck": "bun run --filter='*' typecheck",
+    "test": "bun run --filter='*' test"
+  }
+}

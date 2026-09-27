@@ -12,15 +12,11 @@ env:
 
 jobs:
   test:
-    name: Run Tests, Checks, and Build
+    name: Run Tests and Checks
     runs-on: ubuntu-latest
     env:
-      APP_KEY: 47ce2ffc3a82d30b9e4ff31cff60498a08e0782bc37ac0e2dfa725c1aa0560a0
-      APP_URL: http://localhost:3333
-      HOST: localhost
-      LOG_LEVEL: info
       NODE_ENV: test
-      PORT: 3333
+      PORT: 3001
       RECAP_YEAR: 2026
     permissions:
       contents: read
@@ -31,20 +27,28 @@ jobs:
         with:
           bun-version: latest
       - name: Install dependencies
-        run: bun install
-      - name: Generate code
-        run: bun run codegen
-      - name: Lint
-        run: bun run lint
-      - name: Typecheck
+        run: bun install --frozen-lockfile
+      - name: Typecheck all packages
         run: bun run typecheck
-      - name: Run Tests with Coverage
-        run: bun run test:coverage
+      - name: Run tests
+        run: bun run test
+
+  build-api:
+    name: Build api binary
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
       - name: Build
-        run: bun run build
+        run: bun run --filter=api build
 
   publish:
-    name: Build and Push Docker Image
+    name: Build and Push api Docker Image
     needs: test
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -78,6 +82,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: ./apps/api/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

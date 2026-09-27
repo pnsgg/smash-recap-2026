@@ -1,0 +1,36 @@
+{
+  "name": "api",
+  "version": "1.0.50",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "build": "bun build --compile --minify-whitespace --minify-syntax --target bun --outfile server src/index.ts"
+  },
+  "imports": {
+    "#config/*": "./src/config/*.ts",
+    "#recap/*": "./src/modules/recap/*.ts",
+    "#search/*": "./src/modules/search/*.ts",
+    "#shared/*": "./src/modules/shared/*.ts",
+    "#/graphql": "./src/modules/shared/startgg/graphql.ts",
+    "#/graphql-env": "./src/modules/shared/startgg/graphql-env.d.ts",
+    "#tests/*": "./tests/*.ts"
+  },
+  "dependencies": {
+    "@elysiajs/openapi": "^1.4.16",
+    "@yolk-oss/elysia-env": "^3.0.1",
+    "elysia": "latest",
+    "gql.tada": "^1.11.3",
+    "graphql": "^17.0.2"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "bun-types": "latest",
+    "fishery": "^2.4.0",
+    "typescript": "~5.9.3"
+  },
+  "module": "src/index.js"
+}
