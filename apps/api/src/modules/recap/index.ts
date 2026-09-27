@@ -1,5 +1,7 @@
+import { redis } from 'bun'
 import { Elysia } from 'elysia'
 import { envPlugin } from '#config/env'
+import { cache, CacheClient } from '#plugins/cache'
 import { UserNotFoundError } from '#recap/domain/user_not_found_error'
 import { asUserSlug, asVideogameId } from '#shared/ids'
 import {
@@ -20,10 +22,12 @@ const DEFAULT_VIDEOGAME_ID = asVideogameId('1386')
 
 export const createRecapModule = (
   playerService: PlayerRecapService = playerRecapService,
-  tournamentOrganizerService: TournamentOrganizerRecapService = tournamentOrganizerRecapService
+  tournamentOrganizerService: TournamentOrganizerRecapService = tournamentOrganizerRecapService,
+  cacheClient: CacheClient = redis
 ) =>
   new Elysia({ tags: ['Recap'] })
     .use(envPlugin)
+    .use(cache(cacheClient))
     .onError(({ error, set }) => {
       if (error instanceof UserNotFoundError) {
         set.status = 404

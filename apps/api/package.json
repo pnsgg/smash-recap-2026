@@ -12,6 +12,7 @@
   },
   "imports": {
     "#config/*": "./src/config/*.ts",
+    "#plugins/*": "./src/plugins/*.ts",
     "#recap/*": "./src/modules/recap/*.ts",
     "#search/*": "./src/modules/search/*.ts",
     "#shared/*": "./src/modules/shared/*.ts",
