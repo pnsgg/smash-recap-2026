@@ -8,9 +8,5 @@
 **/.env.development.local
 **/.env.production.local
 
-# only apps/api is needed to build the api image; keep the context lean
-apps/remotion
-apps/web
-
 **/tests
 **/README.md
