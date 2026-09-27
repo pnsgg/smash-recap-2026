@@ -2,7 +2,7 @@ import { AbsoluteFill, Composition } from "remotion";
 import type { PlayerRecapProps } from "@shared";
 import { licanePlayerRecap } from "@shared/fixtures/player-recap";
 
-const PlayerRecapComponent: React.FC<PlayerRecapProps> = () => {
+export const PlayerRecapComponent: React.FC<PlayerRecapProps> = () => {
   return <AbsoluteFill />;
 };
 
