@@ -4,7 +4,7 @@
   "private": true,
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
-    "dev": "bun run --filter='*' dev",
+    "dev": "bun run --filter='*' --parallel dev",
     "typecheck": "bun run --filter='*' typecheck",
     "test": "bun run --filter='*' test"
   }

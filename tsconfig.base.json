@@ -16,6 +16,7 @@
       "@api/*": ["apps/api/src/*"],
       "@shared": ["packages/shared/src/index.ts"],
       "@shared/*": ["packages/shared/src/*"],
+      "@video/*": ["apps/remotion/src/*"],
 
       /* apps/api's own internal aliases — re-declared here so that any package
        * pulling in its source through the @api/* alias above (e.g. packages/shared
