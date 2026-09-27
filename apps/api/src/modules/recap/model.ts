@@ -68,6 +68,11 @@ export function presentPlayerRecap(player: Player) {
     })),
     nemesis: player.nemesis(3),
     eventTypeBreakdown: player.eventTypeBreakdown(),
+    seriesPlayed: player.seriesPlayed(5).map((series) => ({
+      name: series.name,
+      count: series.tournaments.length,
+      tournamentNames: series.tournaments.map((t) => t.name),
+    })),
   }
 }
 
@@ -90,6 +95,11 @@ export function presentTournamentOrganizerRecap(to: TournamentOrganizer) {
     eventTypeBreakdown: to.eventTypeBreakdown().map((e) => ({
       type: e.type,
       count: e.count,
+    })),
+    seriesOrganized: to.seriesOrganized(5).map((series) => ({
+      name: series.name,
+      count: series.tournaments.length,
+      tournamentNames: series.tournaments.map((t) => t.name),
     })),
   }
 }

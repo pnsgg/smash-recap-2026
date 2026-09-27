@@ -1532,3 +1532,48 @@ describe('Player - worstMatchups', () => {
     ])
   })
 })
+
+describe('Player - seriesPlayed', () => {
+  test('groups recurring tournaments into series, sorted by frequency', () => {
+    const player = PlayerFactory.build({
+      tournaments: [
+        TournamentFactory.build({ name: 'PNS BloomBagarre #1', startDate: new Date('2026-01-10') }),
+        TournamentFactory.build({ name: 'PNS BloomBagarre #2', startDate: new Date('2026-01-24') }),
+        TournamentFactory.build({ name: 'PNS KanD.I. #1', startDate: new Date('2026-02-01') }),
+        TournamentFactory.build({ name: 'PNS KanD.I. #2', startDate: new Date('2026-02-15') }),
+        TournamentFactory.build({ name: 'PNS KanD.I. #3', startDate: new Date('2026-03-01') }),
+        TournamentFactory.build({ name: 'One-off Locals', startDate: new Date('2026-04-01') }),
+      ],
+    })
+
+    const series = player.seriesPlayed()
+
+    expect(series).toEqual([
+      expect.objectContaining({ name: 'PNS KanD.I.', tournaments: expect.any(Array) }),
+      expect.objectContaining({ name: 'PNS BloomBagarre', tournaments: expect.any(Array) }),
+    ])
+    expect(series[0].tournaments).toHaveLength(3)
+    expect(series[1].tournaments).toHaveLength(2)
+  })
+
+  test('respects the limit parameter', () => {
+    const player = PlayerFactory.build({
+      tournaments: [
+        TournamentFactory.build({ name: 'Series A #1', startDate: new Date('2026-01-01') }),
+        TournamentFactory.build({ name: 'Series A #2', startDate: new Date('2026-02-01') }),
+        TournamentFactory.build({ name: 'Series B #1', startDate: new Date('2026-01-01') }),
+        TournamentFactory.build({ name: 'Series B #2', startDate: new Date('2026-02-01') }),
+      ],
+    })
+
+    expect(player.seriesPlayed(1)).toHaveLength(1)
+  })
+
+  test('returns an empty list when there are no recurring series', () => {
+    const player = PlayerFactory.build({
+      tournaments: [TournamentFactory.build({ name: 'One-off Locals' })],
+    })
+
+    expect(player.seriesPlayed()).toEqual([])
+  })
+})

@@ -223,5 +223,21 @@ export const licaneTournamentOrganiserRecap: TournamentOrganizerRecapProps = {
       type: 5,
       count: 9
     }
+  ],
+  seriesOrganized: [
+    {
+      name: "Ledgetrompe",
+      count: 31,
+      tournamentNames: ["Ledgetrompe #31", "Ledgetrompe #30", "Ledgetrompe #29"]
+    },
+    {
+      name: "F'Air-Play",
+      count: 3,
+      tournamentNames: [
+        "F'Air-Play #3 - TLS x AMOS Toulouse",
+        "F'Air-Play #2 - TLS x AMOS Toulouse",
+        "F'Air-Play #1 - TLS x AMOS Toulouse"
+      ]
+    }
   ]
 }
