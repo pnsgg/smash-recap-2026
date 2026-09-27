@@ -1,6 +1,7 @@
 import type { Character } from '#recap/domain/character'
 import type { Event } from '#recap/domain/event'
 import { EventType } from '#recap/domain/event_type'
+import { clusterSeries, type TournamentSeries } from '#recap/domain/series_clustering'
 import type { Set as EventSet } from '#recap/domain/set'
 import type { Stage } from '#recap/domain/stage'
 import type { Tournament } from '#recap/domain/tournament'
@@ -452,5 +453,14 @@ export class Player {
     }
 
     return counts
+  }
+
+  /**
+   * Groups the player's tournaments into recurring series played (the same
+   * event across editions), sorted by how many times it was played.
+   */
+  seriesPlayed(limit?: number): TournamentSeries[] {
+    const series = clusterSeries(this.tournaments)
+    return limit !== undefined ? series.slice(0, limit) : series
   }
 }

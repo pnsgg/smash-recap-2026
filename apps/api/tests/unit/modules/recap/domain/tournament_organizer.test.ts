@@ -178,4 +178,36 @@ describe('TournamentOrganizer', () => {
       { count: 8, month: 'Dec' },
     ])
   })
+
+  test('seriesOrganized groups recurring tournaments into series, sorted by frequency', () => {
+    const to = TournamentOrganizerFactory.build({
+      tournaments: [
+        TournamentFactory.build({ name: 'PNS BloomBagarre #1', startDate: new Date('2026-01-10') }),
+        TournamentFactory.build({ name: 'PNS BloomBagarre #2', startDate: new Date('2026-01-24') }),
+        TournamentFactory.build({ name: 'PNS BloomBagarre #3', startDate: new Date('2026-02-01') }),
+        TournamentFactory.build({ name: 'PNS KanD.I. #1', startDate: new Date('2026-03-01') }),
+        TournamentFactory.build({ name: 'PNS KanD.I. #2', startDate: new Date('2026-03-15') }),
+        TournamentFactory.build({ name: 'One-off Locals', startDate: new Date('2026-04-01') }),
+      ],
+    })
+
+    const series = to.seriesOrganized()
+
+    expect(series.map((s) => s.name)).toEqual(['PNS BloomBagarre', 'PNS KanD.I.'])
+    expect(series[0].tournaments).toHaveLength(3)
+    expect(series[1].tournaments).toHaveLength(2)
+  })
+
+  test('seriesOrganized respects the limit parameter', () => {
+    const to = TournamentOrganizerFactory.build({
+      tournaments: [
+        TournamentFactory.build({ name: 'Series A #1', startDate: new Date('2026-01-01') }),
+        TournamentFactory.build({ name: 'Series A #2', startDate: new Date('2026-02-01') }),
+        TournamentFactory.build({ name: 'Series B #1', startDate: new Date('2026-01-01') }),
+        TournamentFactory.build({ name: 'Series B #2', startDate: new Date('2026-02-01') }),
+      ],
+    })
+
+    expect(to.seriesOrganized(1)).toHaveLength(1)
+  })
 })

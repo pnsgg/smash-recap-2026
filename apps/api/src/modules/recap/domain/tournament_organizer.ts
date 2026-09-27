@@ -1,4 +1,5 @@
 import { EventType, EventTypeHelper } from '#recap/domain/event_type'
+import { clusterSeries, type TournamentSeries } from '#recap/domain/series_clustering'
 import type { Tournament } from '#recap/domain/tournament'
 import type { Videogame } from '#recap/domain/videogame'
 import type { UserSlug } from '#shared/ids'
@@ -124,5 +125,14 @@ export class TournamentOrganizer {
       type: EventTypeHelper.fromNumber(Number(type)),
       count,
     }))
+  }
+
+  /**
+   * Groups the TO's tournaments into recurring series organized (the same
+   * event across editions), sorted by how many times it was organized.
+   */
+  seriesOrganized(limit?: number): TournamentSeries[] {
+    const series = clusterSeries(this.tournaments)
+    return limit !== undefined ? series.slice(0, limit) : series
   }
 }

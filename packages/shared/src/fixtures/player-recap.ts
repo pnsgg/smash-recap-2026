@@ -90,4 +90,20 @@ export const licanePlayerRecap: PlayerRecapProps = {
     winRate: 0,
   },
   eventTypeBreakdown: { 1: 64, 5: 7 },
+  seriesPlayed: [
+    {
+      name: "Slay O'Clock",
+      count: 14,
+      tournamentNames: ["Slay O'Clock #62", "Slay O'Clock #61", "Slay O'Clock #60"],
+    },
+    {
+      name: "PNS BloomBagarre",
+      count: 6,
+      tournamentNames: [
+        "PNS BloomBagarre - 5 juin",
+        "PNS BloomBagarre - 8 mai",
+        "PNS BloomBagarre - 3 avril",
+      ],
+    },
+  ],
 };
