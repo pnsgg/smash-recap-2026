@@ -1,6 +1,7 @@
 import { FakeTournamentOrganizerRecapService } from '#tests/fakes/modules/recap/fake_tournament_organizer_recap_service'
 import { describe, expect, test } from 'bun:test'
 import { createRecapModule } from '#recap/index'
+import { FakeCacheClient } from '#tests/fakes/plugins/fake_cache_client'
 
 describe('Tournament Organizer Recap', () => {
   test.each([
@@ -8,7 +9,11 @@ describe('Tournament Organizer Recap', () => {
     { slug: 'e3a5b49b' }, // Clembs
     { slug: '1a10dc59' }, // Zang-Fu
   ])('get tournament organizer recap by slug ($slug)', async ({ slug }) => {
-    const app = createRecapModule(undefined, new FakeTournamentOrganizerRecapService())
+    const app = createRecapModule(
+      undefined,
+      new FakeTournamentOrganizerRecapService(),
+      new FakeCacheClient()
+    )
 
     const response = await app.handle(
       new Request(`http://localhost/tournament-organizers/${slug}/recap`)
