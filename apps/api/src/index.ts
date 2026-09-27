@@ -1,3 +1,4 @@
+import { cors } from '@elysiajs/cors'
 import { openapi } from '@elysiajs/openapi'
 import { Elysia } from 'elysia'
 import { envPlugin } from '#config/env'
@@ -8,6 +9,7 @@ const apiV1 = new Elysia({ prefix: '/api/v1' }).use(recapModule).use(searchModul
 
 const app = new Elysia()
   .use(envPlugin)
+  .use(cors())
   .use(
     openapi({
       documentation: {

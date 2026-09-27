@@ -20,6 +20,7 @@
     "#tests/*": "./tests/*.ts"
   },
   "dependencies": {
+    "@elysiajs/cors": "^1.4.2",
     "@elysiajs/openapi": "^1.4.16",
     "@yolk-oss/elysia-env": "^3.0.1",
     "elysia": "latest",
