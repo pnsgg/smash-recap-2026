@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.0.0...smash-recap-v1.1.0) (2026-09-27)
+
+
+### Features
+
+* cache recap data response ([#74](https://github.com/pnsgg/smash-recap-2026/issues/74)) ([4a24d4f](https://github.com/pnsgg/smash-recap-2026/commit/4a24d4fef2a375a628c75f4e5077a807c1d57b0a))
+
 ## 1.0.0 (2026-09-27)
 
 
