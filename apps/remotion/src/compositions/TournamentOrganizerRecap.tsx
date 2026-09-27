@@ -2,7 +2,7 @@ import { AbsoluteFill, Composition } from "remotion";
 import type { TournamentOrganizerRecapProps } from "@shared";
 import { licaneTournamentOrganiserRecap } from "@shared/fixtures/tournament-organiser-recap";
 
-const TournamentOrganizerRecapComponent: React.FC<
+export const TournamentOrganizerRecapComponent: React.FC<
   TournamentOrganizerRecapProps
 > = () => {
   return <AbsoluteFill />;
