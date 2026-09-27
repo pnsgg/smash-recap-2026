@@ -1,6 +1,6 @@
 import { createApiClient } from "@shared";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
+const API_URL = import.meta.env.VITE_API_URL ?? window.location.origin;
 
 const client = createApiClient(API_URL);
 
