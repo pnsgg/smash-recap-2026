@@ -47,10 +47,30 @@ jobs:
       - name: Build
         run: bun run --filter=api build
 
-  publish:
-    name: Build and Push api Docker Image
+  release-please:
+    name: Release Please
     needs: test
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish:
+    name: Build and Push App Docker Image
+    needs: [test, release-please]
+    # release-please only runs on pushes to main, so it's skipped on tag
+    # pushes; `always()` keeps this job from being skipped along with it.
+    if: always() && needs.test.result == 'success' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -77,6 +97,7 @@ jobs:
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=sha
+            type=raw,value=${{ needs.release-please.outputs.tag_name }},enable=${{ needs.release-please.outputs.release_created == 'true' }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
