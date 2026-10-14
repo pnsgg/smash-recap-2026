@@ -931,6 +931,33 @@ describe('Player - reverseSweeps', () => {
 
     expect(player.reverseSweeps()).toEqual({ won: 1, lost: 1 })
   })
+
+  test('should not count a reverse sweep when any game has no recorded winner', () => {
+    const playerId = asPlayerId('1')
+    const opponentId = asPlayerId('2')
+
+    const player1 = new SetPlayer({ playerId, seed: SeedFactory.build(), score: 3, isDisqualified: false })
+    const player2 = new SetPlayer({ playerId: opponentId, seed: SeedFactory.build(), score: 2, isDisqualified: false })
+
+    const setWithNullGame = SetFactory.build({
+      competitors: new Map([[playerId, player1], [opponentId, player2]]),
+      winnerId: playerId,
+      games: [
+        GameFactory.build({ orderNum: 1, winnerId: opponentId }),
+        GameFactory.build({ orderNum: 2, winnerId: null }),
+        GameFactory.build({ orderNum: 3, winnerId: playerId }),
+        GameFactory.build({ orderNum: 4, winnerId: playerId }),
+        GameFactory.build({ orderNum: 5, winnerId: playerId }),
+      ],
+    })
+
+    const player = PlayerFactory.build({
+      id: playerId,
+      tournaments: [TournamentFactory.build({ events: [EventFactory.build({ sets: [setWithNullGame] })] })],
+    })
+
+    expect(player.reverseSweeps()).toEqual({ won: 0, lost: 0 })
+  })
 })
 
 describe('Player - stageActivity', () => {
