@@ -1,4 +1,4 @@
-import type { presentPlayerRecap, presentTournamentOrganizerRecap } from '@api/modules/recap/model'
+import type { PlayerRecapResponse, TournamentOrganizerRecapResponse } from '@api/modules/recap/model'
 
-export type PlayerRecapProps = ReturnType<typeof presentPlayerRecap>
-export type TournamentOrganizerRecapProps = ReturnType<typeof presentTournamentOrganizerRecap>
+export type PlayerRecapProps = PlayerRecapResponse
+export type TournamentOrganizerRecapProps = TournamentOrganizerRecapResponse

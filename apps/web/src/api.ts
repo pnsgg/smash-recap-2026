@@ -10,7 +10,6 @@ export async function fetchPlayerRecap(slug: string, videogameId: string) {
     .recap.get({ query: videogameId ? { videogameId } : {} });
 
   if (error) throw new Error(`Failed to fetch player recap: ${error.status}`);
-  if ("error" in data) throw new Error(data.message);
   return data;
 }
 
@@ -18,6 +17,5 @@ export async function fetchTournamentOrganizerRecap(slug: string) {
   const { data, error } = await client.api.v1["tournament-organizers"]({ slug }).recap.get();
 
   if (error) throw new Error(`Failed to fetch tournament organizer recap: ${error.status}`);
-  if ("error" in data) throw new Error(data.message);
   return data;
 }
