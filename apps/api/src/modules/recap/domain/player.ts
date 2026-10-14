@@ -55,7 +55,7 @@ export class Player {
     const activityMap = new Map<string, number>(dayNames.map((d) => [d, 0]))
 
     for (const tournament of this.tournaments) {
-      const day = dayNames[tournament.startDate.getDay()]
+      const day = dayNames[tournament.startDate.getUTCDay()]
       activityMap.set(day, (activityMap.get(day) || 0) + 1)
     }
 
@@ -86,7 +86,7 @@ export class Player {
     const activityMap = new Map<string, number>(monthNames.map((m) => [m, 0]))
 
     for (const tournament of this.tournaments) {
-      const month = monthNames[tournament.startDate.getMonth()]
+      const month = monthNames[tournament.startDate.getUTCMonth()]
       activityMap.set(month, (activityMap.get(month) || 0) + 1)
     }
 
