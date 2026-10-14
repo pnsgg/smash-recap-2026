@@ -17,7 +17,7 @@ export class StartggClient implements StartggClientInterface {
     variables: TVariables,
     init?: RequestInit
   ) {
-    const query = print(document)
+    const query = print(document).replace(/\s+/g, ' ').trim()
     const url = `https://www.start.gg/api/-/gql?query=${encodeURIComponent(query)}&variables=${encodeURIComponent(
       JSON.stringify(variables)
     )}`

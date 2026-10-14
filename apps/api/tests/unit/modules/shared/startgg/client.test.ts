@@ -30,7 +30,7 @@ describe('StartggClient', () => {
     const url = new URL(calledUrl)
     expect(url.origin).toBe('https://www.start.gg')
     expect(url.pathname).toBe('/api/-/gql')
-    expect(url.searchParams.get('query')).toContain('query TestQuery {\n  hello\n}')
+    expect(url.searchParams.get('query')).toContain('query TestQuery { hello }')
     expect(JSON.parse(url.searchParams.get('variables') || '{}')).toEqual(mockVariables)
 
     expect(calledInit.method).toBe('GET')
