@@ -112,7 +112,9 @@ export class Event {
    * Counts total sets played by a player in this event.
    */
   getPlayerSetsCount(playerId: PlayerId): number {
-    return this.sets.filter((set) => set.competitors.has(playerId)).length
+    return this.sets.filter(
+      (set) => set.competitors.has(playerId) && !set.isPlayerDisqualified(playerId)
+    ).length
   }
 
   /**
