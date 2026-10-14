@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.1.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.0.0...smash-recap-v1.1.0) (2026-10-14)
+
+
+### Features
+
+* cache recap data response ([#74](https://github.com/pnsgg/smash-recap-2026/issues/74)) ([4a24d4f](https://github.com/pnsgg/smash-recap-2026/commit/4a24d4fef2a375a628c75f4e5077a807c1d57b0a))
+* **recap:** skip unmappable events and expose skippedEventCount in the response ([46dd6fb](https://github.com/pnsgg/smash-recap-2026/commit/46dd6fb938314180f008bae51fa3c863b9406ccf))
+* **startgg:** retry requests on 429 with exponential backoff and Retry-After support ([dbca965](https://github.com/pnsgg/smash-recap-2026/commit/dbca965fb086f7cd0663e4d9574dcb81b8b952bc))
+
+
+### Bug Fixes
+
+* **recap:** exclude disqualification sets from totalSets count ([#76](https://github.com/pnsgg/smash-recap-2026/issues/76)) ([699efd8](https://github.com/pnsgg/smash-recap-2026/commit/699efd8a5f4862369a96dfe6572e5d12c21f6c0d))
+* **recap:** key character and stage aggregations by ID instead of name ([#77](https://github.com/pnsgg/smash-recap-2026/issues/77)) ([ab3ba26](https://github.com/pnsgg/smash-recap-2026/commit/ab3ba26557f8ef02c0b24e4dbf3325d8be9bec28))
+* **recap:** return false for reverse sweep when any game has no recor… ([#78](https://github.com/pnsgg/smash-recap-2026/issues/78)) ([1f58d8e](https://github.com/pnsgg/smash-recap-2026/commit/1f58d8e56bb14974f8e8e37a29b16788f1a197ed))
+* **recap:** skip sets with unresolvable winnerId instead of silently assigning the wrong winner ([65998e6](https://github.com/pnsgg/smash-recap-2026/commit/65998e654188c4c37734591cce36b67d45f754e8))
+* **recap:** use UTC day and month for tournament activity to avoid se… ([#79](https://github.com/pnsgg/smash-recap-2026/issues/79)) ([a5c8cc8](https://github.com/pnsgg/smash-recap-2026/commit/a5c8cc84ada902a564a6be5c2e3738b9e3d6ce96))
+* **shared:** derive PlayerRecapProps from response schema instead of presenter return type ([495812f](https://github.com/pnsgg/smash-recap-2026/commit/495812fbee2dab36a3b1c5340c658ee119900583))
+* **startgg:** throw UserNotFoundError when player has no gamerTag ([32345e4](https://github.com/pnsgg/smash-recap-2026/commit/32345e443508032c90b6d82fe45b4aa6d3ed6ac4))
+
+
+### Performance Improvements
+
+* **startgg:** minify GraphQL query string to reduce GET URL length ([cacb825](https://github.com/pnsgg/smash-recap-2026/commit/cacb825d690fb61f449345fb99015944b4dbf5b1))
+
 ## 1.0.0 (2026-09-27)
 
 
