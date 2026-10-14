@@ -1172,6 +1172,39 @@ describe('Player - totalSets', () => {
 
     expect(player.totalSets()).toBe(50)
   })
+
+  test('should not count disqualification sets', () => {
+    const playerId = asPlayerId('1')
+    const opponentId = asPlayerId('2')
+
+    const player = PlayerFactory.build({
+      id: playerId,
+      tournaments: [
+        TournamentFactory.build({
+          events: [
+            EventFactory.build({
+              sets: [
+                SetFactory.build({
+                  competitors: new Map()
+                    .set(playerId, new SetPlayer({ isDisqualified: false, playerId, score: 3, seed: SeedFactory.build() }))
+                    .set(opponentId, new SetPlayer({ isDisqualified: false, playerId: opponentId, score: 2, seed: SeedFactory.build() })),
+                  winnerId: playerId,
+                }),
+                SetFactory.build({
+                  competitors: new Map()
+                    .set(playerId, new SetPlayer({ isDisqualified: true, playerId, score: 0, seed: SeedFactory.build() }))
+                    .set(opponentId, new SetPlayer({ isDisqualified: false, playerId: opponentId, score: 0, seed: SeedFactory.build() })),
+                  winnerId: opponentId,
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    })
+
+    expect(player.totalSets()).toBe(1)
+  })
 })
 
 describe('Player - tournamentsByMonth', () => {
