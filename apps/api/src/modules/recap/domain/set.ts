@@ -212,7 +212,9 @@ export class Set {
     const opponentId = Array.from(this.competitors.keys()).find((id) => id !== playerId)
     if (!opponentId) return false
 
-    const winners = this.games.map((g) => g.winnerId).filter((w): w is PlayerId => w !== null)
+    const rawWinners = this.games.map((g) => g.winnerId)
+    if (rawWinners.some((w) => w === null)) return false
+    const winners = rawWinners as PlayerId[]
 
     const playerWins = winners.filter((w) => w === playerId).length
     const opponentWins = winners.filter((w) => w === opponentId).length
@@ -240,7 +242,9 @@ export class Set {
 
     if (this.winnerId !== opponentId) return false
 
-    const winners = this.games.map((g) => g.winnerId).filter((w): w is PlayerId => w !== null)
+    const rawWinners = this.games.map((g) => g.winnerId)
+    if (rawWinners.some((w) => w === null)) return false
+    const winners = rawWinners as PlayerId[]
 
     const playerWins = winners.filter((w) => w === playerId).length
     const opponentWins = winners.filter((w) => w === opponentId).length
