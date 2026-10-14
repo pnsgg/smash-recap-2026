@@ -75,4 +75,71 @@ describe('StartggClient', () => {
       'Start.gg API Error: 500 - Internal Server Error'
     )
   })
+
+  test('retries on 429 and succeeds on next attempt', async () => {
+    const client = new StartggClient()
+    const mockDocument = parse('query TestQuery { hello }') as TadaDocumentNode<
+      { hello: string },
+      Record<string, never>
+    >
+    const mockResponseData = { data: { hello: 'ok' } }
+
+    let calls = 0
+    spyOn(globalThis, 'fetch').mockImplementation((async () => {
+      calls++
+      if (calls === 1) return { ok: false, status: 429, headers: new Headers() }
+      return { ok: true, json: async () => mockResponseData }
+    }) as unknown as typeof fetch)
+
+    spyOn(globalThis, 'setTimeout').mockImplementation(((fn: () => void) => { fn(); return 0 }) as unknown as typeof setTimeout)
+
+    const result = await client.fetch(mockDocument, {})
+    expect(calls).toBe(2)
+    expect(result).toEqual(mockResponseData)
+  })
+
+  test('throws after exhausting all retries on persistent 429', async () => {
+    const client = new StartggClient()
+    const mockDocument = parse('query TestQuery { hello }') as TadaDocumentNode<
+      { hello: string },
+      Record<string, never>
+    >
+
+    spyOn(globalThis, 'fetch').mockImplementation((async () => ({
+      ok: false,
+      status: 429,
+      headers: new Headers(),
+    })) as unknown as typeof fetch)
+
+    spyOn(globalThis, 'setTimeout').mockImplementation(((fn: () => void) => { fn(); return 0 }) as unknown as typeof setTimeout)
+
+    await expect(client.fetch(mockDocument, {})).rejects.toThrow(
+      'Start.gg rate limit exceeded after retries'
+    )
+  })
+
+  test('respects Retry-After header on 429', async () => {
+    const client = new StartggClient()
+    const mockDocument = parse('query TestQuery { hello }') as TadaDocumentNode<
+      { hello: string },
+      Record<string, never>
+    >
+
+    let calls = 0
+    spyOn(globalThis, 'fetch').mockImplementation((async () => {
+      calls++
+      if (calls === 1) return { ok: false, status: 429, headers: new Headers({ 'Retry-After': '2' }) }
+      return { ok: true, json: async () => ({ data: { hello: 'ok' } }) }
+    }) as unknown as typeof fetch)
+
+    const delays: number[] = []
+    spyOn(globalThis, 'setTimeout').mockImplementation(((fn: () => void, ms: number) => {
+      delays.push(ms)
+      fn()
+      return 0
+    }) as unknown as typeof setTimeout)
+
+    await client.fetch(mockDocument, {})
+    expect(delays[0]).toBe(2000)
+  })
 })
