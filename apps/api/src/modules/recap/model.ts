@@ -1,6 +1,16 @@
 import { t } from 'elysia'
-import type { Player } from '#recap/domain/player'
-import type { TournamentOrganizer } from '#recap/domain/tournament_organizer'
+
+export class UserNotFoundError extends Error {
+  constructor(public readonly slug: string) {
+    super(`No start.gg user found for slug: ${slug}`)
+    this.name = 'UserNotFoundError'
+  }
+}
+
+export const notFoundResponseSchema = t.Object({
+  error: t.Literal('not_found'),
+  message: t.String(),
+})
 
 export const playerRecapParamsSchema = t.Object({
   slug: t.String(),
@@ -17,89 +27,75 @@ export const tournamentOrganizerRecapParamsSchema = t.Object({
 })
 export type TournamentOrganizerRecapParams = typeof tournamentOrganizerRecapParamsSchema.static
 
-export function presentPlayerRecap(player: Player) {
-  return {
-    id: player.id,
-    prefix: player.prefix,
-    gamerTag: player.gamerTag,
-    totalTournaments: player.tournaments.length,
-    totalSets: player.totalSets(),
-    dayOfWeekActivity: player.dayOfWeekActivity(),
-    tournamentsByMonth: player.tournamentsByMonth(),
-    cleanSweeps: player.cleanSweeps(),
-    reverseSweeps: player.reverseSweeps(),
-    decidingGameSets: player.decidingGameSets(),
-    totalDisqualifications: player.totalDisqualifications(),
-    bestPerformances: player.bestPerformances(5).map((perf) => ({
-      tournamentName: perf.tournament.name,
-      spr: perf.spr,
-    })),
-    worstPerformance: (() => {
-      const perf = player.worstPerformance()
-      return perf ? { tournamentName: perf.tournament.name, spr: perf.spr } : null
-    })(),
-    mostPlayedCharacters: player.mostPlayedCharacters(5).map((char) => ({
-      characterId: char.character.id,
-      characterName: char.character.name,
-      count: char.count,
-    })),
-    highestUpset: (() => {
-      const upset = player.highestUpset()
-      return upset
-        ? {
-            tournamentName: upset.tournament.name,
-            eventName: upset.event.name,
-            factor: upset.factor,
-          }
-        : null
-    })(),
-    stageActivity: player.stageActivity().map((stat) => ({
-      stageId: stat.stage.id,
-      stageName: stat.stage.name,
-      count: stat.count,
-      winRate: stat.winRate,
-    })),
-    worstMatchups: player.worstMatchups(5).map((matchup) => ({
-      characterId: matchup.character.id,
-      characterName: matchup.character.name,
-      count: matchup.count,
-      lossCount: matchup.lossCount,
-      looseRate: matchup.looseRate,
-    })),
-    nemesis: player.nemesis(3),
-    eventTypeBreakdown: player.eventTypeBreakdown(),
-    seriesPlayed: player.seriesPlayed(5).map((series) => ({
-      name: series.name,
-      count: series.tournaments.length,
-      tournamentNames: series.tournaments.map((t) => t.name),
-    })),
-  }
-}
+const nemesisSchema = t.Nullable(
+  t.Object({
+    opponentPlayerId: t.String(),
+    playerWonSet: t.Number(),
+    opponentWonSet: t.Number(),
+    totalSets: t.Number(),
+    winRate: t.Number(),
+  })
+)
 
-export function presentTournamentOrganizerRecap(to: TournamentOrganizer) {
-  return {
-    id: to.id,
-    gamerTag: to.gamerTag,
-    totalTournaments: to.totalTournaments(),
-    biggestTournaments: to.biggestTournaments(5).map((t) => ({
-      tournamentName: t.tournament.name,
-      attendees: t.attendees,
-    })),
-    gamesOrganized: to.gamesOrganized().map((g) => ({
-      videogameId: g.videogame.id,
-      videogameName: g.videogame.name,
-      count: g.count,
-    })),
-    dayOfWeekActivity: to.dayOfWeekActivity(),
-    tournamentsByMonth: to.tournamentsByMonth(),
-    eventTypeBreakdown: to.eventTypeBreakdown().map((e) => ({
-      type: e.type,
-      count: e.count,
-    })),
-    seriesOrganized: to.seriesOrganized(5).map((series) => ({
-      name: series.name,
-      count: series.tournaments.length,
-      tournamentNames: series.tournaments.map((t) => t.name),
-    })),
-  }
-}
+export const playerRecapResponseSchema = t.Object({
+  id: t.String(),
+  prefix: t.Nullable(t.String()),
+  gamerTag: t.String(),
+  totalTournaments: t.Number(),
+  totalSets: t.Number(),
+  dayOfWeekActivity: t.Array(t.Object({ day: t.String(), count: t.Number() })),
+  tournamentsByMonth: t.Array(t.Object({ month: t.String(), count: t.Number() })),
+  cleanSweeps: t.Number(),
+  reverseSweeps: t.Object({ won: t.Number(), lost: t.Number() }),
+  decidingGameSets: t.Object({ count: t.Number(), winCount: t.Number(), winRate: t.Number() }),
+  totalDisqualifications: t.Number(),
+  bestPerformances: t.Array(t.Object({ tournamentName: t.String(), spr: t.Number() })),
+  worstPerformance: t.Nullable(t.Object({ tournamentName: t.String(), spr: t.Number() })),
+  mostPlayedCharacters: t.Array(
+    t.Object({ characterId: t.String(), characterName: t.String(), count: t.Number() })
+  ),
+  highestUpset: t.Nullable(
+    t.Object({ tournamentName: t.String(), eventName: t.String(), factor: t.Number() })
+  ),
+  stageActivity: t.Array(
+    t.Object({
+      stageId: t.String(),
+      stageName: t.String(),
+      count: t.Number(),
+      winRate: t.Number(),
+    })
+  ),
+  worstMatchups: t.Array(
+    t.Object({
+      characterId: t.String(),
+      characterName: t.String(),
+      count: t.Number(),
+      lossCount: t.Number(),
+      looseRate: t.Number(),
+    })
+  ),
+  nemesis: nemesisSchema,
+  eventTypeBreakdown: t.Record(t.String(), t.Number()),
+  seriesPlayed: t.Array(
+    t.Object({ name: t.String(), count: t.Number(), tournamentNames: t.Array(t.String()) })
+  ),
+  skippedEventCount: t.Number(),
+})
+export type PlayerRecapResponse = typeof playerRecapResponseSchema.static
+
+export const tournamentOrganizerRecapResponseSchema = t.Object({
+  id: t.String(),
+  gamerTag: t.String(),
+  totalTournaments: t.Number(),
+  biggestTournaments: t.Array(t.Object({ tournamentName: t.String(), attendees: t.Number() })),
+  gamesOrganized: t.Array(
+    t.Object({ videogameId: t.String(), videogameName: t.String(), count: t.Number() })
+  ),
+  dayOfWeekActivity: t.Array(t.Object({ day: t.String(), count: t.Number() })),
+  tournamentsByMonth: t.Array(t.Object({ month: t.String(), count: t.Number() })),
+  eventTypeBreakdown: t.Array(t.Object({ type: t.Number(), count: t.Number() })),
+  seriesOrganized: t.Array(
+    t.Object({ name: t.String(), count: t.Number(), tournamentNames: t.Array(t.String()) })
+  ),
+})
+export type TournamentOrganizerRecapResponse = typeof tournamentOrganizerRecapResponseSchema.static

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { UserNotFoundError } from '#recap/domain/user_not_found_error'
+import { UserNotFoundError } from '#recap/model'
 
 describe('UserNotFoundError', () => {
   test('carries the slug and a descriptive message', () => {

@@ -1,16 +1,18 @@
 import { redis } from 'bun'
-import { Elysia } from 'elysia'
+import { Elysia, status } from 'elysia'
 import { envPlugin } from '#config/env'
 import { cache, CacheClient } from '#plugins/cache'
-import { UserNotFoundError } from '#recap/domain/user_not_found_error'
 import { asUserSlug, asVideogameId } from '#shared/ids'
 import {
+  notFoundResponseSchema,
   playerRecapParamsSchema,
   playerRecapQuerySchema,
-  presentPlayerRecap,
-  presentTournamentOrganizerRecap,
+  playerRecapResponseSchema,
   tournamentOrganizerRecapParamsSchema,
+  tournamentOrganizerRecapResponseSchema,
+  UserNotFoundError,
 } from '#recap/model'
+import { presentPlayerRecap, presentTournamentOrganizerRecap } from '#recap/presenter'
 import {
   PlayerRecapService,
   playerRecapService,
@@ -28,23 +30,31 @@ export const createRecapModule = (
   new Elysia({ tags: ['Recap'] })
     .use(envPlugin)
     .use(cache(cacheClient))
-    .onError(({ error, set }) => {
-      if (error instanceof UserNotFoundError) {
-        set.status = 404
-        return { error: 'not_found', message: error.message }
-      }
+    .onError(({ error }) => {
+      if (error instanceof UserNotFoundError)
+        return status(404, { error: 'not_found', message: error.message })
+    })
+    .model({
+      'Recap.PlayerRecapResponse': playerRecapResponseSchema,
+      'Recap.TournamentOrganizerRecapResponse': tournamentOrganizerRecapResponseSchema,
+      'Recap.NotFound': notFoundResponseSchema,
     })
     .get(
       '/players/:slug/recap',
       async ({ params, query, env }) => {
         const year = new Date(env.RECAP_YEAR, 0, 1)
         const videogameId = asVideogameId(query.videogameId ?? DEFAULT_VIDEOGAME_ID)
-        const player = await playerService.getRecap(asUserSlug(params.slug), year, videogameId)
-        return presentPlayerRecap(player)
+        const { player, skippedEventCount } = await playerService.getRecap(
+          asUserSlug(params.slug),
+          year,
+          videogameId
+        )
+        return presentPlayerRecap(player, skippedEventCount)
       },
       {
         params: playerRecapParamsSchema,
         query: playerRecapQuerySchema,
+        response: { 200: 'Recap.PlayerRecapResponse', 404: 'Recap.NotFound' },
         detail: {
           summary: 'Get a player recap',
           description:
@@ -61,6 +71,7 @@ export const createRecapModule = (
       },
       {
         params: tournamentOrganizerRecapParamsSchema,
+        response: { 200: 'Recap.TournamentOrganizerRecapResponse', 404: 'Recap.NotFound' },
         detail: {
           summary: 'Get a tournament organizer recap',
           description:
