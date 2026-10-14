@@ -1,6 +1,7 @@
 import { InMemoryFetcher } from '#tests/unit/modules/shared/startgg/in_memory_fetcher'
 import { describe, expect, test } from 'bun:test'
 import { EventType } from '#recap/domain/event_type'
+import { UserNotFoundError } from '#recap/model'
 import { asUserSlug } from '#shared/ids'
 import { StartggPlayerRepository } from '#shared/startgg/player_repository'
 import { getEvent } from '#shared/startgg/queries/get_event'
@@ -312,6 +313,30 @@ const fetcher = new InMemoryFetcher()
 
     return { event: null }
   })
+
+describe('Getting player recap — UserNotFoundError cases', () => {
+  test('throws UserNotFoundError when user has no gamerTag', async () => {
+    const localFetcher = new InMemoryFetcher().register(getPlayerUserId, () => ({
+      user: { id: 'some-id', player: { id: 'some-player-id', prefix: null, gamerTag: null } },
+    }))
+    const repository = new StartggPlayerRepository(localFetcher, {})
+
+    await expect(
+      repository.getPlayerRecap(asUserSlug('user/nogamertag'), new Date('2026-01-01'), '1386' as any)
+    ).rejects.toBeInstanceOf(UserNotFoundError)
+  })
+
+  test('throws UserNotFoundError when user has no player id', async () => {
+    const localFetcher = new InMemoryFetcher().register(getPlayerUserId, () => ({
+      user: { id: 'some-id', player: { id: null, prefix: null, gamerTag: null } },
+    }))
+    const repository = new StartggPlayerRepository(localFetcher, {})
+
+    await expect(
+      repository.getPlayerRecap(asUserSlug('user/noplayer'), new Date('2026-01-01'), '1386' as any)
+    ).rejects.toBeInstanceOf(UserNotFoundError)
+  })
+})
 
 describe('Searching for players', () => {
   const repository = new StartggPlayerRepository(fetcher, {

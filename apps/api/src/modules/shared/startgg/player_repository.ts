@@ -90,13 +90,14 @@ export class StartggPlayerRepository implements PlayerRepository {
     }
 
     const userId = user.id
-    const gamerTag = user.player?.gamerTag || ''
-    const prefix = user.player?.prefix || null
 
     const playerGlobalId = user.player?.id
-    if (!playerGlobalId) {
+    const gamerTag = user.player?.gamerTag
+    if (!playerGlobalId || !gamerTag) {
       throw new UserNotFoundError(slug)
     }
+
+    const prefix = user.player?.prefix || null
     const playerId = asPlayerId(playerGlobalId.toString())
 
     // Phase 1 — collect event IDs for the year (sequential pagination, early stop)
