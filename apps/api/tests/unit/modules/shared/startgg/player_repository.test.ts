@@ -361,7 +361,7 @@ describe('Searching for players', () => {
 
   test('Getting player recap - it should fetch player user ID, paginated events with early stop, events in parallel and map correctly', async () => {
     const year = new Date('2026-01-01')
-    const player = await repository.getPlayerRecap(
+    const { player } = await repository.getPlayerRecap(
       asUserSlug('user/glutonny'),
       year,
       // videogame ID is not filtered by this fake fetcher, any value works
@@ -376,7 +376,7 @@ describe('Searching for players', () => {
     expect(tournament.name).toBe('Genesis X')
     expect(tournament.events).toHaveLength(2)
 
-    const eventSingles = tournament.events.find((e) => e.name === 'Genesis X Singles')
+    const eventSingles = tournament.events.find((e: { name: string }) => e.name === 'Genesis X Singles')
     expect(eventSingles).toBeDefined()
     expect(eventSingles?.isOnline).toBe(false)
     expect(eventSingles?.sets).toHaveLength(1)
@@ -388,7 +388,7 @@ describe('Searching for players', () => {
     expect(setPlayer?.score).toBe(3)
     expect(setPlayer?.isDisqualified).toBe(false)
 
-    const eventDoubles = tournament.events.find((e) => e.name === 'Genesis X Doubles')
+    const eventDoubles = tournament.events.find((e: { name: string }) => e.name === 'Genesis X Doubles')
     expect(eventDoubles).toBeDefined()
     expect(eventDoubles?.eventType).toBe(EventType.TEAMS)
     expect(eventDoubles?.isTeams()).toBe(true)

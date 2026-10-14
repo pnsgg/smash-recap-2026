@@ -78,7 +78,11 @@ export class StartggPlayerRepository implements PlayerRepository {
    * @param year The target year for the recap
    * @returns A promise that resolves to the hydrated Player domain entity
    */
-  async getPlayerRecap(slug: UserSlug, year: Date, videoGameId: VideogameId): Promise<Player> {
+  async getPlayerRecap(
+    slug: UserSlug,
+    year: Date,
+    videoGameId: VideogameId
+  ): Promise<{ player: Player; skippedEventCount: number }> {
     // Phase 0 — resolve slug → user.id + player header
     const { data } = await this.fetcher.fetch(getPlayerUserId, {
       slug,
@@ -103,7 +107,7 @@ export class StartggPlayerRepository implements PlayerRepository {
     // Phase 1 — collect event IDs for the year (sequential pagination, early stop)
     const eventIds = await this.fetchEventIdsForYear(slug, year, videoGameId)
     if (eventIds.length === 0) {
-      return mapEmptyPlayer(playerId, { gamerTag, prefix })
+      return { player: mapEmptyPlayer(playerId, { gamerTag, prefix }), skippedEventCount: 0 }
     }
 
     // Phase 2 — fetch full event data

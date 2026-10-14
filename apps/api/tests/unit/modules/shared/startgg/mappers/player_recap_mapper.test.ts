@@ -14,7 +14,7 @@ import {
 } from '#shared/startgg/mappers/player_recap_mapper'
 import type { EventResult } from '#shared/startgg/mappers/player_recap_mapper'
 
-describe('PlayerRecapMapper - throws validation errors on missing properties', () => {
+describe('PlayerRecapMapper - skips events with mapping errors and counts them', () => {
   const playerId = asPlayerId('player-123')
   const playerHeader = {
     gamerTag: 'Rouxchov',
@@ -181,7 +181,7 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
       },
     ]
 
-    const result = mapPlayerRecap(playerId, playerHeader, rawEvents)
+    const { player: result } = mapPlayerRecap(playerId, playerHeader, rawEvents)
 
     expect(result.id).toBe(playerId)
     expect(result.tournaments).toHaveLength(1)
@@ -269,7 +269,7 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
       },
     ]
 
-    const result = mapPlayerRecap(playerId, playerHeader, rawEvents)
+    const { player: result } = mapPlayerRecap(playerId, playerHeader, rawEvents)
     expect(result.tournaments[0].address).toBeNull()
     expect(result.tournaments[0].events[0].eventType).toBe(EventType.TEAMS)
   })
@@ -317,7 +317,7 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
       },
     ]
 
-    const result = mapPlayerRecap(playerId, playerHeader, rawEvents)
+    const { player: result } = mapPlayerRecap(playerId, playerHeader, rawEvents)
     expect(result.tournaments[0].events).toHaveLength(0)
   })
 
@@ -344,7 +344,7 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
       },
     ]
 
-    const result = mapPlayerRecap(playerId, playerHeader, rawEvents)
+    const { player: result } = mapPlayerRecap(playerId, playerHeader, rawEvents)
     expect(result.tournaments[0].events).toHaveLength(0)
   })
 
@@ -404,7 +404,7 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
       },
     ]
 
-    const result = mapPlayerRecap(playerId, playerHeader, rawEvents)
+    const { player: result } = mapPlayerRecap(playerId, playerHeader, rawEvents)
     expect(result.tournaments[0].events[0].sets).toHaveLength(0)
   })
 
@@ -492,7 +492,7 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
       },
     ]
 
-    const result = mapPlayerRecap(playerId, playerHeader, rawEvents)
+    const { player: result } = mapPlayerRecap(playerId, playerHeader, rawEvents)
     expect(result.tournaments[0].events[0].sets[0].games[0].selections).toHaveLength(0)
   })
 
@@ -648,73 +648,64 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
   test('videogame ID is missing', () => {
     const event = makeBaseEvent()
     event.videogame.id = null
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map event. Reason: Videogame ID is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('videogame name is missing', () => {
     const event = makeBaseEvent()
     event.videogame.name = null
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map event. Reason: Videogame name is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('standing placement is missing', () => {
     const event = makeBaseEvent()
     event.userEntrant.standing.placement = null
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map event. Reason: User entrant placement is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('initial seed number is missing', () => {
     const event = makeBaseEvent()
     event.userEntrant.initialSeedNum = null
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map event. Reason: User entrant initial seed is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('entrant name is missing', () => {
     const event = makeBaseEvent()
     event.userEntrant.name = null
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map event. Reason: User entrant name is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('event ID is missing', () => {
     const event = makeBaseEvent()
     event.id = null
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map event. Reason: Event ID is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('event name is missing', () => {
     const event = makeBaseEvent()
     event.name = null
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map event. Reason: Event name is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('event type is missing', () => {
     const event = makeBaseEvent()
     event.type = null
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map event. Reason: Event type is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('event type code is unsupported', () => {
     const event = makeBaseEvent()
     event.type = 3
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map event. Reason: Unsupported event type code: 3'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('competitor name is missing', () => {
@@ -739,9 +730,8 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
         },
       ],
     }
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map set. Reason: Entrant name is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('set ID is missing', () => {
@@ -766,9 +756,8 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
         },
       ],
     }
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map set. Reason: Set ID is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('set fullRoundText is missing', () => {
@@ -793,9 +782,8 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
         },
       ],
     }
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map set. Reason: Set fullRoundText is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 
   test('game orderNum is missing', () => {
@@ -829,8 +817,7 @@ describe('PlayerRecapMapper - throws validation errors on missing properties', (
         },
       ],
     }
-    expect(() => mapPlayerRecap(playerId, playerHeader, [event as EventResult])).toThrow(
-      'Cannot map game. Reason: orderNum is missing'
-    )
+    const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
+    expect(skippedEventCount).toBe(1)
   })
 })

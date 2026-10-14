@@ -22,7 +22,11 @@ export class FakePlayerRecapService extends PlayerRecapService {
     super(null as any)
   }
 
-  override async getRecap(slug: UserSlug, _year: Date, videogameId: VideogameId): Promise<Player> {
+  override async getRecap(
+    slug: UserSlug,
+    _year: Date,
+    videogameId: VideogameId
+  ): Promise<{ player: Player; skippedEventCount: number }> {
     this.lastVideogameId = videogameId
 
     let data = LICANE_DATA
@@ -34,10 +38,13 @@ export class FakePlayerRecapService extends PlayerRecapService {
       data = { ...LICANE_DATA, id: asPlayerId(slug) }
     }
 
-    return PlayerFactory.build({
-      id: data.id,
-      prefix: data.prefix,
-      gamerTag: data.gamerTag,
-    })
+    return {
+      player: PlayerFactory.build({
+        id: data.id,
+        prefix: data.prefix,
+        gamerTag: data.gamerTag,
+      }),
+      skippedEventCount: 0,
+    }
   }
 }

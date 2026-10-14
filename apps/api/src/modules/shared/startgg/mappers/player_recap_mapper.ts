@@ -44,7 +44,7 @@ export function mapPlayerRecap(
     prefix: string | null
   },
   rawEvents: EventResult[]
-): Player {
+): { player: Player; skippedEventCount: number } {
   const tournamentsMap = new Map<
     string,
     {
@@ -66,14 +66,20 @@ export function mapPlayerRecap(
   }
 
   const tournaments: Tournament[] = []
+  let skippedEventCount = 0
 
   for (const [, group] of tournamentsMap) {
     const rawTournament = group.tournament
     const events: Event[] = []
 
     for (const rawEvent of group.events) {
-      const mappedEvent = mapEvent(rawEvent, playerId)
-      if (mappedEvent) events.push(mappedEvent)
+      try {
+        const mappedEvent = mapEvent(rawEvent, playerId)
+        if (mappedEvent) events.push(mappedEvent)
+      } catch (error) {
+        console.error('[StartggMapper] Skipping event due to mapping error:', error)
+        skippedEventCount++
+      }
     }
 
     const rawTournamentId = rawTournament.id?.toString()
@@ -110,12 +116,15 @@ export function mapPlayerRecap(
     )
   }
 
-  return new Player({
-    id: playerId,
-    gamerTag: playerHeader.gamerTag,
-    prefix: playerHeader.prefix,
-    tournaments,
-  })
+  return {
+    player: new Player({
+      id: playerId,
+      gamerTag: playerHeader.gamerTag,
+      prefix: playerHeader.prefix,
+      tournaments,
+    }),
+    skippedEventCount,
+  }
 }
 
 export function mapEmptyPlayer(

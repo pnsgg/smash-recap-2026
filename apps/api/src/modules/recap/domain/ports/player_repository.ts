@@ -16,5 +16,9 @@ export interface PlayerRepository {
    * @param year The year of the recap to generate
    * @returns A promise that resolves to the player
    */
-  getPlayerRecap: (slug: UserSlug, year: Date, videoGameId: VideogameId) => Promise<Player>
+  getPlayerRecap: (
+    slug: UserSlug,
+    year: Date,
+    videoGameId: VideogameId
+  ) => Promise<{ player: Player; skippedEventCount: number }>
 }

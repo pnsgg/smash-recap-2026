@@ -10,7 +10,11 @@ import { StartggTournamentOrganizerRepository } from '#shared/startgg/tournament
 export class PlayerRecapService {
   constructor(private readonly repository: PlayerRepository) {}
 
-  getRecap(slug: UserSlug, year: Date, videogameId: VideogameId): Promise<Player> {
+  getRecap(
+    slug: UserSlug,
+    year: Date,
+    videogameId: VideogameId
+  ): Promise<{ player: Player; skippedEventCount: number }> {
     return this.repository.getPlayerRecap(slug, year, videogameId)
   }
 }
