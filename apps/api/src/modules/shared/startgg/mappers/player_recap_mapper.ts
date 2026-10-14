@@ -307,7 +307,7 @@ function mapSet(
   if (competitors.size === 0) return null
 
   const winnerId = rawSet.winnerId ? entrantIdToPlayerId.get(rawSet.winnerId.toString()) : null
-  const finalWinnerId = winnerId || Array.from(competitors.keys())[0]
+  if (!winnerId) return null
 
   const games: Game[] = []
   for (const rawGame of rawSet.games || []) {
@@ -328,7 +328,7 @@ function mapSet(
     id: asSetId(setId),
     eventId: asEventId(eventId),
     competitors,
-    winnerId: finalWinnerId,
+    winnerId,
     round: rawSet.round || 0,
     fullRoundText,
     games,

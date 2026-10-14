@@ -450,7 +450,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
             nodes: [
               {
                 id: 'set-1',
-                winnerId: 12345,
+                winnerId: 'entrant-1',
                 round: 2,
                 fullRoundText: 'Winners Round 2',
                 completedAt: 1785278000,
