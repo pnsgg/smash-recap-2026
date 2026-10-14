@@ -187,11 +187,11 @@ export class Player {
     )
 
     for (const character of characters) {
-      const existing = counts.get(character.name)
+      const existing = counts.get(character.id)
       if (existing) {
         existing.count++
       } else {
-        counts.set(character.name, { character, count: 1 })
+        counts.set(character.id, { character, count: 1 })
       }
     }
 
@@ -253,8 +253,7 @@ export class Player {
 
     const statsMap = new Map<string, { stage: Stage; wins: number; total: number }>()
     for (const record of rawRecords) {
-      const stageName = record.stage.name
-      const current = statsMap.get(stageName) || {
+      const current = statsMap.get(record.stage.id) || {
         stage: record.stage,
         wins: 0,
         total: 0,
@@ -263,7 +262,7 @@ export class Player {
       if (record.won) {
         current.wins++
       }
-      statsMap.set(stageName, current)
+      statsMap.set(record.stage.id, current)
     }
 
     return Array.from(statsMap.values()).map((stat) => ({
@@ -297,8 +296,7 @@ export class Player {
 
     const statsMap = new Map<string, { character: Character; wins: number; losses: number }>()
     for (const record of records) {
-      const name = record.opponentCharacter.name
-      const current = statsMap.get(name) || {
+      const current = statsMap.get(record.opponentCharacter.id) || {
         character: record.opponentCharacter,
         wins: 0,
         losses: 0,
@@ -308,7 +306,7 @@ export class Player {
       } else {
         current.wins++
       }
-      statsMap.set(name, current)
+      statsMap.set(record.opponentCharacter.id, current)
     }
 
     return Array.from(statsMap.values())
