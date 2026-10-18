@@ -450,7 +450,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
             nodes: [
               {
                 id: 'set-1',
-                winnerId: 'entrant-1',
+                winnerId: 12345,
                 round: 2,
                 fullRoundText: 'Winners Round 2',
                 completedAt: 1785278000,
@@ -458,7 +458,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
                 slots: [
                   {
                     entrant: {
-                      id: 'entrant-1',
+                      id: '12345',
                       name: 'Rouxchov',
                       isDisqualified: false,
                       standing: { placement: 9 },
