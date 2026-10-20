@@ -1,9 +1,9 @@
-import { t } from 'elysia'
+import { t, type UnwrapSchema } from 'elysia'
 
 export const searchQuerySchema = t.Object({
   gamertag: t.String({ minLength: 1 }),
 })
-export type SearchQuery = typeof searchQuerySchema.static
+export type SearchQuery = UnwrapSchema<typeof searchQuerySchema>
 
 export const searchResponseSchema = t.Array(
   t.Object({
@@ -16,4 +16,4 @@ export const searchResponseSchema = t.Array(
     nbEvents: t.Number(),
   })
 )
-export type SearchResponse = typeof searchResponseSchema.static
+export type SearchResponse = UnwrapSchema<typeof searchResponseSchema>

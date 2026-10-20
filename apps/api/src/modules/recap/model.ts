@@ -1,4 +1,4 @@
-import { t } from 'elysia'
+import { t, type UnwrapSchema } from 'elysia'
 
 export class UserNotFoundError extends Error {
   constructor(public readonly slug: string) {
@@ -15,17 +15,17 @@ export const notFoundResponseSchema = t.Object({
 export const playerRecapParamsSchema = t.Object({
   slug: t.String(),
 })
-export type PlayerRecapParams = typeof playerRecapParamsSchema.static
+export type PlayerRecapParams = UnwrapSchema<typeof playerRecapParamsSchema>
 
 export const playerRecapQuerySchema = t.Object({
   videogameId: t.Optional(t.String()),
 })
-export type PlayerRecapQuery = typeof playerRecapQuerySchema.static
+export type PlayerRecapQuery = UnwrapSchema<typeof playerRecapQuerySchema>
 
 export const tournamentOrganizerRecapParamsSchema = t.Object({
   slug: t.String(),
 })
-export type TournamentOrganizerRecapParams = typeof tournamentOrganizerRecapParamsSchema.static
+export type TournamentOrganizerRecapParams = UnwrapSchema<typeof tournamentOrganizerRecapParamsSchema>
 
 const nemesisSchema = t.Nullable(
   t.Object({
@@ -81,7 +81,7 @@ export const playerRecapResponseSchema = t.Object({
   ),
   skippedEventCount: t.Number(),
 })
-export type PlayerRecapResponse = typeof playerRecapResponseSchema.static
+export type PlayerRecapResponse = UnwrapSchema<typeof playerRecapResponseSchema>
 
 export const tournamentOrganizerRecapResponseSchema = t.Object({
   id: t.String(),
@@ -98,4 +98,4 @@ export const tournamentOrganizerRecapResponseSchema = t.Object({
     t.Object({ name: t.String(), count: t.Number(), tournamentNames: t.Array(t.String()) })
   ),
 })
-export type TournamentOrganizerRecapResponse = typeof tournamentOrganizerRecapResponseSchema.static
+export type TournamentOrganizerRecapResponse = UnwrapSchema<typeof tournamentOrganizerRecapResponseSchema>

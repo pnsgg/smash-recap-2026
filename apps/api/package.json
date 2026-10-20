@@ -21,7 +21,6 @@
     "#tests/*": "./tests/*.ts"
   },
   "dependencies": {
-    "@yolk-oss/elysia-env": "^3.0.1",
     "elysia": "rc",
     "gql.tada": "^1.11.3",
     "graphql": "^17.0.2",

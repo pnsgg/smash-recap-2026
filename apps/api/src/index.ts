@@ -2,7 +2,7 @@ import { cors } from '@elysia/cors'
 import { openapi } from '@elysia/openapi'
 import { staticPlugin } from '@elysia/static'
 import { Elysia } from 'elysia'
-import { envPlugin } from '#config/env'
+import { envPlugin, env } from '#config/env'
 import { recapModule } from '#recap/index'
 import { searchModule } from '#search/index'
 
@@ -46,6 +46,6 @@ const app = api
   // requests, not arbitrary client-side routes (e.g. /user/foo) that don't
   // exist on disk — so the SPA fallback is handled explicitly here instead.
   .get('*', { detail: { hide: true } }, () => Bun.file(`${STATIC_DIR}/index.html`))
-  .listen(envPlugin.decorator.env.PORT)
+  .listen(env.PORT)
 
 console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`)
