@@ -1,6 +1,6 @@
-import { cors } from '@elysiajs/cors'
-import { openapi } from '@elysiajs/openapi'
-import { staticPlugin } from '@elysiajs/static'
+import { cors } from '@elysia/cors'
+import { openapi } from '@elysia/openapi'
+import { staticPlugin } from '@elysia/static'
 import { Elysia } from 'elysia'
 import { envPlugin } from '#config/env'
 import { recapModule } from '#recap/index'
@@ -27,7 +27,7 @@ const api = new Elysia()
       },
     })
   )
-  .get('/health', () => ({ status: 'ok' }), { detail: { hide: true } })
+  .get('/health', { detail: { hide: true } }, () => ({ status: 'ok' }))
   .use(apiV1)
 
 // Eden Treaty clients (apps/web, via packages/shared) only need the API
@@ -45,7 +45,7 @@ const app = api
   // @elysiajs/static's own `indexHTML` fallback only covers directory-index
   // requests, not arbitrary client-side routes (e.g. /user/foo) that don't
   // exist on disk — so the SPA fallback is handled explicitly here instead.
-  .get('*', () => Bun.file(`${STATIC_DIR}/index.html`), { detail: { hide: true } })
+  .get('*', { detail: { hide: true } }, () => Bun.file(`${STATIC_DIR}/index.html`))
   .listen(envPlugin.decorator.env.PORT)
 
 console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`)

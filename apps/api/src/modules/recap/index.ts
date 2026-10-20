@@ -39,45 +39,37 @@ export const createRecapModule = (
       'Recap.TournamentOrganizerRecapResponse': tournamentOrganizerRecapResponseSchema,
       'Recap.NotFound': notFoundResponseSchema,
     })
-    .get(
-      '/players/:slug/recap',
-      async ({ params, query, env }) => {
-        const year = new Date(env.RECAP_YEAR, 0, 1)
-        const videogameId = asVideogameId(query.videogameId ?? DEFAULT_VIDEOGAME_ID)
-        const { player, skippedEventCount } = await playerService.getRecap(
-          asUserSlug(params.slug),
-          year,
-          videogameId
-        )
-        return presentPlayerRecap(player, skippedEventCount)
+    .get('/players/:slug/recap', {
+      params: playerRecapParamsSchema,
+      query: playerRecapQuerySchema,
+      response: { 200: 'Recap.PlayerRecapResponse', 404: 'Recap.NotFound' },
+      detail: {
+        summary: 'Get a player recap',
+        description:
+          "Fetches a player's yearly recap stats by their start.gg user slug and an optional videogame ID (defaults to Super Smash Bros. Ultimate).",
       },
-      {
-        params: playerRecapParamsSchema,
-        query: playerRecapQuerySchema,
-        response: { 200: 'Recap.PlayerRecapResponse', 404: 'Recap.NotFound' },
-        detail: {
-          summary: 'Get a player recap',
-          description:
-            "Fetches a player's yearly recap stats by their start.gg user slug and an optional videogame ID (defaults to Super Smash Bros. Ultimate).",
-        },
-      }
-    )
-    .get(
-      '/tournament-organizers/:slug/recap',
-      async ({ params, env }) => {
-        const year = new Date(env.RECAP_YEAR, 0, 1)
-        const recap = await tournamentOrganizerService.getRecap(asUserSlug(params.slug), year)
-        return presentTournamentOrganizerRecap(recap)
+    }, async ({ params, query, env }) => {
+      const year = new Date(env.RECAP_YEAR, 0, 1)
+      const videogameId = asVideogameId(query.videogameId ?? DEFAULT_VIDEOGAME_ID)
+      const { player, skippedEventCount } = await playerService.getRecap(
+        asUserSlug(params.slug),
+        year,
+        videogameId
+      )
+      return presentPlayerRecap(player, skippedEventCount)
+    })
+    .get('/tournament-organizers/:slug/recap', {
+      params: tournamentOrganizerRecapParamsSchema,
+      response: { 200: 'Recap.TournamentOrganizerRecapResponse', 404: 'Recap.NotFound' },
+      detail: {
+        summary: 'Get a tournament organizer recap',
+        description:
+          "Fetches a tournament organizer's yearly recap stats by their start.gg user slug.",
       },
-      {
-        params: tournamentOrganizerRecapParamsSchema,
-        response: { 200: 'Recap.TournamentOrganizerRecapResponse', 404: 'Recap.NotFound' },
-        detail: {
-          summary: 'Get a tournament organizer recap',
-          description:
-            "Fetches a tournament organizer's yearly recap stats by their start.gg user slug.",
-        },
-      }
-    )
+    }, async ({ params, env }) => {
+      const year = new Date(env.RECAP_YEAR, 0, 1)
+      const recap = await tournamentOrganizerService.getRecap(asUserSlug(params.slug), year)
+      return presentTournamentOrganizerRecap(recap)
+    })
 
 export const recapModule = createRecapModule()

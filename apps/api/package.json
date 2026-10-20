@@ -21,13 +21,13 @@
     "#tests/*": "./tests/*.ts"
   },
   "dependencies": {
-    "@elysiajs/cors": "^1.4.2",
-    "@elysiajs/openapi": "^1.4.16",
-    "@elysiajs/static": "^1.4.10",
     "@yolk-oss/elysia-env": "^3.0.1",
-    "elysia": "latest",
+    "elysia": "rc",
     "gql.tada": "^1.11.3",
-    "graphql": "^17.0.2"
+    "graphql": "^17.0.2",
+    "@elysia/cors": "rc",
+    "@elysia/openapi": "rc",
+    "@elysia/static": "rc"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.6.0",
