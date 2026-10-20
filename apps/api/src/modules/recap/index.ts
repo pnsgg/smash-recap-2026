@@ -30,10 +30,9 @@ export const createRecapModule = (
   new Elysia({ tags: ['Recap'] })
     .use(envPlugin)
     .use(cache(cacheClient))
-    .onError(({ error }) => {
-      if (error instanceof UserNotFoundError)
-        return status(404, { error: 'not_found', message: error.message })
-    })
+    .onError(UserNotFoundError, ({ error }) =>
+      status(404, { error: 'not_found', message: error.message })
+    )
     .model({
       'Recap.PlayerRecapResponse': playerRecapResponseSchema,
       'Recap.TournamentOrganizerRecapResponse': tournamentOrganizerRecapResponseSchema,
