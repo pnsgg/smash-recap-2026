@@ -7,7 +7,7 @@ import { searchModule } from '#search/index'
 
 const apiV1 = new Elysia({ prefix: '/api/v1' }).use(recapModule).use(searchModule)
 
-export const app = new Elysia()
+export const app = new Elysia({ normalize: 'typebox' })
   .use(envPlugin)
   .use(cors())
   .use(
