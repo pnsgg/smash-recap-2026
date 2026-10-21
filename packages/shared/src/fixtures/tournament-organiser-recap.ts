@@ -1,4 +1,4 @@
-import { asUserSlug, asVideogameId } from "@api/modules/shared/ids";
+import { asUserSlug, asVideogameId } from "@api/libs/ids";
 import { TournamentOrganizerRecapProps } from "@shared/recap-types";
 
 export const licaneTournamentOrganiserRecap: TournamentOrganizerRecapProps = {
