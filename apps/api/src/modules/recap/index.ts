@@ -27,7 +27,7 @@ export const createRecapModule = (
   tournamentOrganizerService: TournamentOrganizerRecapService = tournamentOrganizerRecapService,
   cacheClient: CacheClient = redis
 ) =>
-  new Elysia({ tags: ['Recap'] })
+  new Elysia({ tags: ['Recap'], normalize: 'typebox' })
     .use(envPlugin)
     .use(cache(cacheClient))
     .onError(UserNotFoundError, ({ error }) =>

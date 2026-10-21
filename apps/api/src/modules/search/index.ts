@@ -4,7 +4,7 @@ import { presentSearchResults } from '#search/presenter'
 import { PlayersSearchService, playersSearchService } from '#search/service'
 
 export const createSearchModule = (service: PlayersSearchService = playersSearchService) =>
-  new Elysia({ tags: ['Search'] })
+  new Elysia({ tags: ['Search'], normalize: 'typebox' })
     .model({ 'Search.SearchResponse': searchResponseSchema })
     .get('/players/search', {
       query: searchQuerySchema,
