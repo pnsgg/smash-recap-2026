@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { SearchPlayerResult } from '#search/domain/player_search_result'
-import { asPlayerId, asUserSlug } from '#shared/ids'
+import { asPlayerId, asUserSlug } from '#libs/ids'
 
 describe('SearchPlayerResult - constructor', () => {
   test('initializes all fields correctly', () => {

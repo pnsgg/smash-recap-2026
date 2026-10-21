@@ -5,7 +5,7 @@ import { clusterSeries, type TournamentSeries } from '#recap/domain/series_clust
 import type { Set as EventSet } from '#recap/domain/set'
 import type { Stage } from '#recap/domain/stage'
 import type { Tournament } from '#recap/domain/tournament'
-import type { PlayerId } from '#shared/ids'
+import type { PlayerId } from '#libs/ids'
 
 export type PlayerParams = {
   id: PlayerId

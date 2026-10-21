@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import { Character } from '#recap/domain/character'
-import { asCharacterId } from '#shared/ids'
-import type { CharacterId } from '#shared/ids'
+import { asCharacterId } from '#libs/ids'
+import type { CharacterId } from '#libs/ids'
 
 type CharacterOverrides = {
   id?: CharacterId

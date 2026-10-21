@@ -4,8 +4,8 @@ import { Factory } from 'fishery'
 import type { Address } from '#recap/domain/address'
 import type { Event } from '#recap/domain/event'
 import { Tournament } from '#recap/domain/tournament'
-import { asTournamentId } from '#shared/ids'
-import type { TournamentId } from '#shared/ids'
+import { asTournamentId } from '#libs/ids'
+import type { TournamentId } from '#libs/ids'
 
 type TournamentOverrides = {
   id?: TournamentId

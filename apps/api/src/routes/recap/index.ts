@@ -1,8 +1,8 @@
 import { redis } from 'bun'
 import { Elysia, status } from 'elysia'
-import { envPlugin } from '#config/env'
+import { envPlugin } from '#env'
 import { cache, CacheClient } from '#plugins/cache'
-import { asUserSlug, asVideogameId } from '#shared/ids'
+import { asUserSlug, asVideogameId } from '#libs/ids'
 import {
   notFoundResponseSchema,
   playerRecapParamsSchema,

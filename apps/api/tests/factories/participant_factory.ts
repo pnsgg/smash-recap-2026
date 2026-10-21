@@ -2,8 +2,8 @@ import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import { Participant } from '#recap/domain/participant'
 import { Seed } from '#recap/domain/seed'
-import { asParticipantId, asPlayerId } from '#shared/ids'
-import type { ParticipantId, PlayerId } from '#shared/ids'
+import { asParticipantId, asPlayerId } from '#libs/ids'
+import type { ParticipantId, PlayerId } from '#libs/ids'
 
 type ParticipantOverrides = {
   id?: ParticipantId

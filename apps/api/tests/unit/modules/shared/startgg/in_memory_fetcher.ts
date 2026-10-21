@@ -1,6 +1,6 @@
 import { parse, print } from 'graphql'
-import type { TadaDocumentNode } from '#shared/startgg/graphql'
-import type { StartggClient } from '#shared/startgg/client'
+import type { TadaDocumentNode } from '#libs/startgg/graphql'
+import type { StartggClient } from '#libs/startgg/client'
 
 type AnyResult = Record<string, unknown>
 type AnyVariables = Record<string, unknown>

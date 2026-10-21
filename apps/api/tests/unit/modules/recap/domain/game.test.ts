@@ -2,7 +2,7 @@ import { CharacterFactory } from '#tests/factories/character_factory'
 import { GameFactory } from '#tests/factories/game_factory'
 import { describe, expect, test } from 'bun:test'
 import { GameSelection } from '#recap/domain/game'
-import { asEntrantId, asPlayerId } from '#shared/ids'
+import { asEntrantId, asPlayerId } from '#libs/ids'
 
 describe('Game - constructor', () => {
   test('initializes correctly with valid orderNum', () => {

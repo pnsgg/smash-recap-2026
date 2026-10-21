@@ -3,7 +3,7 @@ import type { Character } from '#recap/domain/character'
 import type { Game } from '#recap/domain/game'
 import { Seed } from '#recap/domain/seed'
 import type { Stage } from '#recap/domain/stage'
-import type { EventId, PlayerId, SetId } from '#shared/ids'
+import type { EventId, PlayerId, SetId } from '#libs/ids'
 
 export type SetPlayerParams = {
   playerId: PlayerId

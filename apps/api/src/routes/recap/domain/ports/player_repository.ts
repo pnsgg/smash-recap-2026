@@ -1,6 +1,6 @@
 import type { Player } from '#recap/domain/player'
 import type { SearchPlayerResult } from '#search/domain/player_search_result'
-import type { UserSlug, VideogameId } from '#shared/ids'
+import type { UserSlug, VideogameId } from '#libs/ids'
 
 export interface PlayerRepository {
   /**

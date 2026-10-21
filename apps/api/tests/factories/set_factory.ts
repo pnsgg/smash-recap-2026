@@ -4,8 +4,8 @@ import { Factory } from 'fishery'
 import { BracketType } from '#recap/domain/bracket_type'
 import type { Game } from '#recap/domain/game'
 import { Set, SetPlayer } from '#recap/domain/set'
-import { asEventId, asPlayerId, asSetId } from '#shared/ids'
-import type { EventId, PlayerId, SetId } from '#shared/ids'
+import { asEventId, asPlayerId, asSetId } from '#libs/ids'
+import type { EventId, PlayerId, SetId } from '#libs/ids'
 
 type SetOverrides = {
   id?: SetId

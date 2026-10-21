@@ -2,7 +2,7 @@ import { EventType, EventTypeHelper } from '#recap/domain/event_type'
 import { clusterSeries, type TournamentSeries } from '#recap/domain/series_clustering'
 import type { Tournament } from '#recap/domain/tournament'
 import type { Videogame } from '#recap/domain/videogame'
-import type { UserSlug } from '#shared/ids'
+import type { UserSlug } from '#libs/ids'
 
 export type TournamentOrganizerParams = {
   id: UserSlug

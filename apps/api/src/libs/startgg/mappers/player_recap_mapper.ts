@@ -23,9 +23,9 @@ import {
   asStageId,
   asTournamentId,
   asVideogameId,
-} from '#shared/ids'
-import type { PlayerId } from '#shared/ids'
-import type { getEvent } from '#shared/startgg/queries/get_event'
+} from '#libs/ids'
+import type { PlayerId } from '#libs/ids'
+import type { getEvent } from '#libs/startgg/queries/get_event'
 
 export type EventResult = Exclude<ResultOf<typeof getEvent>['event'], null | undefined>
 type EntrantResult = Exclude<EventResult['userEntrant'], null | undefined>

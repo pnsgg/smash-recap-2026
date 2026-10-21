@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import { Stage } from '#recap/domain/stage'
-import { asStageId } from '#shared/ids'
+import { asStageId } from '#libs/ids'
 
 const SMASH_STAGES = [
   'Battlefield',

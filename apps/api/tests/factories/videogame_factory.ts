@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import { Videogame } from '#recap/domain/videogame'
-import { asVideogameId } from '#shared/ids'
+import { asVideogameId } from '#libs/ids'
 
 const GAMES = [
   'Super Smash Bros. Ultimate',

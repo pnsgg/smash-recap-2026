@@ -1,7 +1,7 @@
 import { CharacterFactory } from '#tests/factories/character_factory'
 import { describe, expect, test } from 'bun:test'
 import { Character } from '#recap/domain/character'
-import { asCharacterId } from '#shared/ids'
+import { asCharacterId } from '#libs/ids'
 
 describe('Character - constructor', () => {
   test('factory generates valid instances', () => {

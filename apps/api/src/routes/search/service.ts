@@ -1,7 +1,7 @@
 import type { PlayerRepository } from '#recap/domain/ports/player_repository'
 import type { SearchPlayerResult } from '#search/domain/player_search_result'
-import { startggClient } from '#shared/startgg/client.instance'
-import { StartggPlayerRepository } from '#shared/startgg/player_repository'
+import { startggClient } from '#libs/startgg/client.instance'
+import { StartggPlayerRepository } from '#libs/startgg/player_repository'
 
 export class PlayersSearchService {
   constructor(private readonly repository: PlayerRepository) {}

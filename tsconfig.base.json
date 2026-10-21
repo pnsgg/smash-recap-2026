@@ -20,15 +20,15 @@
 
       /* apps/api's own internal aliases — re-declared here so that any package
        * pulling in its source through the @api/* alias above (e.g. packages/shared
-       * importing type { presentPlayerRecap } from '@api/modules/recap/model') can
+       * importing type { presentPlayerRecap } from '@api/routes/recap/model') can
        * still resolve them. Package-local paths in apps/api/tsconfig.json only
        * apply when tsc runs *from* apps/api itself. */
-      "#config/*": ["apps/api/src/config/*"],
-      "#recap/*": ["apps/api/src/modules/recap/*"],
-      "#search/*": ["apps/api/src/modules/search/*"],
-      "#shared/*": ["apps/api/src/modules/shared/*"],
-      "#/graphql": ["apps/api/src/modules/shared/startgg/graphql.ts"],
-      "#/graphql-env": ["apps/api/src/modules/shared/startgg/graphql-env.d.ts"]
+      "#env": ["apps/api/src/env.ts"],
+      "#recap/*": ["apps/api/src/routes/recap/*"],
+      "#search/*": ["apps/api/src/routes/search/*"],
+      "#libs/*": ["apps/api/src/libs/*"],
+      "#/graphql": ["apps/api/src/libs/startgg/graphql.ts"],
+      "#/graphql-env": ["apps/api/src/libs/startgg/graphql-env.d.ts"]
     }
   }
 }

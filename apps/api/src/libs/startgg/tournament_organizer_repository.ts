@@ -2,12 +2,12 @@ import type { ResultOf } from 'gql.tada'
 import type { TournamentOrganizerRepository } from '#recap/domain/ports/tournament_organizer_repository'
 import type { TournamentOrganizer } from '#recap/domain/tournament_organizer'
 import { UserNotFoundError } from '#recap/domain/user_not_found_error'
-import type { UserSlug } from '#shared/ids'
-import { mapTournamentOrganizer } from '#shared/startgg/mappers/tournament_organizer_mapper'
-import { getPlayerUserId } from '#shared/startgg/queries/get_player_user_id'
-import { getTournamentDetails } from '#shared/startgg/queries/get_tournament_details'
-import { getTournamentsOrganized } from '#shared/startgg/queries/get_tournaments_organised'
-import type { StartggClientInterface } from '#shared/startgg/client'
+import type { UserSlug } from '#libs/ids'
+import { mapTournamentOrganizer } from '#libs/startgg/mappers/tournament_organizer_mapper'
+import { getPlayerUserId } from '#libs/startgg/queries/get_player_user_id'
+import { getTournamentDetails } from '#libs/startgg/queries/get_tournament_details'
+import { getTournamentsOrganized } from '#libs/startgg/queries/get_tournaments_organised'
+import type { StartggClientInterface } from '#libs/startgg/client'
 
 type TournamentDetailsResult = Exclude<
   ResultOf<typeof getTournamentDetails>['tournament'],

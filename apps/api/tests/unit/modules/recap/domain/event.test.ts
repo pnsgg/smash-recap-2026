@@ -4,7 +4,7 @@ import { BracketType } from '#recap/domain/bracket_type'
 import { EventType } from '#recap/domain/event_type'
 import { Participant } from '#recap/domain/participant'
 import { Seed } from '#recap/domain/seed'
-import { asParticipantId, asPlayerId } from '#shared/ids'
+import { asParticipantId, asPlayerId } from '#libs/ids'
 
 describe('Event - constructor', () => {
   test.each(['', '   '])('throws error if name is empty or whitespace - "%s"', (invalidName) => {

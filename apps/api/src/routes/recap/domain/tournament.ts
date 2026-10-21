@@ -3,7 +3,7 @@ import type { Character } from '#recap/domain/character'
 import type { Event } from '#recap/domain/event'
 import type { Set } from '#recap/domain/set'
 import type { Stage } from '#recap/domain/stage'
-import type { PlayerId, TournamentId } from '#shared/ids'
+import type { PlayerId, TournamentId } from '#libs/ids'
 
 export type TournamentParams = {
   id: TournamentId

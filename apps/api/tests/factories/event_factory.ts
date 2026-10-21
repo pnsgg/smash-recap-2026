@@ -7,8 +7,8 @@ import { EventType } from '#recap/domain/event_type'
 import type { Participant } from '#recap/domain/participant'
 import type { Set } from '#recap/domain/set'
 import type { Videogame } from '#recap/domain/videogame'
-import { asEventId } from '#shared/ids'
-import type { EventId } from '#shared/ids'
+import { asEventId } from '#libs/ids'
+import type { EventId } from '#libs/ids'
 
 type EventOverrides = {
   id?: EventId

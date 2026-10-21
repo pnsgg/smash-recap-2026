@@ -1,4 +1,4 @@
-import type { PlayerId, UserSlug } from '#shared/ids'
+import type { PlayerId, UserSlug } from '#libs/ids'
 
 export type SearchPlayerResultProps = {
   id: PlayerId

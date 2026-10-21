@@ -5,7 +5,7 @@ import {
 } from '#tests/fakes/modules/recap/fake_player_recap_service'
 import { describe, expect, test } from 'bun:test'
 import { createRecapModule } from '#recap/index'
-import { asVideogameId } from '#shared/ids'
+import { asVideogameId } from '#libs/ids'
 import { FakeCacheClient } from '#tests/fakes/plugins/fake_cache_client'
 
 describe('Player Recap', () => {

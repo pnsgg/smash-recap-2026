@@ -1,7 +1,7 @@
 import { PlayerFactory } from '#tests/factories/player_factory'
 import { PlayerRecapService } from '#recap/service'
 import type { Player } from '#recap/domain/player'
-import { type UserSlug, type VideogameId, asPlayerId } from '#shared/ids'
+import { type UserSlug, type VideogameId, asPlayerId } from '#libs/ids'
 
 export const LICANE_DATA = {
   id: asPlayerId('1960701'),

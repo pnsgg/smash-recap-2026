@@ -5,7 +5,7 @@ import type { Participant } from '#recap/domain/participant'
 import type { Set } from '#recap/domain/set'
 import type { Stage } from '#recap/domain/stage'
 import type { Videogame } from '#recap/domain/videogame'
-import type { EventId, PlayerId } from '#shared/ids'
+import type { EventId, PlayerId } from '#libs/ids'
 
 export type EventParams = {
   id: EventId

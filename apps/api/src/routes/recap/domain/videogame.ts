@@ -1,4 +1,4 @@
-import type { VideogameId } from '#shared/ids'
+import type { VideogameId } from '#libs/ids'
 
 export type VideogameParams = {
   id: VideogameId

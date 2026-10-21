@@ -7,12 +7,12 @@ import {
   asPlayerId,
   asSetId,
   asTournamentId,
-} from '#shared/ids'
+} from '#libs/ids'
 import {
   mapEmptyPlayer,
   mapPlayerRecap,
-} from '#shared/startgg/mappers/player_recap_mapper'
-import type { EventResult } from '#shared/startgg/mappers/player_recap_mapper'
+} from '#libs/startgg/mappers/player_recap_mapper'
+import type { EventResult } from '#libs/startgg/mappers/player_recap_mapper'
 
 describe('PlayerRecapMapper - skips events with mapping errors and counts them', () => {
   const playerId = asPlayerId('player-123')

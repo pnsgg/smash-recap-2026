@@ -5,9 +5,9 @@ import { EventType } from '#recap/domain/event_type'
 import { Tournament } from '#recap/domain/tournament'
 import { TournamentOrganizer } from '#recap/domain/tournament_organizer'
 import { Videogame } from '#recap/domain/videogame'
-import { asEventId, asTournamentId, asVideogameId } from '#shared/ids'
-import type { UserSlug } from '#shared/ids'
-import type { getTournamentDetails } from '#shared/startgg/queries/get_tournament_details'
+import { asEventId, asTournamentId, asVideogameId } from '#libs/ids'
+import type { UserSlug } from '#libs/ids'
+import type { getTournamentDetails } from '#libs/startgg/queries/get_tournament_details'
 
 export type TournamentDetailsResult = Exclude<
   ResultOf<typeof getTournamentDetails>['tournament'],

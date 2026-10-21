@@ -2,19 +2,19 @@ import type { Player } from '#recap/domain/player'
 import type { PlayerRepository } from '#recap/domain/ports/player_repository'
 import { UserNotFoundError } from '#recap/domain/user_not_found_error'
 import { SearchPlayerResult } from '#search/domain/player_search_result'
-import { asPlayerId } from '#shared/ids'
-import type { UserSlug, VideogameId } from '#shared/ids'
+import { asPlayerId } from '#libs/ids'
+import type { UserSlug, VideogameId } from '#libs/ids'
 import {
   mapEmptyPlayer,
   mapPlayerRecap,
-} from '#shared/startgg/mappers/player_recap_mapper'
-import type { EventResult } from '#shared/startgg/mappers/player_recap_mapper'
-import { mapSearchPlayerResult } from '#shared/startgg/mappers/search_player_result_mapper'
-import { getEvent } from '#shared/startgg/queries/get_event'
-import { getPlayerEventIds } from '#shared/startgg/queries/get_player_event_ids'
-import { getPlayerUserId } from '#shared/startgg/queries/get_player_user_id'
-import { searchPlayerByGamerTag } from '#shared/startgg/queries/search_player_by_gamertag'
-import type { StartggClientInterface } from '#shared/startgg/client'
+} from '#libs/startgg/mappers/player_recap_mapper'
+import type { EventResult } from '#libs/startgg/mappers/player_recap_mapper'
+import { mapSearchPlayerResult } from '#libs/startgg/mappers/search_player_result_mapper'
+import { getEvent } from '#libs/startgg/queries/get_event'
+import { getPlayerEventIds } from '#libs/startgg/queries/get_player_event_ids'
+import { getPlayerUserId } from '#libs/startgg/queries/get_player_user_id'
+import { searchPlayerByGamerTag } from '#libs/startgg/queries/search_player_by_gamertag'
+import type { StartggClientInterface } from '#libs/startgg/client'
 
 type StartggPlayerRepositoryConfig = {
   eventType?: number

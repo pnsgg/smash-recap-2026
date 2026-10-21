@@ -1,19 +1,19 @@
-import type { StageId } from '#shared/ids'
+import type { CharacterId } from '#libs/ids'
 
-export type StageParams = {
-  id: StageId
+export type CharacterParams = {
+  id: CharacterId
   name: string
 }
 
-export class Stage {
+export class Character {
   constructor(
-    public readonly id: StageId,
+    public readonly id: CharacterId,
     public readonly name: string
   ) {
     this.checkPreconditions({ id, name })
   }
 
-  private checkPreconditions(params: StageParams) {
+  private checkPreconditions(params: CharacterParams) {
     if (!params.name || params.name.trim() === '') {
       throw new Error(`Invalid parameter name: ${params.name}. Value cannot be empty.`)
     }
