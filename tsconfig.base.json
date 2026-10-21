@@ -12,7 +12,7 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@api": ["apps/api/src/index.ts"],
+      "@api": ["apps/api/src/app.ts"],
       "@api/*": ["apps/api/src/*"],
       "@shared": ["packages/shared/src/index.ts"],
       "@shared/*": ["packages/shared/src/*"],
