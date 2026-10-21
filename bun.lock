@@ -15,6 +15,7 @@
         "elysia": "rc",
         "gql.tada": "^1.11.3",
         "graphql": "^17.0.2",
+        "typebox": "^1.4.2",
       },
       "devDependencies": {
         "@faker-js/faker": "^10.6.0",

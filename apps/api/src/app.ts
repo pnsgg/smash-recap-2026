@@ -1,7 +1,7 @@
 import { cors } from '@elysia/cors'
 import { openapi } from '@elysia/openapi'
 import { Elysia } from 'elysia'
-import { envPlugin } from '#config/env'
+import { envPlugin } from '#env'
 import { recapModule } from '#recap/index'
 import { searchModule } from '#search/index'
 

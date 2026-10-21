@@ -1,6 +1,6 @@
 import { staticPlugin } from '@elysia/static'
 import { app } from './app'
-import { env } from '#config/env'
+import { env } from '#env'
 
 // Serves the web app's build output so a single deployed image handles both
 // the API and the frontend, same-origin (no CORS/API URL to wire up).
