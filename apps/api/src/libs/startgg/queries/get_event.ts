@@ -15,6 +15,7 @@ export const getEvent = graphql(`
         id
         name
         startAt
+        timezone
         city
         addrState
         countryCode

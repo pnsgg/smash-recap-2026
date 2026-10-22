@@ -62,6 +62,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           addrState: 'Occitanie',
           countryCode: 'FR',
           startAt: 1783188000,
+          timezone: 'Europe/Paris',
         },
         userEntrant: {
           id: 'entrant-1',
@@ -194,6 +195,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
     expect(tournament.address?.countryCode).toBe('FR')
     expect(tournament.address?.latitude).toBe(43.6)
     expect(tournament.address?.longitude).toBe(1.433333)
+    expect(tournament.timezone).toBe('Europe/Paris')
 
     const event = tournament.events[0]
     expect(event.id).toBe(asEventId('event-1'))
@@ -256,6 +258,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           addrState: null,
           countryCode: null,
           startAt: 1783188000,
+          timezone: 'Europe/Paris',
         },
         userEntrant: {
           id: 'entrant-1',
@@ -304,6 +307,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           addrState: null,
           countryCode: null,
           startAt: 0,
+          timezone: null,
         },
         userEntrant: {
           id: 'entrant-1',
@@ -339,6 +343,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           addrState: null,
           countryCode: null,
           startAt: 0,
+          timezone: null,
         },
         userEntrant: null,
       },
@@ -378,6 +383,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           addrState: null,
           countryCode: null,
           startAt: 0,
+          timezone: null,
         },
         userEntrant: {
           id: 'entrant-1',
@@ -438,6 +444,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           addrState: null,
           countryCode: null,
           startAt: 0,
+          timezone: null,
         },
         userEntrant: {
           id: 'entrant-1',
