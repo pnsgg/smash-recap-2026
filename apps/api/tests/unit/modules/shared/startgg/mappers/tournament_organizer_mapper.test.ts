@@ -14,6 +14,8 @@ describe('TournamentOrganizerMapper', () => {
       {
         id: 'tournament-1',
         name: 'Genesis 10',
+        startAt: 1785276620,
+        timezone: 'America/Los_Angeles',
         numAttendees: 1500,
         events: [
           {
@@ -62,6 +64,8 @@ describe('TournamentOrganizerMapper', () => {
     expect(tournament.id).toBe(asTournamentId('tournament-1'))
     expect(tournament.name).toBe('Genesis 10')
     expect(tournament.numAttendees).toBe(1500)
+    expect(tournament.startDate).toEqual(new Date(1785276620 * 1000))
+    expect(tournament.timezone).toBe('America/Los_Angeles')
     expect(tournament.events).toHaveLength(2)
 
     const event1 = tournament.events[0]
@@ -88,6 +92,8 @@ describe('TournamentOrganizerMapper', () => {
       {
         id: 'tournament-1',
         name: 'Genesis 10',
+        startAt: 1785276620,
+        timezone: null,
         numAttendees: 1500,
         events: [
           null,
@@ -132,6 +138,8 @@ describe('TournamentOrganizerMapper', () => {
       {
         id: 'tournament-1',
         name: 'Genesis 10',
+        startAt: 1785276620,
+        timezone: null,
         numAttendees: 1500,
         events: [
           {
@@ -157,6 +165,8 @@ describe('TournamentOrganizerMapper', () => {
       {
         id: 'tournament-1',
         name: 'Genesis 10',
+        startAt: 1785276620,
+        timezone: null,
         numAttendees: 1500,
         events: [
           {
@@ -182,6 +192,8 @@ describe('TournamentOrganizerMapper', () => {
       {
         id: 'tournament-1',
         name: 'Genesis 10',
+        startAt: 1785276620,
+        timezone: null,
         numAttendees: 1500,
         events: [
           {
@@ -213,12 +225,16 @@ describe('TournamentOrganizerMapper', () => {
       {
         id: null,
         name: null,
+        startAt: null,
+        timezone: null,
         numAttendees: null,
         events: null,
       },
       {
         id: 'tournament-2',
         name: 'Genesis 10',
+        startAt: 1785276620,
+        timezone: null,
         numAttendees: 1500,
         events: [
           {
@@ -243,6 +259,7 @@ describe('TournamentOrganizerMapper', () => {
     expect(t1.id).toBe(asTournamentId(''))
     expect(t1.name).toBe('Unknown Tournament')
     expect(t1.numAttendees).toBe(0)
+    expect(t1.timezone).toBeNull()
     expect(t1.events).toHaveLength(0)
 
     // Second tournament checks (null videogame, name, isOnline, numEntrants, id)
