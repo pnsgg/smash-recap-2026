@@ -4,7 +4,7 @@ import { TournamentOrganizerRecapProps } from "@shared/recap-types";
 export const licaneTournamentOrganiserRecap: TournamentOrganizerRecapProps = {
   id: asUserSlug("541f04fd"),
   gamerTag: "Licane",
-  totalTournaments: 101,
+  totalTournaments: 107,
   biggestTournaments: [
     {
       tournamentName: "Le Parthenon #6",
@@ -137,73 +137,73 @@ export const licaneTournamentOrganiserRecap: TournamentOrganizerRecapProps = {
   dayOfWeekActivity: [
     {
       day: "Sun",
-      count: 0
+      count: 6
     },
     {
       day: "Mon",
-      count: 0
+      count: 3
     },
     {
       day: "Tue",
-      count: 0
+      count: 33
     },
     {
       day: "Wed",
-      count: 0
+      count: 3
     },
     {
       day: "Thu",
-      count: 0
+      count: 7
     },
     {
       day: "Fri",
-      count: 0
+      count: 11
     },
     {
       day: "Sat",
-      count: 101
+      count: 44
     }
   ],
   tournamentsByMonth: [
     {
       month: "Jan",
-      count: 0
+      count: 12
     },
     {
       month: "Feb",
-      count: 0
+      count: 16
     },
     {
       month: "Mar",
-      count: 0
+      count: 14
     },
     {
       month: "Apr",
-      count: 0
+      count: 15
     },
     {
       month: "May",
-      count: 0
+      count: 10
     },
     {
       month: "Jun",
-      count: 0
+      count: 13
     },
     {
       month: "Jul",
-      count: 0
+      count: 11
     },
     {
       month: "Aug",
-      count: 0
+      count: 4
     },
     {
       month: "Sep",
-      count: 101
+      count: 8
     },
     {
       month: "Oct",
-      count: 0
+      count: 4
     },
     {
       month: "Nov",

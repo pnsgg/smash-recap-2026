@@ -12,6 +12,14 @@ export type TournamentParams = {
   events: Event[]
   startDate: Date
   numAttendees?: number | null
+  timezone?: string | null
+}
+
+export type LocalTime = {
+  weekday: number
+  month: number
+  hour: number
+  minute: number
 }
 
 export class Tournament {
@@ -21,6 +29,8 @@ export class Tournament {
   public readonly events: Event[]
   public readonly startDate: Date
   public readonly numAttendees: number
+  /** IANA timezone, e.g. "Europe/Paris" */
+  public readonly timezone: string | null
 
   constructor(params: TournamentParams) {
     this.checkPreconditions(params)
@@ -30,11 +40,38 @@ export class Tournament {
     this.events = params.events
     this.startDate = params.startDate
     this.numAttendees = params.numAttendees ?? 0
+    this.timezone = params.timezone ?? null
   }
 
   private checkPreconditions(params: TournamentParams) {
     if (!params.name || params.name.trim() === '') {
       throw new Error(`Invalid parameter name: ${params.name}. Value cannot be empty.`)
+    }
+  }
+
+  /**
+   * Expresses an instant in the tournament's local time.
+   * Falls back to UTC when the timezone is unknown.
+   */
+  toLocalTime(date: Date): LocalTime {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: this.timezone ?? 'UTC',
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    }).formatToParts(date)
+    const part = (type: Intl.DateTimeFormatPartTypes) =>
+      Number(parts.find((p) => p.type === type)?.value)
+
+    const month = part('month') - 1
+    return {
+      weekday: new Date(Date.UTC(part('year'), month, part('day'))).getUTCDay(),
+      month,
+      hour: part('hour'),
+      minute: part('minute'),
     }
   }
 

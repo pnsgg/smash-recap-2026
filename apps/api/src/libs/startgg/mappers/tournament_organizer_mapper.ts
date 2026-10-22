@@ -61,7 +61,8 @@ export function mapTournamentOrganizer(
       id: asTournamentId(raw.id?.toString() ?? ''),
       name: raw.name ?? 'Unknown Tournament',
       address: null,
-      startDate: new Date(),
+      startDate: new Date((raw.startAt ?? 0) * 1000),
+      timezone: raw.timezone,
       events,
       numAttendees: raw.numAttendees ?? 0,
     })

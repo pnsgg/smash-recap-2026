@@ -5,6 +5,8 @@ export const getTournamentDetails = graphql(`
     tournament(id: $id) {
       id
       name
+      startAt
+      timezone
       numAttendees
       events {
         id

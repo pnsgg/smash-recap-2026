@@ -273,3 +273,38 @@ describe('Tournament - getPlayerSPR', () => {
   })
 })
 
+describe('Tournament - toLocalTime', () => {
+  test('expresses an instant in the tournament timezone', () => {
+    const tournament = TournamentFactory.build({ timezone: 'America/Los_Angeles' })
+
+    expect(tournament.toLocalTime(new Date('2026-07-25T02:30:00Z'))).toEqual({
+      weekday: 5,
+      month: 6,
+      hour: 19,
+      minute: 30,
+    })
+  })
+
+  test('crosses into the next day and year ahead of UTC', () => {
+    const tournament = TournamentFactory.build({ timezone: 'Europe/Paris' })
+
+    expect(tournament.toLocalTime(new Date('2026-12-31T23:30:00Z'))).toEqual({
+      weekday: 5,
+      month: 0,
+      hour: 0,
+      minute: 30,
+    })
+  })
+
+  test('falls back to UTC when the timezone is unknown', () => {
+    const tournament = TournamentFactory.build({ timezone: null })
+
+    expect(tournament.toLocalTime(new Date('2026-07-25T02:30:00Z'))).toEqual({
+      weekday: 6,
+      month: 6,
+      hour: 2,
+      minute: 30,
+    })
+  })
+})
+

@@ -111,6 +111,7 @@ export function mapPlayerRecap(
               })
             : null,
         startDate: new Date(((rawTournament.startAt as number) || 0) * 1000),
+        timezone: rawTournament.timezone,
         events,
       })
     )

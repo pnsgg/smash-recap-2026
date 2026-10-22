@@ -210,4 +210,43 @@ describe('TournamentOrganizer', () => {
 
     expect(to.seriesOrganized(1)).toHaveLength(1)
   })
+
+  test('dayOfWeekActivity counts the weekday in each tournament local time', () => {
+    const to = TournamentOrganizerFactory.build({
+      tournaments: [
+        TournamentFactory.build({
+          startDate: new Date('2026-07-25T02:30:00Z'),
+          timezone: 'America/Los_Angeles',
+        }),
+        TournamentFactory.build({
+          startDate: new Date('2026-07-24T22:30:00Z'),
+          timezone: 'Europe/Paris',
+        }),
+      ],
+    })
+
+    const activity = to.dayOfWeekActivity()
+    expect(activity.find((d) => d.day === 'Fri')?.count).toBe(1)
+    expect(activity.find((d) => d.day === 'Sat')?.count).toBe(1)
+  })
+
+  test('tournamentsByMonth counts the month in each tournament local time', () => {
+    const to = TournamentOrganizerFactory.build({
+      tournaments: [
+        TournamentFactory.build({
+          startDate: new Date('2026-12-31T23:30:00Z'),
+          timezone: 'Europe/Paris',
+        }),
+        TournamentFactory.build({
+          startDate: new Date('2026-02-01T05:00:00Z'),
+          timezone: 'America/Los_Angeles',
+        }),
+      ],
+    })
+
+    const months = to.tournamentsByMonth()
+    expect(months.find((m) => m.month === 'Jan')?.count).toBe(2)
+    expect(months.find((m) => m.month === 'Feb')?.count).toBe(0)
+    expect(months.find((m) => m.month === 'Dec')?.count).toBe(0)
+  })
 })
