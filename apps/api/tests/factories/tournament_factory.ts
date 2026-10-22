@@ -14,6 +14,7 @@ type TournamentOverrides = {
   events?: Event[]
   startDate?: Date
   numAttendees?: number | null
+  timezone?: string | null
 }
 
 export const TournamentFactory = Factory.define<Tournament, any, Tournament, TournamentOverrides>(
@@ -35,6 +36,7 @@ export const TournamentFactory = Factory.define<Tournament, any, Tournament, Tou
       events,
       startDate,
       numAttendees,
+      timezone: params.timezone ?? null,
     })
   }
 )
