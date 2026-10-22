@@ -1,6 +1,6 @@
 import { PlayersSearchService } from '#search/service'
 import { SearchPlayerResult } from '#search/domain/player_search_result'
-import { asPlayerId, asUserSlug } from '#shared/ids'
+import { asPlayerId, asUserSlug } from '#libs/ids'
 
 export class FakePlayersSearchService extends PlayersSearchService {
   constructor() {

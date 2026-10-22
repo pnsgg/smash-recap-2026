@@ -7,8 +7,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@elysiajs/eden": "^1.4.4",
-    "elysia": "latest"
+    "@elysia/eden": "rc",
+    "elysia": "rc"
   },
   "devDependencies": {
     "bun-types": "latest",

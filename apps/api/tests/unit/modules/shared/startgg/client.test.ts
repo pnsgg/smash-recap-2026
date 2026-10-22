@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, spyOn, test } from 'bun:test'
 import { parse } from 'graphql'
-import type { TadaDocumentNode } from '#shared/startgg/graphql'
-import { StartggClient } from '#shared/startgg/client'
+import type { TadaDocumentNode } from '#libs/startgg/graphql'
+import { StartggClient } from '#libs/startgg/client'
 
 describe('StartggClient', () => {
   afterEach(() => {

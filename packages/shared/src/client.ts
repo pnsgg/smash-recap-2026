@@ -1,6 +1,6 @@
 /// <reference types="bun-types" />
 
-import { treaty } from '@elysiajs/eden'
+import { treaty } from '@elysia/eden'
 import type { App } from '@api'
 
 export type { App }

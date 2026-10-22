@@ -11,7 +11,7 @@ import { BracketType } from '#recap/domain/bracket_type'
 import { EventType } from '#recap/domain/event_type'
 import { GameSelection } from '#recap/domain/game'
 import { SetPlayer } from '#recap/domain/set'
-import { asPlayerId } from '#shared/ids'
+import { asPlayerId } from '#libs/ids'
 
 describe('Player - bestPerformances and worstPerformance', () => {
   test('bestPerformances returns empty list if player has no tournaments with valid SPR', () => {

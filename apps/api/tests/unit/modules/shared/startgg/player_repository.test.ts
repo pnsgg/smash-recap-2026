@@ -2,12 +2,12 @@ import { InMemoryFetcher } from '#tests/unit/modules/shared/startgg/in_memory_fe
 import { describe, expect, test } from 'bun:test'
 import { EventType } from '#recap/domain/event_type'
 import { UserNotFoundError } from '#recap/model'
-import { asUserSlug } from '#shared/ids'
-import { StartggPlayerRepository } from '#shared/startgg/player_repository'
-import { getEvent } from '#shared/startgg/queries/get_event'
-import { getPlayerEventIds } from '#shared/startgg/queries/get_player_event_ids'
-import { getPlayerUserId } from '#shared/startgg/queries/get_player_user_id'
-import { searchPlayerByGamerTag } from '#shared/startgg/queries/search_player_by_gamertag'
+import { asUserSlug } from '#libs/ids'
+import { StartggPlayerRepository } from '#libs/startgg/player_repository'
+import { getEvent } from '#libs/startgg/queries/get_event'
+import { getPlayerEventIds } from '#libs/startgg/queries/get_player_event_ids'
+import { getPlayerUserId } from '#libs/startgg/queries/get_player_user_id'
+import { searchPlayerByGamerTag } from '#libs/startgg/queries/search_player_by_gamertag'
 
 const isSortedDesc = <T>(array: T[]): boolean =>
   array.every((value, index, elements) => !index || elements[index - 1] >= value)

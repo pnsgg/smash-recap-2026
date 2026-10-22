@@ -1,7 +1,7 @@
 import { VideogameFactory } from '#tests/factories/videogame_factory'
 import { describe, expect, test } from 'bun:test'
 import { Videogame } from '#recap/domain/videogame'
-import { asVideogameId } from '#shared/ids'
+import { asVideogameId } from '#libs/ids'
 
 describe('Videogame - constructor', () => {
   test('factory generates valid instances', () => {

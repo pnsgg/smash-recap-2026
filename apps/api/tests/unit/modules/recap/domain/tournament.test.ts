@@ -6,7 +6,7 @@ import { BracketType } from '#recap/domain/bracket_type'
 import { Participant } from '#recap/domain/participant'
 import { Seed } from '#recap/domain/seed'
 import { SetPlayer } from '#recap/domain/set'
-import { asParticipantId, asPlayerId } from '#shared/ids'
+import { asParticipantId, asPlayerId } from '#libs/ids'
 
 describe('Tournament - constructor', () => {
   test('initializes correctly with valid name', () => {

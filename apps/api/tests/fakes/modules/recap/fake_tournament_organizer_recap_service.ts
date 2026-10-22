@@ -3,9 +3,9 @@ import { EventType } from '#recap/domain/event_type'
 import { Tournament } from '#recap/domain/tournament'
 import { TournamentOrganizer } from '#recap/domain/tournament_organizer'
 import { Videogame } from '#recap/domain/videogame'
-import { asUserSlug } from '#shared/ids'
-import type { UserSlug } from '#shared/ids'
-import { asTournamentId, asVideogameId } from '#shared/ids'
+import { asUserSlug } from '#libs/ids'
+import type { UserSlug } from '#libs/ids'
+import { asTournamentId, asVideogameId } from '#libs/ids'
 
 type MockTournamentOrganizerData = {
   id: UserSlug

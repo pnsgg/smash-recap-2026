@@ -11,23 +11,24 @@
     "build": "bun build --compile --minify-whitespace --minify-syntax --target bun --outfile server src/index.ts"
   },
   "imports": {
-    "#config/*": "./src/config/*.ts",
+    "#env": "./src/env.ts",
     "#plugins/*": "./src/plugins/*.ts",
-    "#recap/*": "./src/modules/recap/*.ts",
-    "#search/*": "./src/modules/search/*.ts",
-    "#shared/*": "./src/modules/shared/*.ts",
-    "#/graphql": "./src/modules/shared/startgg/graphql.ts",
-    "#/graphql-env": "./src/modules/shared/startgg/graphql-env.d.ts",
+    "#recap/*": "./src/routes/recap/*.ts",
+    "#search/*": "./src/routes/search/*.ts",
+    "#libs/*": "./src/libs/*.ts",
+    "#/graphql": "./src/libs/startgg/graphql.ts",
+    "#/graphql-env": "./src/libs/startgg/graphql-env.d.ts",
     "#tests/*": "./tests/*.ts"
   },
   "dependencies": {
-    "@elysiajs/cors": "^1.4.2",
-    "@elysiajs/openapi": "^1.4.16",
-    "@elysiajs/static": "^1.4.10",
-    "@yolk-oss/elysia-env": "^3.0.1",
-    "elysia": "latest",
+    "@elysia/cors": "rc",
+    "@elysia/openapi": "rc",
+    "@elysia/static": "rc",
+    "@sinclair/typebox": "^0.34.0",
+    "elysia": "rc",
     "gql.tada": "^1.11.3",
-    "graphql": "^17.0.2"
+    "graphql": "^17.0.2",
+    "typebox": "^1.4.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.6.0",

@@ -1,7 +1,7 @@
 import { StageFactory } from '#tests/factories/stage_factory'
 import { describe, expect, test } from 'bun:test'
 import { Stage } from '#recap/domain/stage'
-import { asStageId } from '#shared/ids'
+import { asStageId } from '#libs/ids'
 
 describe('Stage - constructor', () => {
   test('factory generates valid instances', () => {

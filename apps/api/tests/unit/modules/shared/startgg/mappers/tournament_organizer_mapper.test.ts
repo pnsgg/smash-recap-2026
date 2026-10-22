@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 import { BracketType } from '#recap/domain/bracket_type'
 import { EventType } from '#recap/domain/event_type'
-import { asEventId, asTournamentId, asUserSlug, asVideogameId } from '#shared/ids'
-import { mapTournamentOrganizer } from '#shared/startgg/mappers/tournament_organizer_mapper'
-import type { TournamentDetailsResult } from '#shared/startgg/mappers/tournament_organizer_mapper'
+import { asEventId, asTournamentId, asUserSlug, asVideogameId } from '#libs/ids'
+import { mapTournamentOrganizer } from '#libs/startgg/mappers/tournament_organizer_mapper'
+import type { TournamentDetailsResult } from '#libs/startgg/mappers/tournament_organizer_mapper'
 
 describe('TournamentOrganizerMapper', () => {
   const slug = asUserSlug('my-to-slug')

@@ -4,8 +4,8 @@ import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import { Game, GameSelection } from '#recap/domain/game'
 import type { Stage } from '#recap/domain/stage'
-import { asGameId, asPlayerId } from '#shared/ids'
-import type { GameId, PlayerId } from '#shared/ids'
+import { asGameId, asPlayerId } from '#libs/ids'
+import type { GameId, PlayerId } from '#libs/ids'
 
 type GameOverrides = {
   id?: GameId

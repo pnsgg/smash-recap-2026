@@ -6,7 +6,7 @@ import { BracketType } from '#recap/domain/bracket_type'
 import { GameSelection } from '#recap/domain/game'
 import { Seed } from '#recap/domain/seed'
 import { SetPlayer } from '#recap/domain/set'
-import { asPlayerId } from '#shared/ids'
+import { asPlayerId } from '#libs/ids'
 
 describe('Set - constructor', () => {
   test('initializes Set correctly with valid attributes', () => {
