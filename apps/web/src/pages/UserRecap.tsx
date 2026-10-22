@@ -23,7 +23,15 @@ export const UserRecap = () => {
       <Link to="/">Back</Link>
       {error && <p>{error.message}</p>}
       {!recap && !error && <p>Your recap is loading...</p>}
-      {recap && <Player component={PlayerRecapComponent} inputProps={recap} controls {...VIDEO_CONFIG} />}
+      {recap &&
+        <Player
+          component={PlayerRecapComponent}
+          inputProps={recap}
+          controls
+          {...VIDEO_CONFIG}
+          acknowledgeRemotionLicense
+        />
+      }
     </div>
   );
 };
