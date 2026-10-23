@@ -29,8 +29,4 @@ export const app = new Elysia({ normalize: 'typebox' })
   .get('/health', { detail: { hide: true } }, () => ({ status: 'ok' }))
   .use(apiV1)
 
-// Eden Treaty clients (apps/web, via packages/shared) only need the API
-// surface above, not the static/SPA-fallback routes below — keeping this
-// type-only import from forcing those Bun-specific handlers to be
-// type-checked in projects that don't have Bun's ambient types configured.
 export type App = typeof app
