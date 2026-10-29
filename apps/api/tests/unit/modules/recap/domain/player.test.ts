@@ -867,6 +867,65 @@ describe('Player - nemesis', () => {
   })
 })
 
+/** Sets between the player and each opponent: `won` sets to the player, `lost` to the opponent. */
+const playerWithRecords = (records: { opponent: string; won: number; lost: number }[]) => {
+  const playerId = asPlayerId('1')
+  const set = (opponentId: ReturnType<typeof asPlayerId>, winner: ReturnType<typeof asPlayerId>) =>
+    SetFactory.build({
+      competitors: new Map()
+        .set(playerId, new SetPlayer({ isDisqualified: false, playerId, score: 0, seed: SeedFactory.build() }))
+        .set(opponentId, new SetPlayer({ isDisqualified: false, playerId: opponentId, score: 0, seed: SeedFactory.build() })),
+      winnerId: winner,
+    })
+  const sets = records.flatMap(({ opponent, won, lost }) => {
+    const opponentId = asPlayerId(opponent)
+    return [
+      ...Array.from({ length: won }, () => set(opponentId, playerId)),
+      ...Array.from({ length: lost }, () => set(opponentId, opponentId)),
+    ]
+  })
+  return PlayerFactory.build({
+    id: playerId,
+    tournaments: TournamentFactory.buildList(1, { events: EventFactory.buildList(1, { sets }) }),
+  })
+}
+
+describe('Player - nemesis tie-break', () => {
+  test('between equal win rates, picks the opponent played more often', () => {
+    const player = playerWithRecords([
+      { opponent: 'short', won: 0, lost: 3 },
+      { opponent: 'long', won: 0, lost: 7 },
+    ])
+    expect(player.nemesis()?.opponentPlayerId).toBe(asPlayerId('long'))
+  })
+})
+
+describe('Player - rival', () => {
+  test('is the opponent played the most sets against, whatever the result', () => {
+    const player = playerWithRecords([
+      { opponent: 'nemesis', won: 0, lost: 4 },
+      { opponent: 'rival', won: 6, lost: 5 },
+    ])
+    const rival = player.rival()
+    expect(rival?.opponentPlayerId).toBe(asPlayerId('rival'))
+    expect(rival?.totalSets).toBe(11)
+    expect(rival?.playerWonSet).toBe(6)
+    expect(player.nemesis()?.opponentPlayerId).toBe(asPlayerId('nemesis'))
+  })
+
+  test('between equal set counts, picks the closest record', () => {
+    const player = playerWithRecords([
+      { opponent: 'lopsided', won: 5, lost: 0 },
+      { opponent: 'close', won: 3, lost: 2 },
+    ])
+    expect(player.rival()?.opponentPlayerId).toBe(asPlayerId('close'))
+  })
+
+  test('needs at least 3 sets against the same opponent', () => {
+    expect(playerWithRecords([{ opponent: 'twice', won: 1, lost: 1 }]).rival()).toBeNull()
+  })
+})
+
 describe('Player - reverseSweeps', () => {
   test('should return 0 won and lost if player did not attend any tournament', () => {
     const player = PlayerFactory.build()

@@ -1,6 +1,7 @@
 import type { Player } from '#recap/domain/player'
+import type { PlayerProfile } from '#recap/domain/player_profile'
 import type { SearchPlayerResult } from '#search/domain/player_search_result'
-import type { UserSlug, VideogameId } from '#libs/ids'
+import type { PlayerId, UserSlug, VideogameId } from '#libs/ids'
 
 export interface PlayerRepository {
   /**
@@ -21,4 +22,11 @@ export interface PlayerRepository {
     year: Date,
     videoGameId: VideogameId
   ) => Promise<{ player: Player; skippedEventCount: number }>
+
+  /**
+   * Fetches another player's name and picture, e.g. to show who a nemesis is
+   * @param playerId The start.gg player ID
+   * @returns A promise that resolves to the profile, or null if start.gg doesn't know the player
+   */
+  getPlayerProfile: (playerId: PlayerId) => Promise<PlayerProfile | null>
 }

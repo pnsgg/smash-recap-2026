@@ -2,11 +2,13 @@ import { InMemoryFetcher } from '#tests/unit/modules/shared/startgg/in_memory_fe
 import { describe, expect, test } from 'bun:test'
 import { EventType } from '#recap/domain/event_type'
 import { UserNotFoundError } from '#recap/model'
-import { asUserSlug } from '#libs/ids'
+import { asPlayerId, asUserSlug } from '#libs/ids'
 import { StartggPlayerRepository } from '#libs/startgg/player_repository'
 import { getEvent } from '#libs/startgg/queries/get_event'
 import { getPlayerEventIds } from '#libs/startgg/queries/get_player_event_ids'
+import { getPlayerProfile } from '#libs/startgg/queries/get_player_profile'
 import { getPlayerUserId } from '#libs/startgg/queries/get_player_user_id'
+import { getVideogameCharacters } from '#libs/startgg/queries/get_videogame_characters'
 import { searchPlayerByGamerTag } from '#libs/startgg/queries/search_player_by_gamertag'
 
 const isSortedDesc = <T>(array: T[]): boolean =>
@@ -73,6 +75,7 @@ const fetcher = new InMemoryFetcher()
       return {
         user: {
           id: 'user-glutonny-id',
+          images: [{ url: 'https://images.start.gg/glutonny.jpg' }],
           player: {
             id: 'user-glutonny-id',
             prefix: 'Solary',
@@ -146,6 +149,7 @@ const fetcher = new InMemoryFetcher()
             name: 'Genesis X',
             startAt: 1785276620,
             timezone: 'America/Los_Angeles',
+            images: [{ url: 'https://images.start.gg/genesis-x.png' }],
             city: 'San Jose',
             addrState: 'CA',
             countryCode: 'US',
@@ -280,6 +284,7 @@ const fetcher = new InMemoryFetcher()
             name: 'Genesis X',
             startAt: 1785276620,
             timezone: 'America/Los_Angeles',
+            images: [{ url: 'https://images.start.gg/genesis-x.png' }],
             city: 'San Jose',
             addrState: 'CA',
             countryCode: 'US',
@@ -315,11 +320,38 @@ const fetcher = new InMemoryFetcher()
 
     return { event: null }
   })
+  .register(getVideogameCharacters, () => ({
+    videogame: {
+      characters: [
+        {
+          id: '1313',
+          images: [
+            { url: 'https://images.start.gg/wario-render.png', type: 'icon' },
+            { url: 'https://images.start.gg/wario-stock.png', type: 'stockIcon' },
+          ],
+        },
+      ],
+    },
+  }))
+  .register(getPlayerProfile, ({ playerId }) => ({
+    player:
+      playerId === 'user-mkleo-id'
+        ? {
+            prefix: null,
+            gamerTag: 'MKLeo',
+            user: { images: [{ url: 'https://images.start.gg/mkleo.jpg' }] },
+          }
+        : null,
+  }))
 
 describe('Getting player recap — UserNotFoundError cases', () => {
   test('throws UserNotFoundError when user has no gamerTag', async () => {
     const localFetcher = new InMemoryFetcher().register(getPlayerUserId, () => ({
-      user: { id: 'some-id', player: { id: 'some-player-id', prefix: null, gamerTag: null } },
+      user: {
+        id: 'some-id',
+        images: null,
+        player: { id: 'some-player-id', prefix: null, gamerTag: null },
+      },
     }))
     const repository = new StartggPlayerRepository(localFetcher, {})
 
@@ -330,7 +362,7 @@ describe('Getting player recap — UserNotFoundError cases', () => {
 
   test('throws UserNotFoundError when user has no player id', async () => {
     const localFetcher = new InMemoryFetcher().register(getPlayerUserId, () => ({
-      user: { id: 'some-id', player: { id: null, prefix: null, gamerTag: null } },
+      user: { id: 'some-id', images: null, player: { id: null, prefix: null, gamerTag: null } },
     }))
     const repository = new StartggPlayerRepository(localFetcher, {})
 
@@ -395,4 +427,76 @@ describe('Searching for players', () => {
     expect(eventDoubles?.eventType).toBe(EventType.TEAMS)
     expect(eventDoubles?.isTeams()).toBe(true)
   })
+
+  test('Getting player recap - it should carry the avatar, the tournament logos and the character pictures', async () => {
+    const { player } = await repository.getPlayerRecap(
+      asUserSlug('user/glutonny'),
+      new Date('2026-01-01'),
+      '1386' as any
+    )
+
+    expect(player.avatarUrl).toBe('https://images.start.gg/glutonny.jpg')
+    expect(player.tournaments[0]?.imageUrl).toBe('https://images.start.gg/genesis-x.png')
+
+    const characters = player.tournaments[0]!.events.flatMap((event) =>
+      event.sets.flatMap((set) => set.games.flatMap((game) => game.selections.map((s) => s.character)))
+    )
+    expect(characters.find((c) => c.name === 'Wario')?.images).toEqual({
+      renderUrl: 'https://images.start.gg/wario-render.png',
+      stockIconUrl: 'https://images.start.gg/wario-stock.png',
+    })
+    expect(characters.find((c) => c.name === 'Byleth')?.images).toEqual({
+      renderUrl: null,
+      stockIconUrl: null,
+    })
+  })
+
+  test('Getting player recap - a failed character pictures request still gives a recap, without pictures', async () => {
+    const noPictures: typeof fetcher = Object.assign(Object.create(fetcher), {
+      fetch: (document: unknown, variables: unknown) =>
+        document === getVideogameCharacters
+          ? Promise.reject(new Error('start.gg is down'))
+          : fetcher.fetch(document as never, variables as never),
+    })
+
+    const { player } = await new StartggPlayerRepository(noPictures, {}).getPlayerRecap(
+      asUserSlug('user/glutonny'),
+      new Date('2026-01-01'),
+      '1386' as any
+    )
+
+    expect(player.tournaments).toHaveLength(1)
+    const wario = player.tournaments[0]!.events[0]!.sets[0]!.games[0]!.selections[0]!.character
+    expect(wario.images).toEqual({ renderUrl: null, stockIconUrl: null })
+  })
+
+  test('Getting a player profile - it should return the tag and the avatar, or null for an unknown player', async () => {
+    expect(await repository.getPlayerProfile(asPlayerId('user-mkleo-id'))).toEqual({
+      prefix: null,
+      gamerTag: 'MKLeo',
+      avatarUrl: 'https://images.start.gg/mkleo.jpg',
+    })
+    expect(await repository.getPlayerProfile(asPlayerId('nobody'))).toBeNull()
+  })
+
+  test('Getting player recap - an event start.gg answers without data is skipped, not fatal', async () => {
+    // start.gg returns only `errors` for an event over its 1000-object cap
+    const capped: typeof fetcher = Object.assign(Object.create(fetcher), {
+      fetch: (document: unknown, variables: { eventId?: string }) =>
+        document === getEvent && variables.eventId === 'event-2'
+          ? Promise.resolve({ data: undefined })
+          : fetcher.fetch(document as never, variables as never),
+    })
+    const cappedRepository = new StartggPlayerRepository(capped, {})
+
+    const { player, skippedEventCount } = await cappedRepository.getPlayerRecap(
+      asUserSlug('user/glutonny'),
+      new Date('2026-01-01'),
+      '1386' as any
+    )
+
+    expect(player.tournaments[0]?.events).toHaveLength(1)
+    expect(skippedEventCount).toBe(1)
+  })
 })
+

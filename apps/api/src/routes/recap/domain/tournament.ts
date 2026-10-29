@@ -13,6 +13,7 @@ export type TournamentParams = {
   startDate: Date
   numAttendees?: number | null
   timezone?: string | null
+  imageUrl?: string | null
 }
 
 export type LocalTime = {
@@ -31,6 +32,7 @@ export class Tournament {
   public readonly numAttendees: number
   /** IANA timezone, e.g. "Europe/Paris" */
   public readonly timezone: string | null
+  public readonly imageUrl: string | null
 
   constructor(params: TournamentParams) {
     this.checkPreconditions(params)
@@ -41,6 +43,7 @@ export class Tournament {
     this.startDate = params.startDate
     this.numAttendees = params.numAttendees ?? 0
     this.timezone = params.timezone ?? null
+    this.imageUrl = params.imageUrl ?? null
   }
 
   private checkPreconditions(params: TournamentParams) {

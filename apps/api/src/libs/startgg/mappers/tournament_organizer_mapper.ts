@@ -17,7 +17,8 @@ export type TournamentDetailsResult = Exclude<
 export function mapTournamentOrganizer(
   slug: UserSlug,
   gamerTag: string,
-  rawTournaments: TournamentDetailsResult[]
+  rawTournaments: TournamentDetailsResult[],
+  avatarUrl: string | null = null
 ): TournamentOrganizer {
   const tournaments = rawTournaments.map((raw) => {
     const events = (raw.events ?? [])
@@ -26,7 +27,8 @@ export function mapTournamentOrganizer(
       .map((e) => {
         const videogame = new Videogame(
           asVideogameId(e.videogame?.id?.toString() ?? '0'),
-          e.videogame?.name ?? 'Unknown'
+          e.videogame?.name ?? 'Unknown',
+          e.videogame?.images?.[0]?.url ?? null
         )
 
         const bracketType = BracketTypeHelper.fromString(e.phaseGroups?.[0]?.bracketType)
@@ -65,8 +67,9 @@ export function mapTournamentOrganizer(
       timezone: raw.timezone,
       events,
       numAttendees: raw.numAttendees ?? 0,
+      imageUrl: raw.images?.[0]?.url ?? null,
     })
   })
 
-  return new TournamentOrganizer({ id: slug, gamerTag, tournaments })
+  return new TournamentOrganizer({ id: slug, gamerTag, tournaments, avatarUrl })
 }

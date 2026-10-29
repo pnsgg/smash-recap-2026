@@ -8,6 +8,9 @@ export const getTournamentDetails = graphql(`
       startAt
       timezone
       numAttendees
+      images(type: "profile") {
+        url
+      }
       events {
         id
         name
@@ -15,6 +18,9 @@ export const getTournamentDetails = graphql(`
         videogame {
           id
           name
+          images(type: "primary") {
+            url
+          }
         }
         isOnline
         numEntrants

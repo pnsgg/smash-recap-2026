@@ -1,6 +1,7 @@
 import { PlayerFactory } from '#tests/factories/player_factory'
 import { PlayerRecapService } from '#recap/service'
 import type { Player } from '#recap/domain/player'
+import type { PlayerProfile } from '#recap/domain/player_profile'
 import { type UserSlug, type VideogameId, asPlayerId } from '#libs/ids'
 
 export const LICANE_DATA = {
@@ -26,7 +27,12 @@ export class FakePlayerRecapService extends PlayerRecapService {
     slug: UserSlug,
     _year: Date,
     videogameId: VideogameId
-  ): Promise<{ player: Player; skippedEventCount: number }> {
+  ): Promise<{
+    player: Player
+    skippedEventCount: number
+    nemesisProfile: PlayerProfile | null
+    rivalProfile: PlayerProfile | null
+  }> {
     this.lastVideogameId = videogameId
 
     let data = LICANE_DATA
@@ -45,6 +51,8 @@ export class FakePlayerRecapService extends PlayerRecapService {
         gamerTag: data.gamerTag,
       }),
       skippedEventCount: 0,
+      nemesisProfile: null,
+      rivalProfile: null,
     }
   }
 }

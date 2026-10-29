@@ -1,7 +1,8 @@
 import type { ResultOf } from 'gql.tada'
 import { Address } from '#recap/domain/address'
 import { BracketTypeHelper } from '#recap/domain/bracket_type'
-import { Character } from '#recap/domain/character'
+import { Character, NO_CHARACTER_IMAGES } from '#recap/domain/character'
+import type { CharacterImages } from '#recap/domain/character'
 import { Event } from '#recap/domain/event'
 import { EventType } from '#recap/domain/event_type'
 import { Game, GameSelection } from '#recap/domain/game'
@@ -37,13 +38,19 @@ type SetResult = Exclude<
 >
 type GameResult = Exclude<Exclude<SetResult['games'], null | undefined>[number], null | undefined>
 
+export type CharacterImageLookup = ReadonlyMap<string, CharacterImages>
+
+type PlayerHeader = {
+  gamerTag: string
+  prefix: string | null
+  avatarUrl?: string | null
+}
+
 export function mapPlayerRecap(
   playerId: PlayerId,
-  playerHeader: {
-    gamerTag: string
-    prefix: string | null
-  },
-  rawEvents: EventResult[]
+  playerHeader: PlayerHeader,
+  rawEvents: EventResult[],
+  characterImages: CharacterImageLookup = new Map()
 ): { player: Player; skippedEventCount: number } {
   const tournamentsMap = new Map<
     string,
@@ -74,7 +81,7 @@ export function mapPlayerRecap(
 
     for (const rawEvent of group.events) {
       try {
-        const mappedEvent = mapEvent(rawEvent, playerId)
+        const mappedEvent = mapEvent(rawEvent, playerId, characterImages)
         if (mappedEvent) events.push(mappedEvent)
       } catch (error) {
         console.error('[StartggMapper] Skipping event due to mapping error:', error)
@@ -112,6 +119,7 @@ export function mapPlayerRecap(
             : null,
         startDate: new Date(((rawTournament.startAt as number) || 0) * 1000),
         timezone: rawTournament.timezone,
+        imageUrl: rawTournament.images?.[0]?.url ?? null,
         events,
       })
     )
@@ -122,25 +130,36 @@ export function mapPlayerRecap(
       id: playerId,
       gamerTag: playerHeader.gamerTag,
       prefix: playerHeader.prefix,
+      avatarUrl: playerHeader.avatarUrl,
       tournaments,
     }),
     skippedEventCount,
   }
 }
 
-export function mapEmptyPlayer(
-  playerId: PlayerId,
-  playerHeader: {
-    gamerTag: string
-    prefix: string | null
-  }
-): Player {
+export function mapEmptyPlayer(playerId: PlayerId, playerHeader: PlayerHeader): Player {
   return new Player({
     id: playerId,
     gamerTag: playerHeader.gamerTag,
     prefix: playerHeader.prefix,
+    avatarUrl: playerHeader.avatarUrl,
     tournaments: [],
   })
+}
+
+export function mapCharacterImages(
+  characters: ReadonlyArray<{
+    id?: string | number | null
+    images?: ReadonlyArray<{ url?: string | null; type?: string | null } | null> | null
+  } | null>
+): CharacterImageLookup {
+  const lookup = new Map<string, CharacterImages>()
+  for (const character of characters) {
+    if (!character?.id) continue
+    const url = (type: string) => character.images?.find((image) => image?.type === type)?.url ?? null
+    lookup.set(character.id.toString(), { renderUrl: url('icon'), stockIconUrl: url('stockIcon') })
+  }
+  return lookup
 }
 
 function getEventFinalBracketType(
@@ -161,7 +180,11 @@ function getEventFinalBracketType(
 }
 
 // TODO: Prevent throws as it block the entire recap generation
-function mapEvent(rawEvent: EventResult, targetPlayerId: PlayerId): Event | null {
+function mapEvent(
+  rawEvent: EventResult,
+  targetPlayerId: PlayerId,
+  characterImages: CharacterImageLookup
+): Event | null {
   if (rawEvent.userEntrant?.isDisqualified) return null
 
   const userEntrant = rawEvent.userEntrant
@@ -225,7 +248,14 @@ function mapEvent(rawEvent: EventResult, targetPlayerId: PlayerId): Event | null
   const rawSets = userEntrant.paginatedSets?.nodes || []
   for (const rawSet of rawSets) {
     if (!rawSet) continue
-    const mappedSet = mapSet(rawSet, eventId, entrantIdToPlayerId, participantsMap, targetPlayerId)
+    const mappedSet = mapSet(
+      rawSet,
+      eventId,
+      entrantIdToPlayerId,
+      participantsMap,
+      targetPlayerId,
+      characterImages
+    )
     if (mappedSet) sets.push(mappedSet)
   }
 
@@ -246,7 +276,8 @@ function mapSet(
   eventId: string,
   entrantIdToPlayerId: Map<string, PlayerId>,
   participantsMap: Map<string, Participant>,
-  targetPlayerId: PlayerId
+  targetPlayerId: PlayerId,
+  characterImages: CharacterImageLookup
 ): Set | null {
   const competitors = new Map<PlayerId, SetPlayer>()
 
@@ -313,7 +344,7 @@ function mapSet(
   const games: Game[] = []
   for (const rawGame of rawSet.games || []) {
     if (!rawGame) continue
-    const mappedGame = mapGame(rawGame, entrantIdToPlayerId)
+    const mappedGame = mapGame(rawGame, entrantIdToPlayerId, characterImages)
     if (mappedGame) games.push(mappedGame)
   }
 
@@ -338,7 +369,11 @@ function mapSet(
   })
 }
 
-function mapGame(rawGame: GameResult, entrantIdToPlayerId: Map<string, PlayerId>): Game | null {
+function mapGame(
+  rawGame: GameResult,
+  entrantIdToPlayerId: Map<string, PlayerId>,
+  characterImages: CharacterImageLookup
+): Game | null {
   const gameWinnerPlayerId = rawGame.winnerId
     ? entrantIdToPlayerId.get(rawGame.winnerId.toString())
     : null
@@ -375,7 +410,11 @@ function mapGame(rawGame: GameResult, entrantIdToPlayerId: Map<string, PlayerId>
     selections.push(
       new GameSelection(
         playerId,
-        new Character(asCharacterId(characterId), characterName),
+        new Character(
+          asCharacterId(characterId),
+          characterName,
+          characterImages.get(characterId) ?? NO_CHARACTER_IMAGES
+        ),
         asEntrantId(selection.entrant.id.toString())
       )
     )
