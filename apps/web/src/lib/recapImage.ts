@@ -2,6 +2,7 @@ import { renderStillOnWeb } from "@remotion/web-renderer";
 import { STILL_FORMATS, type StillFormatKey } from "@video/constants";
 import { ORGANIZER_ARCADE_STILL_COMPONENTS, organizerArcadeStillId } from "@video/stills/arcade/OrganizerArcadeStills";
 import { PLAYER_ARCADE_STILL_COMPONENTS, playerArcadeStillId } from "@video/stills/arcade/PlayerArcadeStills";
+import { DEFAULT_GAME } from "@shared";
 import { RECAP_YEAR } from "../config";
 import type { RecapData } from "../pages/Recap";
 
@@ -43,16 +44,24 @@ export async function renderRecapImage(input: RecapData, key: StillFormatKey, si
   return still.blob({ format: "png" });
 }
 
-/** `smashrecap-2026-licane-x.png`, `smashrecap-2026-licane-organizer-x.png`: safe as a file name. */
+/** `smashrecap-2026-licane-x.png`, `smashrecap-2026-zain-melee-x.png`, `smashrecap-2026-licane-organizer-x.png`. */
 export const recapImageName = (input: RecapData, key: StillFormatKey) => {
-  const tag = input.recap.gamerTag
+  const tag = fileSafe(input.recap.gamerTag);
+  const kind = input.kind === "organizer" ? "-organizer" : recapGameSuffix(input);
+  return `smashrecap-${RECAP_YEAR}-${tag || "player"}${kind}-${key}.png`;
+};
+
+/** Lowercase letters, digits and dashes only, for file names. */
+export const fileSafe = (text: string) =>
+  text
     .normalize("NFKD")
     .replace(/[^\w-]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .toLowerCase();
-  const kind = input.kind === "organizer" ? "-organizer" : "";
-  return `smashrecap-${RECAP_YEAR}-${tag || "player"}${kind}-${key}.png`;
-};
+
+/** `-melee` for a player recap of any game but the default one, so downloads for two games don't collide. */
+export const recapGameSuffix = (input: RecapData) =>
+  input.kind === "player" && input.game.id !== DEFAULT_GAME.id ? `-${fileSafe(input.game.short)}` : "";
 
 /** Hands a blob to the browser's download, then frees it. */
 export function downloadBlob(blob: Blob, fileName: string) {

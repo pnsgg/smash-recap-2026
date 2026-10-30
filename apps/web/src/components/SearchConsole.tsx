@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { useFetcher, useNavigate, useNavigation } from "react-router";
+import { DEFAULT_GAME, findGame, GAMES, type Game } from "@shared";
 import { recapPath, toDiscriminator, type PlayerSearchResult, type RecapKind } from "../api";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { play } from "../lib/sound";
@@ -19,13 +20,22 @@ type Props = {
   /** `panel` sits on the cabinet's control panel and opens its results upward; `compact` fits a screen. */
   variant?: "panel" | "compact";
   defaultKind?: RecapKind;
+  /** The game a player recap is looked up for, until another one is picked on the landing page's panel. */
+  defaultGame?: Game;
   autoFocus?: boolean;
 };
 
-export function SearchConsole({ variant = "compact", defaultKind = "player", autoFocus = false }: Props) {
+/** The picker's sections: the Smash games, then the Rivals ones. */
+const SERIES = [...new Set(GAMES.map((game) => game.series))].map((series) => ({
+  series,
+  games: GAMES.filter((game) => game.series === series),
+}));
+
+export function SearchConsole({ variant = "compact", defaultKind = "player", defaultGame = DEFAULT_GAME, autoFocus = false }: Props) {
   const navigate = useNavigate();
   const id = useId();
   const [kind, setKind] = useState<RecapKind>(defaultKind);
+  const [game, setGame] = useState<Game>(defaultGame);
   const [text, setText] = useState("");
   const [active, setActive] = useState(-1);
   const [open, setOpen] = useState(false);
@@ -58,7 +68,7 @@ export function SearchConsole({ variant = "compact", defaultKind = "player", aut
 
   const go = (discriminator: string) => {
     play("coin");
-    navigate(recapPath(kind, discriminator));
+    navigate(recapPath(kind, discriminator, game));
   };
   const choose = (result: PlayerSearchResult) => go(toDiscriminator(result.slug));
 
@@ -94,7 +104,8 @@ export function SearchConsole({ variant = "compact", defaultKind = "player", aut
 
   let status: string;
   if (opening) status = "Loading the recap…";
-  else if (directDiscriminator) status = `Opens the ${kind === "player" ? "player" : "organiser"} recap for start.gg/user/${directDiscriminator}.`;
+  else if (directDiscriminator)
+    status = `Opens the ${kind === "player" ? `${game.short} player` : "organiser"} recap for start.gg/user/${directDiscriminator}.`;
   else if (query.length < 2) status = "Type at least two letters of a gamer tag, or paste a start.gg profile link.";
   else if (waiting) status = "Searching start.gg…";
   else if (answer?.failed) status = "start.gg did not answer. Try again in a moment.";
@@ -122,11 +133,47 @@ export function SearchConsole({ variant = "compact", defaultKind = "player", aut
         ))}
       </fieldset>
 
-      <label className="console__label" htmlFor={`${id}-input`}>
-        Your start.gg gamer tag
-      </label>
-      <div className="console__row">
+      <div className={variant === "panel" ? "console__row console__row--game" : "console__row"}>
+        {/* The landing page picks the game. Player recaps are per game; an organiser's counts every game they ran. */}
+        {variant === "panel" && (
+          <div className="console__game">
+            {kind === "player" ? (
+              <>
+                <label className="console__label" htmlFor={`${id}-game`}>
+                  Game
+                </label>
+                <select
+                  id={`${id}-game`}
+                  className="console__select"
+                  value={game.id}
+                  onChange={(event) => {
+                    setGame(findGame(event.target.value) ?? DEFAULT_GAME);
+                    play("select");
+                  }}
+                >
+                  {SERIES.map(({ series, games }) => (
+                    <optgroup key={series} label={series}>
+                      {games.map((option) => (
+                        <option key={option.id} value={option.id}>
+                          {option.short}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </>
+            ) : (
+              <>
+                <span className="console__label">Game</span>
+                <span className="console__select console__select--all">Every game</span>
+              </>
+            )}
+          </div>
+        )}
         <div className="console__field">
+          <label className="console__label" htmlFor={`${id}-input`}>
+            Your start.gg gamer tag
+          </label>
           <input
             id={`${id}-input`}
             ref={inputRef}

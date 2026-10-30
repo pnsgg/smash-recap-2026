@@ -1,4 +1,4 @@
-import type { PlayerRecapProps, TournamentOrganizerRecapProps } from "@shared";
+import { DEFAULT_GAME, type Game, type PlayerRecapProps, type TournamentOrganizerRecapProps } from "@shared";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Await, Link, useParams, useRevalidator } from "react-router";
 import { recapPath, toDiscriminator, type RecapKind, type Settled } from "../api";
@@ -14,7 +14,7 @@ import { displayName, formatNumber, organizerStatGroups, playerStatGroups, playe
 import "./Recap.css";
 
 export type RecapData =
-  | { kind: "player"; recap: PlayerRecapProps }
+  | { kind: "player"; recap: PlayerRecapProps; game: Game }
   | { kind: "organizer"; recap: TournamentOrganizerRecapProps };
 
 /** What the route's loader streams: the recap, or why there is none. */
@@ -26,6 +26,8 @@ const RecapPlayer = lazy(() => import("../components/RecapPlayer"));
 
 type Props = {
   kind: RecapKind;
+  /** The game a player recap is for. Organiser recaps count every game. */
+  game?: Game;
   /** The account's name, when the server had it before sending the page. */
   initialName?: string | null;
   /** The recap's public address, used for sharing and printed on the downloadable image. */
@@ -47,7 +49,7 @@ type ScreenProps = Omit<Props, "recap"> & {
   result: RecapResult | null;
 };
 
-function RecapScreen({ kind, initialName = null, shareUrl, result }: ScreenProps) {
+function RecapScreen({ kind, game = DEFAULT_GAME, initialName = null, shareUrl, result }: ScreenProps) {
   const discriminator = toDiscriminator(useParams().discriminator ?? "");
   const revalidator = useRevalidator();
   const pending = result === null;
@@ -66,8 +68,10 @@ function RecapScreen({ kind, initialName = null, shareUrl, result }: ScreenProps
   useEffect(() => {
     if (!loaded || !name) return;
     document.title =
-      kind === "player" ? `${name}’s ${RECAP_YEAR} on SmashRecap` : `${name}’s ${RECAP_YEAR} as an organiser on SmashRecap`;
-  }, [loaded, name, kind]);
+      kind === "player"
+        ? `${name}’s ${RECAP_YEAR} ${game.short} season on SmashRecap`
+        : `${name}’s ${RECAP_YEAR} as an organiser on SmashRecap`;
+  }, [loaded, name, kind, game]);
 
   // Remotion only runs in the browser, so the player mounts after hydration.
   const [mounted, setMounted] = useState(false);
@@ -139,8 +143,8 @@ function RecapScreen({ kind, initialName = null, shareUrl, result }: ScreenProps
                       <span className="recap__cursor" aria-hidden="true" />
                     </p>
                     <p className="recap__signal-text">
-                      Pulling every {kind === "player" ? "set" : "tournament"} for start.gg/user/{discriminator}. Big
-                      seasons take up to a minute the first time.
+                      Pulling every {kind === "player" ? `${game.short} set` : "tournament"} for start.gg/user/
+                      {discriminator}. Big seasons take up to a minute the first time.
                     </p>
                   </>
                 )}
@@ -150,7 +154,7 @@ function RecapScreen({ kind, initialName = null, shareUrl, result }: ScreenProps
                     <p className="recap__signal-text">
                       start.gg has no account at user/{discriminator}. Search for the player by tag instead.
                     </p>
-                    <SearchConsole variant="compact" defaultKind={kind} />
+                    <SearchConsole variant="compact" defaultKind={kind} defaultGame={game} />
                   </>
                 )}
                 {unavailable && (
@@ -167,7 +171,7 @@ function RecapScreen({ kind, initialName = null, shareUrl, result }: ScreenProps
                     <p className="recap__signal-title">Nothing to replay yet</p>
                     <p className="recap__signal-text">
                       {kind === "player"
-                        ? `${name} has no Ultimate sets on start.gg in ${RECAP_YEAR} so far.`
+                        ? `${name} has no ${game.short} sets on start.gg in ${RECAP_YEAR} so far.`
                         : `${name} has not organised a start.gg tournament in ${RECAP_YEAR} so far.`}
                     </p>
                     <Link className="button" to={recapPath(otherKind, discriminator)}>
@@ -182,7 +186,7 @@ function RecapScreen({ kind, initialName = null, shareUrl, result }: ScreenProps
             <a className="link" href={`https://www.start.gg/user/${discriminator}`} target="_blank" rel="noreferrer">
               start.gg/user/{discriminator}
             </a>
-            <span>{KIND_LABEL[kind]}</span>
+            <span>{kind === "player" ? `${KIND_LABEL[kind]} · ${game.short}` : KIND_LABEL[kind]}</span>
           </div>
         </div>
 
@@ -220,7 +224,7 @@ function RecapScreen({ kind, initialName = null, shareUrl, result }: ScreenProps
                 {(["player", "organizer"] as const).map((value) => (
                   <Link
                     key={value}
-                    to={recapPath(value, discriminator)}
+                    to={recapPath(value, discriminator, game)}
                     className="recap__kind"
                     aria-current={value === kind ? "page" : undefined}
                     replace

@@ -75,22 +75,82 @@
 }
 
 .console__label {
+  display: block;
   font-size: var(--step-small);
   font-weight: 600;
   color: var(--muted);
 }
 
+/* Labels on the first line, the controls under them: the select and the tag field share one height. */
 .console__row {
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  row-gap: 0.375rem;
+  align-items: start;
 }
 
+/* The landing page's panel adds the game. Wide enough for Rivals of Aether II, so "Every game" moves nothing. */
+.console__row--game {
+  grid-template-columns: 15.5rem minmax(0, 1fr) auto;
+}
+
+.console__game,
 .console__field {
-  flex: 1;
+  display: contents;
+}
+
+.console__row > * > .console__label {
+  grid-row: 1;
+  align-self: end;
+}
+
+.console__row > * > :not(.console__label),
+.console__submit {
+  grid-row: 2;
+}
+
+.console__game > * {
+  grid-column: 1;
+  margin-right: 0.5rem;
+}
+
+.console__select {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
   min-width: 0;
+  min-height: 3.25rem;
+  padding: 0.625rem 2.5rem 0.625rem 1rem;
+  border: 0;
+  border-radius: 0;
+  appearance: none;
+  background:
+    var(--ground)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h10v2H8v2H6v2H4V4H2V2H0z' fill='%23e9f1ea'/%3E%3C/svg%3E")
+    no-repeat right 1rem center;
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--step-body);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.console__select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 0;
+}
+
+.console__select--all {
+  background-image: none;
+  opacity: 0.7;
+}
+
+.console__field > * {
+  grid-column: -3;
 }
 
 .console__input {
+  align-self: stretch;
   width: 100%;
   min-height: 3.25rem;
   padding: 0.625rem 1rem;
@@ -114,6 +174,7 @@
 }
 
 .console__submit {
+  grid-column: -2;
   min-height: 3.25rem;
 }
 
@@ -204,7 +265,6 @@
 .console--panel {
   grid-template-columns: auto minmax(0, 1fr);
   grid-template-areas:
-    "kinds label"
     "kinds row"
     "kinds status";
   column-gap: clamp(1rem, 2vw, 2rem);
@@ -230,7 +290,6 @@
 }
 
 .console--panel .console__label {
-  grid-area: label;
   color: var(--card-muted);
 }
 
@@ -259,10 +318,23 @@
 }
 
 @media (max-width: 640px) {
-  .console__row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
+  /* One column: each label over its control, the button last. */
+  .console__row,
+  .console__row--game {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .console__row > * > .console__label,
+  .console__row > * > :not(.console__label),
+  .console__submit {
+    grid-row: auto;
+    grid-column: 1;
+    margin-right: 0;
+  }
+
+  .console__field > .console__label,
+  .console__submit {
+    margin-top: 0.125rem;
   }
 
   .console__submit {
@@ -284,7 +356,6 @@
     grid-template-columns: 1fr;
     grid-template-areas:
       "kinds"
-      "label"
       "row"
       "status";
   }

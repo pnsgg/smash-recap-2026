@@ -29,7 +29,8 @@ export function RecapActions({ ready, shareUrl, name, recap }: Props) {
   const [nativeShare, setNativeShare] = useState(false);
   useEffect(() => setNativeShare(canShareNatively()), []);
 
-  const shareText = `${name}’s ${RECAP_YEAR} Smash season, replayed on SmashRecap`;
+  const season = recap?.kind === "player" ? recap.game.short : "Smash";
+  const shareText = `${name}’s ${RECAP_YEAR} ${season} season, replayed on SmashRecap`;
 
   const copyLink = async () => {
     try {
