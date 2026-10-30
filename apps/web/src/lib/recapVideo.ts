@@ -3,6 +3,7 @@ import { PLAYER_RECAP_ARCADE, TOURNAMENT_ORGANIZER_RECAP_ARCADE } from "@video/c
 import { PlayerRecapArcadeComponent } from "@video/compositions/PlayerRecapArcade";
 import { TournamentOrganizerRecapArcadeComponent } from "@video/compositions/TournamentOrganizerRecapArcade";
 import type { RecapData } from "../pages/Recap";
+import { fileSafe, recapGameSuffix } from "./recapImage";
 
 /**
  * Renders a recap's video in the browser, frame by frame, and returns the file. Browser only and heavy:
@@ -49,13 +50,9 @@ export async function renderRecapVideo(
   return { blob: await result.getBlob(), extension: container };
 }
 
-/** `smashrecap-2026-licane.mp4`, `smashrecap-2026-licane-organizer.webm`: safe as a file name. */
+/** `smashrecap-2026-licane.mp4`, `smashrecap-2026-zain-melee.mp4`, `smashrecap-2026-licane-organizer.webm`. */
 export const recapVideoName = (input: RecapData, extension: string, year: number) => {
-  const tag = input.recap.gamerTag
-    .normalize("NFKD")
-    .replace(/[^\w-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .toLowerCase();
-  const kind = input.kind === "organizer" ? "-organizer" : "";
+  const tag = fileSafe(input.recap.gamerTag);
+  const kind = input.kind === "organizer" ? "-organizer" : recapGameSuffix(input);
   return `smashrecap-${year}-${tag || "player"}${kind}.${extension}`;
 };

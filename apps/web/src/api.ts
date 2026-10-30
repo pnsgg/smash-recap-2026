@@ -1,4 +1,4 @@
-import { createApiClient } from "@shared";
+import { createApiClient, DEFAULT_GAME, findGame, type Game } from "@shared";
 import { API_URL } from "./config";
 
 const client = createApiClient(API_URL);
@@ -8,7 +8,22 @@ export type RecapKind = "player" | "organizer";
 /** start.gg user slugs look like `user/541f04fd`; the part after the slash is the discriminator. */
 export const toUserSlug = (discriminator: string) => `user/${discriminator}`;
 export const toDiscriminator = (slug: string) => slug.replace(/^user\//, "");
-export const recapPath = (kind: RecapKind, discriminator: string) => `/${kind}/${discriminator}`;
+
+/** `?videogameId=1` for a player recap of any game but the default one, which keeps the bare address. */
+export const gameQuery = (game: Game = DEFAULT_GAME) => (game.id === DEFAULT_GAME.id ? "" : `?videogameId=${game.id}`);
+
+/** A recap's page. Player recaps are per game; organiser recaps count every game, so they take none. */
+export const recapPath = (kind: RecapKind, discriminator: string, game?: Game) =>
+  `/${kind}/${discriminator}${kind === "player" ? gameQuery(game) : ""}`;
+
+/**
+ * The game a player recap address asks for: the default one with no `videogameId`, null for a
+ * game SmashRecap doesn't cover.
+ */
+export const gameFromUrl = (url: URL): Game | null => {
+  const id = url.searchParams.get("videogameId");
+  return id === null ? DEFAULT_GAME : (findGame(id) ?? null);
+};
 
 export class RecapNotFoundError extends Error {
   constructor(public readonly discriminator: string) {
@@ -17,10 +32,10 @@ export class RecapNotFoundError extends Error {
   }
 }
 
-export async function fetchPlayerRecap(discriminator: string, videogameId?: string) {
+export async function fetchPlayerRecap(discriminator: string, game: Game = DEFAULT_GAME) {
   const { data, error } = await client.api.v1
     .players({ slug: toUserSlug(discriminator) })
-    .recap.get({ query: videogameId ? { videogameId } : {} });
+    .recap.get({ query: { videogameId: game.id } });
 
   if (error?.status === 404) throw new RecapNotFoundError(discriminator);
   if (error) throw new Error(`Failed to fetch player recap: ${error.status}`);
@@ -63,12 +78,12 @@ export const within = <T>(promise: Promise<T>, timeoutMs: number): Promise<T | n
   Promise.race([promise, new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs))]);
 
 /** The name and headline numbers for link previews, giving up after `timeoutMs`. */
-export async function fetchPlayerSummary(discriminator: string, timeoutMs: number, videogameId?: string) {
+export async function fetchPlayerSummary(discriminator: string, timeoutMs: number, game: Game = DEFAULT_GAME) {
   return settle(
     (async () => {
       const { data, error } = await client.api.v1
         .players({ slug: toUserSlug(discriminator) })
-        .summary.get({ query: videogameId ? { videogameId } : {}, fetch: { signal: AbortSignal.timeout(timeoutMs) } });
+        .summary.get({ query: { videogameId: game.id }, fetch: { signal: AbortSignal.timeout(timeoutMs) } });
       if (error?.status === 404) throw new RecapNotFoundError(discriminator);
       if (error || !data) throw new Error(`Failed to fetch player summary: ${error?.status}`);
       return data;

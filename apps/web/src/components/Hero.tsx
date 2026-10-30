@@ -58,7 +58,7 @@ export function Hero() {
 
               <div className="cab__info">
                 <ul className="cab__facts">
-                  <li>Super Smash Bros. Ultimate</li>
+                  <li>Every Smash, both Rivals</li>
                   <li>Every start.gg event of&nbsp;{RECAP_YEAR}</li>
                   <li>For players and organisers</li>
                 </ul>
