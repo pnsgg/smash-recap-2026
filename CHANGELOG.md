@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.3.0...smash-recap-v1.3.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* **recap:** keep organiser events of unknown types instead of failing the recap ([#93](https://github.com/pnsgg/smash-recap-2026/issues/93)) ([974945a](https://github.com/pnsgg/smash-recap-2026/commit/974945a2e79757fc62b364aa69ff9d5aa6f22729))
+* **search:** fetch 50 matches so active players with common tags are found ([#95](https://github.com/pnsgg/smash-recap-2026/issues/95)) ([a2559a1](https://github.com/pnsgg/smash-recap-2026/commit/a2559a118d89711932ddbd2659fccacf69650bda))
+
 ## [1.3.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.2.0...smash-recap-v1.3.0) (2026-10-30)
 
 
