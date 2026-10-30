@@ -8,17 +8,21 @@ export type TournamentOrganizerParams = {
   id: UserSlug
   gamerTag: string
   tournaments: Tournament[]
+  avatarUrl?: string | null
 }
 
 export class TournamentOrganizer {
   public readonly id: UserSlug
   public readonly gamerTag: string
   public readonly tournaments: Tournament[]
+  /** The start.gg profile picture of the organizer's account, if it has one. */
+  public readonly avatarUrl: string | null
 
   constructor(params: TournamentOrganizerParams) {
     this.id = params.id
     this.gamerTag = params.gamerTag
     this.tournaments = params.tournaments
+    this.avatarUrl = params.avatarUrl ?? null
   }
 
   /**

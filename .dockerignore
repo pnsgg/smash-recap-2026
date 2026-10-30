@@ -10,3 +10,7 @@
 
 **/tests
 **/README.md
+
+# Remotion renders, stills and bundles: local output, never part of the image
+apps/remotion/out
+apps/remotion/build

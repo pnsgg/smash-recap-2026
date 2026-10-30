@@ -9,6 +9,7 @@ import {
   asTournamentId,
 } from '#libs/ids'
 import {
+  mapCharacterImages,
   mapEmptyPlayer,
   mapPlayerRecap,
 } from '#libs/startgg/mappers/player_recap_mapper'
@@ -63,6 +64,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           countryCode: 'FR',
           startAt: 1783188000,
           timezone: 'Europe/Paris',
+          images: [{ url: 'https://images.start.gg/images/tournament/1/logo.png' }],
         },
         userEntrant: {
           id: 'entrant-1',
@@ -182,13 +184,29 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
       },
     ]
 
-    const { player: result } = mapPlayerRecap(playerId, playerHeader, rawEvents)
+    const characterImages = mapCharacterImages([
+      {
+        id: 1337,
+        images: [
+          { url: 'https://images.start.gg/wolf-render.png', type: 'icon' },
+          { url: 'https://images.start.gg/wolf-stock.png', type: 'stockIcon' },
+        ],
+      },
+    ])
+    const { player: result } = mapPlayerRecap(
+      playerId,
+      { ...playerHeader, avatarUrl: 'https://images.start.gg/rouxchov.jpg' },
+      rawEvents,
+      characterImages
+    )
 
     expect(result.id).toBe(playerId)
+    expect(result.avatarUrl).toBe('https://images.start.gg/rouxchov.jpg')
     expect(result.tournaments).toHaveLength(1)
 
     const tournament = result.tournaments[0]
     expect(tournament.id).toBe(asTournamentId('tournament-1'))
+    expect(tournament.imageUrl).toBe('https://images.start.gg/images/tournament/1/logo.png')
     expect(tournament.name).toBe('PNS BloomBagarre')
     expect(tournament.address?.city).toBe('Toulouse')
     expect(tournament.address?.state).toBe('Occitanie')
@@ -222,10 +240,21 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
     const sel1 = game.selections[0]
     expect(sel1.playerId).toBe(asPlayerId('3739330'))
     expect(sel1.character.name).toBe('Wolf')
+    expect(sel1.character.images).toEqual({
+      renderUrl: 'https://images.start.gg/wolf-render.png',
+      stockIconUrl: 'https://images.start.gg/wolf-stock.png',
+    })
 
     const sel2 = game.selections[1]
     expect(sel2.playerId).toBe(playerId)
     expect(sel2.character.name).toBe('Banjo-Kazooie')
+    // Not in the lookup: the character is still mapped, without pictures
+    expect(sel2.character.images).toEqual({ renderUrl: null, stockIconUrl: null })
+  })
+
+  test('a player without an avatar maps to a null avatarUrl', () => {
+    const result = mapEmptyPlayer(playerId, playerHeader)
+    expect(result.avatarUrl).toBeNull()
   })
 
   test('successfully maps Teams events payload', () => {
@@ -259,6 +288,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           countryCode: null,
           startAt: 1783188000,
           timezone: 'Europe/Paris',
+          images: null,
         },
         userEntrant: {
           id: 'entrant-1',
@@ -274,6 +304,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
 
     const { player: result } = mapPlayerRecap(playerId, playerHeader, rawEvents)
     expect(result.tournaments[0].address).toBeNull()
+    expect(result.tournaments[0].imageUrl).toBeNull()
     expect(result.tournaments[0].events[0].eventType).toBe(EventType.TEAMS)
   })
 
@@ -308,6 +339,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           countryCode: null,
           startAt: 0,
           timezone: null,
+          images: null,
         },
         userEntrant: {
           id: 'entrant-1',
@@ -344,6 +376,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           countryCode: null,
           startAt: 0,
           timezone: null,
+          images: null,
         },
         userEntrant: null,
       },
@@ -384,6 +417,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           countryCode: null,
           startAt: 0,
           timezone: null,
+          images: null,
         },
         userEntrant: {
           id: 'entrant-1',
@@ -445,6 +479,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           countryCode: null,
           startAt: 0,
           timezone: null,
+          images: null,
         },
         userEntrant: {
           id: 'entrant-1',

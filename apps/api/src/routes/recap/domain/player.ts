@@ -12,6 +12,7 @@ export type PlayerParams = {
   prefix: string | null
   gamerTag: string
   tournaments: Tournament[]
+  avatarUrl?: string | null
 }
 
 type HeadToHeadEntry = {
@@ -27,6 +28,7 @@ export class Player {
   public readonly prefix: string | null
   public readonly gamerTag: string
   public readonly tournaments: Tournament[]
+  public readonly avatarUrl: string | null
 
   constructor(params: PlayerParams) {
     this.checkPreconditions(params)
@@ -35,6 +37,7 @@ export class Player {
     this.prefix = params.prefix
     this.gamerTag = params.gamerTag
     this.tournaments = params.tournaments
+    this.avatarUrl = params.avatarUrl ?? null
   }
 
   private checkPreconditions(params: PlayerParams) {
@@ -388,51 +391,22 @@ export class Player {
 
   /**
    * Find the nemesis of the player: the opponent against whom he has the worst win rate,
-   * among those he has played at least `minSets` times.
+   * among those he has played at least `minSets` times. Between equal win rates, the one
+   * played more often.
    */
   nemesis(minSets = 3): HeadToHeadEntry | null {
-    const headToHeadMap = new Map<PlayerId, { playerWonSet: number; opponentWonSet: number }>()
+    const entries = this.headToHead(Infinity).filter((entry) => entry.totalSets >= minSets)
+    return entries.sort((a, b) => a.winRate - b.winRate || b.totalSets - a.totalSets)[0] ?? null
+  }
 
-    for (const tournament of this.tournaments) {
-      for (const event of tournament.events) {
-        for (const set of event.sets) {
-          if (!set.competitors.has(this.id)) continue
-
-          const opponentId = Array.from(set.competitors.keys()).find((id) => id !== this.id)
-          if (!opponentId) continue
-
-          const record = headToHeadMap.get(opponentId) || {
-            playerWonSet: 0,
-            opponentWonSet: 0,
-          }
-
-          if (set.winnerId === this.id) {
-            record.playerWonSet++
-          } else if (set.winnerId === opponentId) {
-            record.opponentWonSet++
-          }
-
-          headToHeadMap.set(opponentId, record)
-        }
-      }
-    }
-
-    const entries = Array.from(headToHeadMap.entries())
-      .map(([opponentPlayerId, record]) => {
-        const totalSets = record.playerWonSet + record.opponentWonSet
-        return {
-          opponentPlayerId,
-          playerWonSet: record.playerWonSet,
-          opponentWonSet: record.opponentWonSet,
-          totalSets,
-          winRate: totalSets > 0 ? record.playerWonSet / totalSets : 0,
-        }
-      })
-      .filter((entry) => entry.totalSets >= minSets)
-
-    if (entries.length === 0) return null
-
-    return entries.sort((a, b) => a.winRate - b.winRate)[0]
+  /**
+   * Find the rival of the player: the opponent he played the most sets against, whatever the
+   * result, if at least `minSets`. Between equal set counts, the closest record.
+   */
+  rival(minSets = 3): HeadToHeadEntry | null {
+    const gap = (entry: HeadToHeadEntry) => Math.abs(entry.playerWonSet - entry.opponentWonSet)
+    const entries = this.headToHead(Infinity).filter((entry) => entry.totalSets >= minSets)
+    return entries.sort((a, b) => b.totalSets - a.totalSets || gap(a) - gap(b))[0] ?? null
   }
 
   /**

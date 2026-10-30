@@ -5,10 +5,18 @@ export type CharacterParams = {
   name: string
 }
 
+export type CharacterImages = {
+  renderUrl: string | null
+  stockIconUrl: string | null
+}
+
+export const NO_CHARACTER_IMAGES: CharacterImages = { renderUrl: null, stockIconUrl: null }
+
 export class Character {
   constructor(
     public readonly id: CharacterId,
-    public readonly name: string
+    public readonly name: string,
+    public readonly images: CharacterImages = NO_CHARACTER_IMAGES
   ) {
     this.checkPreconditions({ id, name })
   }

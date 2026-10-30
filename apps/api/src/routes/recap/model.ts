@@ -27,9 +27,12 @@ export const tournamentOrganizerRecapParamsSchema = t.Object({
 })
 export type TournamentOrganizerRecapParams = UnwrapSchema<typeof tournamentOrganizerRecapParamsSchema>
 
-const nemesisSchema = t.Nullable(
+const headToHeadSchema = t.Nullable(
   t.Object({
     opponentPlayerId: t.String(),
+    prefix: t.Nullable(t.String()),
+    gamerTag: t.Nullable(t.String()),
+    avatarUrl: t.Nullable(t.String()),
     playerWonSet: t.Number(),
     opponentWonSet: t.Number(),
     totalSets: t.Number(),
@@ -37,10 +40,16 @@ const nemesisSchema = t.Nullable(
   })
 )
 
+const characterImageFields = {
+  renderUrl: t.Nullable(t.String()),
+  stockIconUrl: t.Nullable(t.String()),
+}
+
 export const playerRecapResponseSchema = t.Object({
   id: t.String(),
   prefix: t.Nullable(t.String()),
   gamerTag: t.String(),
+  avatarUrl: t.Nullable(t.String()),
   totalTournaments: t.Number(),
   totalSets: t.Number(),
   dayOfWeekActivity: t.Array(t.Object({ day: t.String(), count: t.Number() })),
@@ -49,13 +58,35 @@ export const playerRecapResponseSchema = t.Object({
   reverseSweeps: t.Object({ won: t.Number(), lost: t.Number() }),
   decidingGameSets: t.Object({ count: t.Number(), winCount: t.Number(), winRate: t.Number() }),
   totalDisqualifications: t.Number(),
-  bestPerformances: t.Array(t.Object({ tournamentName: t.String(), spr: t.Number() })),
-  worstPerformance: t.Nullable(t.Object({ tournamentName: t.String(), spr: t.Number() })),
+  bestPerformances: t.Array(
+    t.Object({
+      tournamentName: t.String(),
+      tournamentImageUrl: t.Nullable(t.String()),
+      spr: t.Number(),
+    })
+  ),
+  worstPerformance: t.Nullable(
+    t.Object({
+      tournamentName: t.String(),
+      tournamentImageUrl: t.Nullable(t.String()),
+      spr: t.Number(),
+    })
+  ),
   mostPlayedCharacters: t.Array(
-    t.Object({ characterId: t.String(), characterName: t.String(), count: t.Number() })
+    t.Object({
+      characterId: t.String(),
+      characterName: t.String(),
+      ...characterImageFields,
+      count: t.Number(),
+    })
   ),
   highestUpset: t.Nullable(
-    t.Object({ tournamentName: t.String(), eventName: t.String(), factor: t.Number() })
+    t.Object({
+      tournamentName: t.String(),
+      tournamentImageUrl: t.Nullable(t.String()),
+      eventName: t.String(),
+      factor: t.Number(),
+    })
   ),
   stageActivity: t.Array(
     t.Object({
@@ -69,15 +100,22 @@ export const playerRecapResponseSchema = t.Object({
     t.Object({
       characterId: t.String(),
       characterName: t.String(),
+      ...characterImageFields,
       count: t.Number(),
       lossCount: t.Number(),
       looseRate: t.Number(),
     })
   ),
-  nemesis: nemesisSchema,
+  nemesis: headToHeadSchema,
+  rival: headToHeadSchema,
   eventTypeBreakdown: t.Record(t.String(), t.Number()),
   seriesPlayed: t.Array(
-    t.Object({ name: t.String(), count: t.Number(), tournamentNames: t.Array(t.String()) })
+    t.Object({
+      name: t.String(),
+      count: t.Number(),
+      tournamentNames: t.Array(t.String()),
+      imageUrl: t.Nullable(t.String()),
+    })
   ),
   skippedEventCount: t.Number(),
 })
@@ -86,16 +124,49 @@ export type PlayerRecapResponse = UnwrapSchema<typeof playerRecapResponseSchema>
 export const tournamentOrganizerRecapResponseSchema = t.Object({
   id: t.String(),
   gamerTag: t.String(),
+  avatarUrl: t.Nullable(t.String()),
   totalTournaments: t.Number(),
-  biggestTournaments: t.Array(t.Object({ tournamentName: t.String(), attendees: t.Number() })),
+  biggestTournaments: t.Array(
+    t.Object({
+      tournamentName: t.String(),
+      tournamentImageUrl: t.Nullable(t.String()),
+      attendees: t.Number(),
+    })
+  ),
   gamesOrganized: t.Array(
-    t.Object({ videogameId: t.String(), videogameName: t.String(), count: t.Number() })
+    t.Object({
+      videogameId: t.String(),
+      videogameName: t.String(),
+      imageUrl: t.Nullable(t.String()),
+      count: t.Number(),
+    })
   ),
   dayOfWeekActivity: t.Array(t.Object({ day: t.String(), count: t.Number() })),
   tournamentsByMonth: t.Array(t.Object({ month: t.String(), count: t.Number() })),
   eventTypeBreakdown: t.Array(t.Object({ type: t.Number(), count: t.Number() })),
   seriesOrganized: t.Array(
-    t.Object({ name: t.String(), count: t.Number(), tournamentNames: t.Array(t.String()) })
+    t.Object({
+      name: t.String(),
+      count: t.Number(),
+      tournamentNames: t.Array(t.String()),
+      imageUrl: t.Nullable(t.String()),
+    })
   ),
 })
 export type TournamentOrganizerRecapResponse = UnwrapSchema<typeof tournamentOrganizerRecapResponseSchema>
+
+export const playerSummaryResponseSchema = t.Object({
+  id: t.String(),
+  prefix: t.Nullable(t.String()),
+  gamerTag: t.String(),
+  totalTournaments: t.Number(),
+  totalSets: t.Number(),
+})
+export type PlayerSummaryResponse = UnwrapSchema<typeof playerSummaryResponseSchema>
+
+export const tournamentOrganizerSummaryResponseSchema = t.Object({
+  id: t.String(),
+  gamerTag: t.String(),
+  totalTournaments: t.Number(),
+})
+export type TournamentOrganizerSummaryResponse = UnwrapSchema<typeof tournamentOrganizerSummaryResponseSchema>

@@ -13,6 +13,8 @@ build
 
 # remotion
 apps/remotion/out
+apps/remotion/scripts
+apps/remotion/CLAUDE.md
 
 # misc
 .DS_Store

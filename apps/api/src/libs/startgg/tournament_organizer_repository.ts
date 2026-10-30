@@ -48,7 +48,7 @@ export class StartggTournamentOrganizerRepository implements TournamentOrganizer
       .map((r) => r.data.tournament)
       .filter((t): t is TournamentDetailsResult => t !== null)
 
-    return mapTournamentOrganizer(slug, gamerTag, rawTournaments)
+    return mapTournamentOrganizer(slug, gamerTag, rawTournaments, userData.user?.images?.[0]?.url ?? null)
   }
 
   /**

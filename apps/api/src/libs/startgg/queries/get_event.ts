@@ -21,6 +21,9 @@ export const getEvent = graphql(`
         countryCode
         lat
         lng
+        images(type: "profile") {
+          url
+        }
       }
       phases {
         phaseOrder

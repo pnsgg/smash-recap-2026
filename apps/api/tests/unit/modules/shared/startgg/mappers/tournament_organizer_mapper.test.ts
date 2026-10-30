@@ -17,6 +17,7 @@ describe('TournamentOrganizerMapper', () => {
         startAt: 1785276620,
         timezone: 'America/Los_Angeles',
         numAttendees: 1500,
+        images: [{ url: 'https://images.start.gg/genesis-logo.png' }],
         events: [
           {
             id: 'event-1',
@@ -25,6 +26,7 @@ describe('TournamentOrganizerMapper', () => {
             videogame: {
               id: '1',
               name: 'Super Smash Bros. Melee',
+              images: [{ url: 'https://images.start.gg/melee-cover.jpg' }],
             },
             isOnline: false,
             numEntrants: 800,
@@ -41,6 +43,7 @@ describe('TournamentOrganizerMapper', () => {
             videogame: {
               id: '1',
               name: 'Super Smash Bros. Melee',
+              images: null,
             },
             isOnline: true,
             numEntrants: 200,
@@ -54,10 +57,15 @@ describe('TournamentOrganizerMapper', () => {
       },
     ]
 
-    const result = mapTournamentOrganizer(slug, gamerTag, rawTournaments)
+    const result = mapTournamentOrganizer(slug, gamerTag, rawTournaments, 'https://images.start.gg/to.jpg')
 
     expect(result.id).toBe(slug)
     expect(result.gamerTag).toBe(gamerTag)
+    expect(result.avatarUrl).toBe('https://images.start.gg/to.jpg')
+    expect(result.tournaments[0]?.imageUrl).toBe('https://images.start.gg/genesis-logo.png')
+    expect(result.tournaments[0]?.events[0]?.videogame.imageUrl).toBe('https://images.start.gg/melee-cover.jpg')
+    // The teams event's videogame came without pictures
+    expect(result.tournaments[0]?.events[1]?.videogame.imageUrl).toBeNull()
     expect(result.tournaments).toHaveLength(1)
 
     const tournament = result.tournaments[0]
@@ -95,13 +103,14 @@ describe('TournamentOrganizerMapper', () => {
         startAt: 1785276620,
         timezone: null,
         numAttendees: 1500,
+        images: null,
         events: [
           null,
           {
             id: 'event-1',
             name: 'Valid Event',
             type: 1,
-            videogame: { id: '1', name: 'Game' },
+            videogame: { id: '1', name: 'Game', images: null },
             isOnline: false,
             numEntrants: 10,
             phaseGroups: [{ bracketType: 'DOUBLE_ELIMINATION' }],
@@ -110,7 +119,7 @@ describe('TournamentOrganizerMapper', () => {
             id: 'event-2',
             name: 'Event without phaseGroups',
             type: 1,
-            videogame: { id: '1', name: 'Game' },
+            videogame: { id: '1', name: 'Game', images: null },
             isOnline: false,
             numEntrants: 10,
             phaseGroups: null,
@@ -119,7 +128,7 @@ describe('TournamentOrganizerMapper', () => {
             id: 'event-3',
             name: 'Event with empty phaseGroups',
             type: 1,
-            videogame: { id: '1', name: 'Game' },
+            videogame: { id: '1', name: 'Game', images: null },
             isOnline: false,
             numEntrants: 10,
             phaseGroups: [],
@@ -141,12 +150,13 @@ describe('TournamentOrganizerMapper', () => {
         startAt: 1785276620,
         timezone: null,
         numAttendees: 1500,
+        images: null,
         events: [
           {
             id: 'event-1',
             name: 'Event with null type',
             type: null,
-            videogame: { id: '1', name: 'Game' },
+            videogame: { id: '1', name: 'Game', images: null },
             isOnline: false,
             numEntrants: 10,
             phaseGroups: [{ bracketType: 'DOUBLE_ELIMINATION' }],
@@ -168,12 +178,13 @@ describe('TournamentOrganizerMapper', () => {
         startAt: 1785276620,
         timezone: null,
         numAttendees: 1500,
+        images: null,
         events: [
           {
             id: 'event-1',
             name: 'Event with unsupported type',
             type: 3,
-            videogame: { id: '1', name: 'Game' },
+            videogame: { id: '1', name: 'Game', images: null },
             isOnline: false,
             numEntrants: 10,
             phaseGroups: [{ bracketType: 'DOUBLE_ELIMINATION' }],
@@ -195,12 +206,13 @@ describe('TournamentOrganizerMapper', () => {
         startAt: 1785276620,
         timezone: null,
         numAttendees: 1500,
+        images: null,
         events: [
           {
             id: 'event-1',
             name: 'Event',
             type: 1,
-            videogame: { id: '1', name: 'Game' },
+            videogame: { id: '1', name: 'Game', images: null },
             isOnline: false,
             numEntrants: 10,
             phaseGroups: [{ bracketType }],
@@ -228,6 +240,7 @@ describe('TournamentOrganizerMapper', () => {
         startAt: null,
         timezone: null,
         numAttendees: null,
+        images: null,
         events: null,
       },
       {
@@ -236,6 +249,7 @@ describe('TournamentOrganizerMapper', () => {
         startAt: 1785276620,
         timezone: null,
         numAttendees: 1500,
+        images: null,
         events: [
           {
             id: null,

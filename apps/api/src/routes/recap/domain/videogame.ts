@@ -8,7 +8,9 @@ export type VideogameParams = {
 export class Videogame {
   constructor(
     public readonly id: VideogameId,
-    public readonly name: string
+    public readonly name: string,
+    /** The game's cover art on start.gg, if it has one. */
+    public readonly imageUrl: string | null = null
   ) {
     this.checkPreconditions({ id, name })
   }

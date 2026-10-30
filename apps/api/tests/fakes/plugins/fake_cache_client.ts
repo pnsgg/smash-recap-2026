@@ -1,4 +1,4 @@
-import type { CacheClient } from '#plugins/cache'
+import type { CacheClient } from '#recap/store'
 
 interface Entry {
   value: string

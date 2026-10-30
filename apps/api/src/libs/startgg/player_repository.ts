@@ -1,10 +1,12 @@
 import type { Player } from '#recap/domain/player'
+import type { PlayerProfile } from '#recap/domain/player_profile'
 import type { PlayerRepository } from '#recap/domain/ports/player_repository'
 import { UserNotFoundError } from '#recap/domain/user_not_found_error'
 import { SearchPlayerResult } from '#search/domain/player_search_result'
 import { asPlayerId } from '#libs/ids'
-import type { UserSlug, VideogameId } from '#libs/ids'
+import type { PlayerId, UserSlug, VideogameId } from '#libs/ids'
 import {
+  mapCharacterImages,
   mapEmptyPlayer,
   mapPlayerRecap,
 } from '#libs/startgg/mappers/player_recap_mapper'
@@ -12,7 +14,9 @@ import type { EventResult } from '#libs/startgg/mappers/player_recap_mapper'
 import { mapSearchPlayerResult } from '#libs/startgg/mappers/search_player_result_mapper'
 import { getEvent } from '#libs/startgg/queries/get_event'
 import { getPlayerEventIds } from '#libs/startgg/queries/get_player_event_ids'
+import { getPlayerProfile } from '#libs/startgg/queries/get_player_profile'
 import { getPlayerUserId } from '#libs/startgg/queries/get_player_user_id'
+import { getVideogameCharacters } from '#libs/startgg/queries/get_videogame_characters'
 import { searchPlayerByGamerTag } from '#libs/startgg/queries/search_player_by_gamertag'
 import type { StartggClientInterface } from '#libs/startgg/client'
 
@@ -102,24 +106,47 @@ export class StartggPlayerRepository implements PlayerRepository {
     }
 
     const prefix = user.player?.prefix || null
+    const avatarUrl = user.images?.[0]?.url ?? null
     const playerId = asPlayerId(playerGlobalId.toString())
 
     // Phase 1 — collect event IDs for the year (sequential pagination, early stop)
     const eventIds = await this.fetchEventIdsForYear(slug, year, videoGameId)
     if (eventIds.length === 0) {
-      return { player: mapEmptyPlayer(playerId, { gamerTag, prefix }), skippedEventCount: 0 }
+      return {
+        player: mapEmptyPlayer(playerId, { gamerTag, prefix, avatarUrl }),
+        skippedEventCount: 0,
+      }
     }
 
-    // Phase 2 — fetch full event data
-    const eventsResponses = await Promise.all(
-      eventIds.map((eventId) => this.fetcher.fetch(getEvent, { eventId, userId }))
-    )
+    // Phase 2 — fetch full event data, and the game's character pictures once for all of it.
+    const [eventsResponses, charactersResponse] = await Promise.all([
+      Promise.all(eventIds.map((eventId) => this.fetcher.fetch(getEvent, { eventId, userId }))),
+      this.fetcher.fetch(getVideogameCharacters, { videogameId: videoGameId }).catch(() => null),
+    ])
 
-    const rawEvents = eventsResponses
-      .map((r) => r.data.event)
-      .filter((e): e is EventResult => e !== null)
+    const rawEvents: EventResult[] = []
+    let unreadableEventCount = 0
+    for (const response of eventsResponses) {
+      const event = (response as { data?: typeof response.data }).data?.event
+      if (event === undefined) unreadableEventCount++
+      else if (event !== null) rawEvents.push(event)
+    }
 
-    return mapPlayerRecap(playerId, { gamerTag, prefix }, rawEvents)
+    const characterImages = mapCharacterImages(charactersResponse?.data?.videogame?.characters ?? [])
+    const recap = mapPlayerRecap(playerId, { gamerTag, prefix, avatarUrl }, rawEvents, characterImages)
+    return { ...recap, skippedEventCount: recap.skippedEventCount + unreadableEventCount }
+  }
+
+  async getPlayerProfile(playerId: PlayerId): Promise<PlayerProfile | null> {
+    const { data } = await this.fetcher.fetch(getPlayerProfile, { playerId })
+    const player = data?.player
+    if (!player?.gamerTag) return null
+
+    return {
+      prefix: player.prefix || null,
+      gamerTag: player.gamerTag,
+      avatarUrl: player.user?.images?.[0]?.url ?? null,
+    }
   }
 
   /**
