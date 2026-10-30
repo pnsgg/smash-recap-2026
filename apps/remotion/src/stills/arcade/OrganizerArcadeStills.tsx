@@ -208,15 +208,14 @@ const organizerPanels = (d: OperatorData): PanelSpec[] => {
       ? {
           key: "events",
           render: ({ width, height }) => {
-            const share = d.events.singles / d.events.total;
             return (
               <Panel label="Brackets run this season" width={width} height={height}>
                 <div style={{ position: "absolute", left: 22, top: 62 }}>
                   <StillFigure value={String(d.events.total)} px={height < 260 ? 7 : 10} unit="events" />
                 </div>
                 <div style={{ position: "absolute", left: 22, right: 22, bottom: 64, height: 26, display: "flex", border: `4px solid ${color.casingDeep}` }}>
-                  <div style={{ width: `${share * 100}%`, backgroundColor: color.ink }} />
-                  <div style={{ width: `${(1 - share) * 100}%`, backgroundColor: color.gold }} />
+                  <div style={{ width: `${(d.events.singles / d.events.total) * 100}%`, backgroundColor: color.ink }} />
+                  <div style={{ width: `${(d.events.teams / d.events.total) * 100}%`, backgroundColor: color.gold }} />
                 </div>
                 <div style={{ position: "absolute", left: 22, right: 22, bottom: 20, display: "flex", justifyContent: "space-between" }}>
                   <StillFigure value={String(d.events.singles)} px={4} unit="singles" />

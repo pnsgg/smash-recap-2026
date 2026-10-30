@@ -141,7 +141,7 @@ const Others: React.FC<{ t: number; games: Game[]; total: number }> = ({ t, game
 
 const Events: React.FC<{ t: number; events: OperatorData["events"] }> = ({ t, events }) => {
   const grow = interpolate(t, [10, 34], [0, 1], clamp);
-  const share = events.total > 0 ? events.singles / events.total : 0;
+  const share = (count: number) => (events.total > 0 ? count / events.total : 0);
   return (
     <div style={{ position: "absolute", left: 44, right: 44, top: 150 }}>
       <div style={{ display: "flex", alignItems: "flex-end", gap: 16 }}>
@@ -150,8 +150,8 @@ const Events: React.FC<{ t: number; events: OperatorData["events"] }> = ({ t, ev
       </div>
       <div style={{ ...caption, fontSize: 18, marginTop: 16 }}>Brackets you ran this season</div>
       <div style={{ display: "flex", height: 34, marginTop: 30, outline: `4px solid ${color.casingDeep}`, backgroundColor: color.raised }}>
-        <div style={{ width: `${share * grow * 100}%`, backgroundColor: color.ink }} />
-        <div style={{ width: `${(1 - share) * grow * 100}%`, backgroundColor: color.gold }} />
+        <div style={{ width: `${share(events.singles) * grow * 100}%`, backgroundColor: color.ink }} />
+        <div style={{ width: `${share(events.teams) * grow * 100}%`, backgroundColor: color.gold }} />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 18, opacity: snap(t, 30) }}>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
