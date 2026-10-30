@@ -24,6 +24,12 @@ type StartggPlayerRepositoryConfig = {
   eventType?: number
 }
 
+/**
+ * start.gg doesn't order matches by activity, and ranking only sees what this page returns: common
+ * tags (1900+ KIDs) need more than the default 25. Each extra match slows the search down.
+ */
+const SEARCH_PAGE_SIZE = 50
+
 export class StartggPlayerRepository implements PlayerRepository {
   constructor(
     private readonly fetcher: StartggClientInterface,
@@ -38,6 +44,7 @@ export class StartggPlayerRepository implements PlayerRepository {
   async searchPlayerByGamerTag(gamerTag: string): Promise<SearchPlayerResult[]> {
     const { data } = await this.fetcher.fetch(searchPlayerByGamerTag, {
       query: {
+        perPage: SEARCH_PAGE_SIZE,
         filter: {
           hideTest: true,
           isUser: true,
