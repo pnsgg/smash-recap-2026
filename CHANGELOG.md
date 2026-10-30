@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.1.0...smash-recap-v1.2.0) (2026-10-30)
+
+
+### Features
+
+* acknowledge remotion license ([#87](https://github.com/pnsgg/smash-recap-2026/issues/87)) ([6f5abbc](https://github.com/pnsgg/smash-recap-2026/commit/6f5abbc1406af022e3af3d0012d4892fb487b28c))
+* Arcade UI redesign, richer recap stats, and dynamic link previews ([#89](https://github.com/pnsgg/smash-recap-2026/issues/89)) ([f28cf9d](https://github.com/pnsgg/smash-recap-2026/commit/f28cf9d93c3441e566c1fc0ecfb44d3fbd82b458))
+* **recap:** add timezone and local time conversion to tournaments ([#85](https://github.com/pnsgg/smash-recap-2026/issues/85)) ([049b8d8](https://github.com/pnsgg/smash-recap-2026/commit/049b8d8ffeb5daf5d32f98d8d1f56ac962b227d7))
+
 ## [1.1.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.0.0...smash-recap-v1.1.0) (2026-10-18)
 
 
