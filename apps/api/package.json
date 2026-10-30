@@ -23,7 +23,6 @@
   "dependencies": {
     "@elysia/cors": "rc",
     "@elysia/openapi": "rc",
-    "@elysia/static": "rc",
     "@sinclair/typebox": "^0.34.0",
     "elysia": "rc",
     "gql.tada": "^1.11.3",
