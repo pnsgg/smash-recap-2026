@@ -121,7 +121,7 @@ export class TournamentOrganizer {
 
     for (const tournament of this.tournaments) {
       for (const event of tournament.events) {
-        counts[event.eventType]++
+        if (event.eventType !== null) counts[event.eventType]++
       }
     }
 

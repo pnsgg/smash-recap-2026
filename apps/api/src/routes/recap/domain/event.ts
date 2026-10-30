@@ -12,7 +12,8 @@ export type EventParams = {
   name: string
   videogame: Videogame
   isOnline: boolean
-  eventType: EventType
+  /** null when start.gg's type is neither singles nor teams. */
+  eventType: EventType | null
   lastBracketType: BracketType
   participants: Participant[]
   sets: Set[]
@@ -24,7 +25,7 @@ export class Event {
   public readonly name: string
   public readonly videogame: Videogame
   public readonly isOnline: boolean
-  public readonly eventType: EventType
+  public readonly eventType: EventType | null
   public readonly lastBracketType: BracketType
   public readonly participants: Participant[]
   public readonly sets: Set[]
@@ -51,7 +52,7 @@ export class Event {
   }
 
   isTeams(): boolean {
-    return this.eventType !== EventType.SINGLES
+    return this.eventType === EventType.TEAMS
   }
 
   getFinalRankingUpTo(upTo: number): Participant[] {

@@ -37,13 +37,13 @@ export function mapTournamentOrganizer(
         if (rawEventType === null) {
           throw new Error('Cannot map event. Reason: Event type is missing')
         }
-        let eventType: EventType
+        // start.gg has other, undocumented codes (7 is on 2XKO's mixed events). An organiser's recap
+        // only counts events, so these still count as run, just as neither singles nor teams.
+        let eventType: EventType | null = null
         if (rawEventType === 1) {
           eventType = EventType.SINGLES
         } else if (rawEventType === 2 || rawEventType === 5) {
           eventType = EventType.TEAMS
-        } else {
-          throw new Error(`Cannot map event. Reason: Unsupported event type code: ${rawEventType}`)
         }
 
         return new Event({
