@@ -1,12 +1,29 @@
+import { Folder } from "remotion";
 import "./index.css";
-import { PlayerRecap } from "./compositions/PlayerRecap";
-import { TournamentOrganizerRecap } from "./compositions/TournamentOrganizerRecap";
+import { PlayerRecapArcade } from "./compositions/PlayerRecapArcade";
+import { TournamentOrganizerRecapArcade } from "./compositions/TournamentOrganizerRecapArcade";
+import { TrailerHorizontal } from "./compositions/Trailers/TrailerHorizontal";
+import { TrailerSquare } from "./compositions/Trailers/TrailerSquare";
+import { TrailerVertical } from "./compositions/Trailers/TrailerVertical";
+import { OrganizerArcadeStills } from "./stills/arcade/OrganizerArcadeStills";
+import { PlayerArcadeStills } from "./stills/arcade/PlayerArcadeStills";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
-      <PlayerRecap />
-      <TournamentOrganizerRecap />
+      <Folder name="OneCredit">
+        <PlayerRecapArcade />
+        <TournamentOrganizerRecapArcade />
+        <Folder name="still-images">
+          <PlayerArcadeStills />
+          <OrganizerArcadeStills />
+        </Folder>
+      </Folder>
+      <Folder name="Trailer">
+        <TrailerHorizontal />
+        <TrailerSquare />
+        <TrailerVertical />
+      </Folder>
     </>
   );
 };

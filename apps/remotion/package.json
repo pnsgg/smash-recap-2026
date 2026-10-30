@@ -27,7 +27,13 @@
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
     "typecheck": "tsc",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "render": "remotion render",
+    "critique": "bun scripts/critique.ts",
+    "synth-sfx": "bun scripts/synth-sfx.ts",
+    "contact-sheet": "bash scripts/contact-sheet.sh",
+    "phone-test": "bash scripts/phone-test.sh",
+    "loop-check": "bash scripts/loop-check.sh"
   },
   "sideEffects": [
     "*.css"

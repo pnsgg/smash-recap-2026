@@ -1,0 +1,20 @@
+{
+  "coin": 0.5,
+  "blip": 0.07002267573696146,
+  "select": 0.14002267573696145,
+  "tick": 0.03,
+  "impact": 0.6,
+  "alarm": 0.26,
+  "stamp": 0.16,
+  "riser": 4,
+  "drop": 1.2,
+  "hiscore": 2.5,
+  "bell": 0.9,
+  "fanfare": 3.2,
+  "question": 0.6,
+  "hiss": 2,
+  "coin-drop": 0.8,
+  "game-over": 1.6,
+  "countdown": 0.1,
+  "power-off": 0.6
+}
