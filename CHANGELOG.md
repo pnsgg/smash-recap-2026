@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.2.0...smash-recap-v1.3.0) (2026-10-30)
+
+
+### Features
+
+* allow users to view a player recap for specific games ([#90](https://github.com/pnsgg/smash-recap-2026/issues/90)) ([e3df681](https://github.com/pnsgg/smash-recap-2026/commit/e3df6812054edec4e0c9e313a788c9158505b122))
+
 ## [1.2.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.1.0...smash-recap-v1.2.0) (2026-10-30)
 
 
