@@ -22,8 +22,8 @@ export function SiteFooter() {
               <a className="link" href="https://www.start.gg" target="_blank" rel="noreferrer">
                 start.gg
               </a>
-              . Player recaps cover every Super Smash Bros. game and both Rivals of Aether; organiser recaps count
-              every game you ran.
+              . Player recaps cover Super Smash Bros. Melee, Brawl and Ultimate and both Rivals of Aether; organiser
+              recaps count every game you ran.
             </p>
           </div>
           <div className="credits__group" data-reveal style={{ "--i": 2 } as CSSProperties}>
