@@ -1,0 +1,104 @@
+/* One centred screen: the damage meter, the stage it flew off, and the way back. */
+.lost {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100svh;
+  padding: 0 var(--margin) calc(var(--frame) + var(--gutter));
+}
+
+.lost__bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 1rem;
+  min-height: 4.5rem;
+  padding-top: var(--frame);
+}
+
+.lost__main {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: clamp(1rem, 2.5vh, 1.75rem);
+  text-align: center;
+}
+
+.lost__snow {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lost__damage {
+  font-size: clamp(4.5rem, 2rem + 9vw, 10rem);
+  line-height: 1;
+  color: var(--accent);
+}
+
+.lost__svg {
+  width: min(100%, 26rem);
+  overflow: visible;
+}
+
+.lost__title {
+  font-size: var(--step-head);
+}
+
+.lost__text {
+  font-size: var(--step-lead);
+}
+
+.lost .button {
+  margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lost__main > :not(.lost__snow) {
+    animation: rise 520ms var(--ease-out) both;
+  }
+
+  .lost__main > :nth-child(3) {
+    animation-delay: 70ms;
+  }
+
+  .lost__main > :nth-child(4) {
+    animation-delay: 140ms;
+  }
+
+  .lost__main > :nth-child(5) {
+    animation-delay: 210ms;
+  }
+
+  .lost__main > :nth-child(6) {
+    animation-delay: 280ms;
+  }
+
+  .lost__snow {
+    animation: snow-out 700ms linear both;
+  }
+
+  .lost__damage .pixel-number {
+    animation: hit 360ms steps(3) 900ms both;
+  }
+
+  .lost__platform {
+    transform-box: fill-box;
+    animation: rise 520ms var(--ease-out) both;
+    animation-delay: calc(300ms + var(--i) * 70ms);
+  }
+}
+
+@keyframes hit {
+  0% {
+    transform: translate(6px, -4px);
+  }
+  50% {
+    transform: translate(-5px, 3px);
+  }
+  100% {
+    transform: none;
+  }
+}

@@ -11,7 +11,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "rootDirs": [".", "./.react-router/types"]
   },
-  "include": ["src", "vite.config.ts"]
+  "include": ["src", "server", "vite.config.ts", "react-router.config.ts", ".react-router/types/**/*"]
 }

@@ -1,0 +1,80 @@
+.credits {
+  margin-top: var(--section-gap);
+}
+
+.credits__roll {
+  padding: 0 var(--margin) clamp(3rem, 2rem + 3vw, 5rem);
+}
+
+.credits__title {
+  font-size: var(--step-head);
+  margin-bottom: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+}
+
+.credits__groups {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2.5rem var(--gutter);
+}
+
+.credits__group {
+  grid-column: span 4;
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+}
+
+.credits__group h3 {
+  font-size: var(--step-lead);
+  color: var(--accent);
+}
+
+.credits__group ul {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.credits__legal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+  margin-top: clamp(3rem, 2rem + 3vw, 5rem);
+  font-size: var(--step-note);
+  color: var(--muted);
+}
+
+.credits__legal a {
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* The kick plate at the foot of the cabinet: putty, with the name cut across it. */
+.credits__plate {
+  padding: clamp(1.5rem, 3vw, 3rem) var(--margin) calc(var(--frame) + clamp(1rem, 2vw, 2rem));
+  background: var(--casing);
+  color: var(--card-ink);
+}
+
+.credits__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  padding-bottom: 0.12em;
+}
+
+@media (max-width: 1100px) {
+  .credits__group {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 640px) {
+  .credits__group {
+    grid-column: 1 / -1;
+  }
+
+  .credits__legal {
+    flex-direction: column;
+  }
+}

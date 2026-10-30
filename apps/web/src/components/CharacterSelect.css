@@ -1,0 +1,266 @@
+.select {
+  padding: var(--section-gap) var(--margin) 0;
+}
+
+.select__head {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  align-items: end;
+  margin-bottom: clamp(2rem, 1.5rem + 2vw, 4rem);
+}
+
+.select__head h2 {
+  grid-column: 1 / span 7;
+  font-size: var(--step-head);
+}
+
+.select__head p {
+  grid-column: 8 / span 5;
+  max-width: 36ch;
+}
+
+.select__body {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 2.5rem;
+  align-items: start;
+}
+
+.select__grid {
+  position: relative;
+  grid-column: 1 / span 6;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.select__tile {
+  position: relative;
+  display: grid;
+  padding: 0;
+  border: 0;
+  background: var(--raised);
+  color: var(--ink);
+  text-align: left;
+  overflow: clip;
+  transition: transform var(--t-press) var(--ease-out);
+}
+
+.select__tile:active {
+  transform: scale(0.97);
+}
+
+.select__portrait {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  filter: grayscale(0.6) contrast(1.1) brightness(0.8);
+  transition: filter var(--t-ui) ease;
+}
+
+.select__tile[aria-selected="true"] .select__portrait,
+.select__tile:hover .select__portrait,
+.select__tile:focus-visible .select__portrait {
+  filter: none;
+}
+
+.select__initial {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: var(--step-head);
+  background: var(--raised-2);
+}
+
+.select__plate {
+  padding: 0.375rem 0.625rem;
+  background: var(--raised-2);
+  font-family: var(--font-display);
+  font-size: var(--step-body);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition:
+    background-color var(--t-hover) ease,
+    color var(--t-hover) ease;
+}
+
+.select__tile[aria-selected="true"] .select__plate {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.select__tile:focus-visible {
+  outline-offset: -3px;
+}
+
+.select__token {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-size: var(--step-body);
+  font-weight: 700;
+  pointer-events: none;
+  outline: 3px solid var(--ground);
+  transition: transform var(--t-ui) var(--ease-out);
+}
+
+.select__stage {
+  grid-column: 7 / span 6;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--gutter);
+  align-items: start;
+}
+
+.select__monitor {
+  padding: var(--bezel);
+  background: var(--casing);
+}
+
+.select__glass {
+  aspect-ratio: 1;
+}
+
+.select__big {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: grid;
+  place-items: center;
+}
+
+.select__snow {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.select__info {
+  display: grid;
+  gap: 1rem;
+}
+
+.select__name {
+  font-size: var(--step-head);
+}
+
+.select__summary {
+  max-width: 34ch;
+}
+
+.select__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem var(--gutter);
+  margin-top: 0.5rem;
+}
+
+.select__stats dt {
+  font-size: var(--step-small);
+  color: var(--muted);
+}
+
+.select__stats dd {
+  margin-top: 0.375rem;
+  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+  line-height: 1;
+  color: var(--accent);
+}
+
+.select__note {
+  font-size: var(--step-small);
+  color: var(--muted);
+}
+
+.select__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .select__snow {
+    animation: snow-out 420ms linear both;
+  }
+
+  .select__big {
+    animation: channel-in 520ms var(--ease-expo) both;
+  }
+
+  .select__info {
+    animation: swap-in 420ms var(--ease-out) both;
+  }
+}
+
+@keyframes channel-in {
+  from {
+    transform: scale(1.06, 0.88);
+  }
+}
+
+@keyframes swap-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (max-width: 1200px) {
+  .select__stage {
+    grid-template-columns: 1fr;
+  }
+
+  .select__monitor {
+    max-width: 22rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .select__head h2,
+  .select__head p,
+  .select__grid,
+  .select__stage {
+    grid-column: 1 / -1;
+  }
+
+  .select__head p {
+    margin-top: 1rem;
+  }
+
+  .select__stage {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .select__stage {
+    grid-template-columns: 1fr;
+  }
+
+  .select__monitor {
+    max-width: none;
+  }
+
+  .select__plate {
+    font-size: var(--step-small);
+  }
+
+  .select__token {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: var(--step-small);
+  }
+}

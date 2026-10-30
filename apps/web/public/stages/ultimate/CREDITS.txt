@@ -1,0 +1,5 @@
+Super Smash Bros. Ultimate stage-select previews, one per stage, named by start.gg stage ID.
+Copyright Nintendo and the respective rights holders.
+Ripped by Random Talking Bush, hosted by The Spriters Resource:
+https://www.spriters-resource.com/nintendo_switch/supersmashbrosultimate/
+Re-encoded at 256x128 for the recap video.
