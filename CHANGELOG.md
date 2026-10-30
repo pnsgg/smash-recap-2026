@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.3.1...smash-recap-v1.3.2) (2026-10-30)
+
+
+### Bug Fixes
+
+* **recap:** drop Smash 64, 3DS and Wii U from the supported games ([#96](https://github.com/pnsgg/smash-recap-2026/issues/96)) ([83938d0](https://github.com/pnsgg/smash-recap-2026/commit/83938d07857518b9cd8d8d93f7ad7ba97476993a))
+
 ## [1.3.1](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.3.0...smash-recap-v1.3.1) (2026-10-30)
 
 
