@@ -1,14 +1,11 @@
 /**
- * The games a player recap can be made for: every Super Smash Bros. and both Rivals of Aether.
+ * The games a player recap can be made for: Melee, Brawl and Ultimate, and both Rivals of Aether.
  * `id` is the start.gg videogame ID the recap API takes as `videogameId`; `short` is the name
  * players use. Organiser recaps are not per game: they count every game a TO ran.
  */
 export const GAMES = [
-  { id: '4', name: 'Super Smash Bros.', short: 'Smash 64', series: 'Super Smash Bros.' },
   { id: '1', name: 'Super Smash Bros. Melee', short: 'Melee', series: 'Super Smash Bros.' },
   { id: '5', name: 'Super Smash Bros. Brawl', short: 'Brawl', series: 'Super Smash Bros.' },
-  { id: '29', name: 'Super Smash Bros. for 3DS', short: 'Smash 3DS', series: 'Super Smash Bros.' },
-  { id: '3', name: 'Super Smash Bros. for Wii U', short: 'Smash Wii U', series: 'Super Smash Bros.' },
   { id: '1386', name: 'Super Smash Bros. Ultimate', short: 'Ultimate', series: 'Super Smash Bros.' },
   { id: '24', name: 'Rivals of Aether', short: 'Rivals of Aether', series: 'Rivals of Aether' },
   { id: '53945', name: 'Rivals of Aether II', short: 'Rivals of Aether II', series: 'Rivals of Aether' },
