@@ -170,7 +170,7 @@ describe('TournamentOrganizerMapper', () => {
     )
   })
 
-  test('throws error when rawEventType is unsupported event type code', () => {
+  test('keeps an event of an unknown type, as neither singles nor teams', () => {
     const rawTournaments: TournamentDetailsResult[] = [
       {
         id: 'tournament-1',
@@ -193,9 +193,9 @@ describe('TournamentOrganizerMapper', () => {
       },
     ]
 
-    expect(() => mapTournamentOrganizer(slug, gamerTag, rawTournaments)).toThrow(
-      'Cannot map event. Reason: Unsupported event type code: 3'
-    )
+    const [tournament] = mapTournamentOrganizer(slug, gamerTag, rawTournaments).tournaments
+    expect(tournament?.events).toHaveLength(1)
+    expect(tournament?.events[0]?.eventType).toBeNull()
   })
 
   test('throws error when bracketType is missing, null, or invalid', () => {

@@ -8,13 +8,15 @@ export const deriveOperator = (recap: TournamentOrganizerRecapProps) => {
   const events = (type: number) => recap.eventTypeBreakdown.find((e) => e.type === type)?.count ?? 0;
   const singles = events(EVENT_TYPE.singles);
   const teams = events(EVENT_TYPE.teams);
+  // Every event counts towards its game, including types that are neither singles nor teams.
+  const total = recap.gamesOrganized.reduce((sum, game) => sum + game.count, 0);
 
   return {
     tag: recap.gamerTag,
     avatarUrl: recap.avatarUrl,
     totalTournaments: recap.totalTournaments,
     games: recap.gamesOrganized,
-    events: { singles, teams, total: singles + teams },
+    events: { singles, teams, total },
     biggest: recap.biggestTournaments.filter((t) => t.attendees > 0),
     series: recap.seriesOrganized.slice(0, 2),
     months: recap.tournamentsByMonth,
