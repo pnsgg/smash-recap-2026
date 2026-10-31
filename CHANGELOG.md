@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.3.2...smash-recap-v1.4.0) (2026-10-31)
+
+
+### Features
+
+* **recap:** name each screen for what it shows and list three series ([52711f7](https://github.com/pnsgg/smash-recap-2026/commit/52711f753b944ea167495be40ac79a665cabe38c))
+* **recap:** simplify the organiser acts and cap the crowd animation ([fd68eec](https://github.com/pnsgg/smash-recap-2026/commit/fd68eec049e011b60b95191da2c4c59a245653ca))
+* redesign the hero and simplify the recaps ([b89c9cf](https://github.com/pnsgg/smash-recap-2026/commit/b89c9cf86482fce97bf167373802cc53cbebb4fe))
+* **web:** bring back the recap player controls ([4faf2c9](https://github.com/pnsgg/smash-recap-2026/commit/4faf2c9592bd4c5f8de5d0eedace2074f4014ba5))
+* **web:** credit the authors in the footer ([9e3033c](https://github.com/pnsgg/smash-recap-2026/commit/9e3033cb26ee2755c901fd8067a439fdc642e7e2))
+* **web:** rebuild the hero as a CRT monitor ([f0980ea](https://github.com/pnsgg/smash-recap-2026/commit/f0980eaaed3eb4273d0d7481c9b584e5babea35a))
+* **web:** remove the home page sections and the recap page stats ([7e62a13](https://github.com/pnsgg/smash-recap-2026/commit/7e62a13f2d13683752cf690168d43e6156825045))
+
 ## [1.3.2](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.3.1...smash-recap-v1.3.2) (2026-10-30)
 
 
