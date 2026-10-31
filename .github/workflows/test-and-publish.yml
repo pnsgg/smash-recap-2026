@@ -2,7 +2,6 @@ name: Test, Build, and Publish
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   pull_request:
     branches: [main]
 
@@ -14,13 +13,8 @@ jobs:
   test:
     name: Run Tests and Checks
     runs-on: ubuntu-latest
-    env:
-      NODE_ENV: test
-      PORT: 3001
-      RECAP_YEAR: 2026
     permissions:
       contents: read
-      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
@@ -33,19 +27,27 @@ jobs:
       - name: Run tests
         run: bun run test
 
-  build-api:
-    name: Build api binary
+  build-image:
+    name: Build App Docker Image
     needs: test
+    # Release PRs only change the version and changelog.
+    if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'release-please--')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build
-        run: bun run --filter=api build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./apps/api/Dockerfile
+          push: false
+          cache-from: type=gha
 
   release-please:
     name: Release Please
@@ -67,10 +69,7 @@ jobs:
 
   publish:
     name: Build and Push App Docker Image
-    needs: [test, release-please]
-    # release-please only runs on pushes to main, so it's skipped on tag
-    # pushes; `always()` keeps this job from being skipped along with it.
-    if: always() && needs.test.result == 'success' && github.event_name == 'push'
+    needs: release-please
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -95,7 +94,6 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
-            type=semver,pattern={{version}}
             type=sha
             type=raw,value=${{ needs.release-please.outputs.tag_name }},enable=${{ needs.release-please.outputs.release_created == 'true' }}
 
