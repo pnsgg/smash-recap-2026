@@ -1,4 +1,4 @@
-import { spring, interpolate, random } from "remotion";
+import { spring, interpolate } from "remotion";
 
 export interface SpringConfig {
   damping: number;
@@ -50,7 +50,7 @@ export const getBeatFrame = (
 export const countUp = (value: number, progress: number): number =>
   Math.round(value * Math.min(1, Math.max(0, progress)));
 
-export const BEAT = getBeatFrame(1, 120, 30);
+const BEAT = getBeatFrame(1, 120, 30);
 export const BAR = 4 * BEAT;
 
 export const clamp = {
@@ -78,33 +78,4 @@ export const track = ({
     previous = to;
   }
   return value;
-};
-
-export const impactShake = ({
-  frame,
-  impacts,
-  intensity = 6,
-  decayFrames = 10,
-  seed = "shake",
-}: {
-  frame: number;
-  impacts: ReadonlyArray<number>;
-  intensity?: number;
-  decayFrames?: number;
-  seed?: string;
-}): { x: number; y: number; rotate: number } => {
-  let x = 0;
-  let y = 0;
-  let rotate = 0;
-  for (const at of impacts) {
-    const age = frame - at;
-    if (age < 0 || age > decayFrames) {
-      continue;
-    }
-    const falloff = intensity * Math.exp(-age / (decayFrames / 3));
-    x += (random(`${seed}-x-${at}-${age}`) - 0.5) * 2 * falloff;
-    y += (random(`${seed}-y-${at}-${age}`) - 0.5) * 2 * falloff;
-    rotate += (random(`${seed}-r-${at}-${age}`) - 0.5) * 0.25 * falloff;
-  }
-  return { x, y, rotate };
 };
