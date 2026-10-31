@@ -2,7 +2,6 @@ import { DEFAULT_GAME, type Game, type PlayerRecapProps, type TournamentOrganize
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Await, Link, useParams, useRevalidator } from "react-router";
 import { recapPath, toDiscriminator, type RecapKind, type Settled } from "../api";
-import { PixelNumber } from "../components/PixelNumber";
 import { PlayerLoading } from "../components/PlayerLoading";
 import { RecapActions } from "../components/RecapActions";
 import { SearchConsole } from "../components/SearchConsole";
@@ -10,7 +9,7 @@ import { SettingsToggles } from "../components/SettingsToggles";
 import { Static } from "../components/Static";
 import { Wordmark } from "../components/Wordmark";
 import { RECAP_YEAR } from "../config";
-import { displayName, formatNumber, organizerStatGroups, playerStatGroups, playerSummary, type StatLine } from "../lib/stats";
+import { displayName, formatNumber, playerSummary } from "../lib/stats";
 import "./Recap.css";
 
 export type RecapData =
@@ -78,13 +77,6 @@ function RecapScreen({ kind, game = DEFAULT_GAME, initialName = null, shareUrl, 
   useEffect(() => setMounted(true), []);
 
   const otherKind: RecapKind = kind === "player" ? "organizer" : "player";
-
-  const resultLines: StatLine[] =
-    loaded && !isEmpty
-      ? loaded.kind === "player"
-        ? pick(playerStatGroups(loaded.recap), ["tournaments", "sets", "deciding", "spr"])
-        : pick(organizerStatGroups(loaded.recap), ["to-tournaments", "to-biggest", "to-games", "to-series"])
-      : [];
 
   // The Remotion Player focuses its play button when it mounts; give focus back to the page.
   const playerRef = useRef<HTMLDivElement>(null);
@@ -183,9 +175,6 @@ function RecapScreen({ kind, game = DEFAULT_GAME, initialName = null, shareUrl, 
             )}
           </div>
           <div className="recap__bezel">
-            <a className="link" href={`https://www.start.gg/user/${discriminator}`} target="_blank" rel="noreferrer">
-              start.gg/user/{discriminator}
-            </a>
             <span>{kind === "player" ? `${KIND_LABEL[kind]} · ${game.short}` : KIND_LABEL[kind]}</span>
           </div>
         </div>
@@ -204,18 +193,6 @@ function RecapScreen({ kind, game = DEFAULT_GAME, initialName = null, shareUrl, 
                   ? "The link may be mistyped, or the account was deleted on start.gg."
                   : "The video plays here as soon as the numbers are in."}
             </p>
-            {resultLines.length > 0 && (
-              <dl className="recap__stats">
-                {resultLines.map((line) => (
-                  <div key={line.id}>
-                    <dt>{line.name}</dt>
-                    <dd>
-                      <PixelNumber value={line.figure} label={line.value} />
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            )}
           </div>
 
           {!notFound && (
@@ -253,9 +230,4 @@ function RecapScreen({ kind, game = DEFAULT_GAME, initialName = null, shareUrl, 
       </main>
     </div>
   );
-}
-
-function pick<T extends { id: string }>(groups: { lines: T[] }[], ids: string[]) {
-  const lines = groups.flatMap((g) => g.lines);
-  return ids.map((id) => lines.find((l) => l.id === id)).filter((l): l is T => Boolean(l));
 }
