@@ -5,7 +5,7 @@ export const SIZE = 600;
 
 const ACT_BARS = {
   serviceMode: 4,
-  gamesInstalled: 5,
+  gamesInstalled: 4,
   biggestCrowds: 5,
   series: 3,
   coinBox: 4,

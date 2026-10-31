@@ -10,6 +10,8 @@ import type { OperatorData } from "../data";
 const TABLE_AT = 140;
 const STANDS = { left: 44, top: 250, width: 512, height: 250 } as const;
 const FILLED_BY = 60;
+/** Every head is its own drawing, redrawn each frame. Past this the stands stop adding people; the figure stays real. */
+const MAX_HEADS = 200;
 
 const HAIR = [color.ground, "#3b2a1e", color.accentEdge, color.gold, color.cardMuted];
 const SHIRT = [color.accent, color.ink, color.gold, color.cyan, color.osd, color.casingDeep];
@@ -22,18 +24,19 @@ const Logo: React.FC<{ src: string | null; side: number }> = ({ src, side }) => 
 
 const Record: React.FC<{ t: number; record: OperatorData["biggest"][number] }> = ({ t, record }) => {
   const n = record.attendees;
-  // The largest head that lets every attendee fit in the stands.
-  const pitch = Math.max(4, Math.floor(Math.sqrt((STANDS.width * STANDS.height) / n)));
+  const heads = Math.min(n, MAX_HEADS);
+  // The largest head that lets the whole crowd fit in the stands.
+  const pitch = Math.max(4, Math.floor(Math.sqrt((STANDS.width * STANDS.height) / heads)));
   const px = Math.max(1, Math.floor(pitch / 6));
   const cols = Math.floor(STANDS.width / pitch);
-  const shown = Math.min(n, Math.floor((t / FILLED_BY) * n));
+  const shown = Math.min(heads, Math.floor((t / FILLED_BY) * heads));
   const name = displayCase(record.tournamentName);
   return (
     <>
       <div style={{ position: "absolute", left: 44, top: 40, display: "flex", alignItems: "center", gap: 20 }}>
         <Logo src={record.tournamentImageUrl} side={96} />
         <div style={{ minWidth: 0 }}>
-          <Slam frame={t} at={0} text="RECORD CROWD" style={display(32, color.gold)} fill={color.gold} />
+          <Slam frame={t} at={0} text="BIGGEST TOURNAMENT" style={display(32, color.gold)} fill={color.gold} />
           <div style={{ ...display(fitDisplay(name, 32, 380)), marginTop: 12, opacity: snap(t, 6) }}>{name}</div>
         </div>
       </div>
@@ -65,7 +68,7 @@ const Record: React.FC<{ t: number; record: OperatorData["biggest"][number] }> =
 const Table: React.FC<{ t: number; biggest: OperatorData["biggest"] }> = ({ t, biggest }) => (
   <>
     <div style={{ position: "absolute", left: 44, top: 40 }}>
-      <Slam frame={t} at={0} text="BIGGEST CROWDS" style={display(32, color.gold)} fill={color.gold} />
+      <Slam frame={t} at={0} text="BIGGEST TOURNAMENTS" style={display(32, color.gold)} fill={color.gold} />
       <div style={{ ...caption, marginTop: 12, opacity: snap(t, 4) }}>Your tournaments by attendees</div>
     </div>
     <div style={{ position: "absolute", left: 44, right: 44, top: 116 }}>

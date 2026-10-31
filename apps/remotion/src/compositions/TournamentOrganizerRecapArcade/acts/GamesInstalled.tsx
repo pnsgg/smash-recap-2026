@@ -9,9 +9,7 @@ import type { OperatorData } from "../data";
 
 type Game = OperatorData["games"][number];
 
-const ALL_AT = 110;
-const EVENTS_AT = 210;
-const GRID = { cols: 6, rows: 3, w: 84, h: 132, gap: 6 } as const;
+const EVENTS_AT = 120;
 
 const NameScreen: React.FC<{ name: string; width: number; height: number; size: number }> = ({ name, width, height, size }) => (
   <div
@@ -92,53 +90,6 @@ const Cabinet: React.FC<{ game: Game; t: number; at: number; rank: number }> = (
   );
 };
 
-const Others: React.FC<{ t: number; games: Game[]; total: number }> = ({ t, games, total }) => {
-  const slots = GRID.cols * GRID.rows;
-  const shown = games.length > slots ? games.slice(0, slots - 1) : games;
-  const more = games.length - shown.length;
-  return (
-    <>
-      <div style={{ position: "absolute", left: 44, top: 40, display: "flex", alignItems: "flex-end", gap: 14 }}>
-        <PixelText text={String(rollUp(total, t, 0, 30))} px={8} fill={color.gold} />
-        <div style={{ ...display(32), marginBottom: -2 }}>{total === 1 ? "GAME" : "GAMES"}</div>
-      </div>
-      <div style={{ ...caption, position: "absolute", left: 44, top: 108, opacity: snap(t, 6) }}>Every game you ran events for</div>
-      <div
-        style={{
-          position: "absolute",
-          left: 300 - (GRID.cols * GRID.w + (GRID.cols - 1) * GRID.gap) / 2,
-          top: 146,
-          display: "grid",
-          gridTemplateColumns: `repeat(${GRID.cols}, ${GRID.w}px)`,
-          gap: GRID.gap,
-        }}
-      >
-        {shown.map((g, i) => (
-          <div key={g.videogameId} style={{ height: GRID.h, transform: `scale(${snap(t, 4 + i * 2)})` }}>
-            <div style={{ height: 104, backgroundColor: "#050606", outline: `3px solid ${color.casingDeep}`, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-              <PixelImage
-                src={g.imageUrl}
-                rows={52}
-                maxCols={42}
-                px={2}
-                mode="art"
-                levels={6}
-                fallback={<NameScreen name={g.videogameName} width={GRID.w} height={104} size={16} />}
-              />
-            </div>
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
-              <PixelText text={String(g.count)} px={3} fill={color.ink} />
-            </div>
-          </div>
-        ))}
-        {more > 0 ? (
-          <div style={{ height: 104, display: "flex", alignItems: "center", justifyContent: "center", ...display(16, color.muted), backgroundColor: color.raised }}>+{more}</div>
-        ) : null}
-      </div>
-    </>
-  );
-};
-
 const Events: React.FC<{ t: number; events: OperatorData["events"] }> = ({ t, events }) => {
   const grow = interpolate(t, [10, 34], [0, 1], clamp);
   const share = (count: number) => (events.total > 0 ? count / events.total : 0);
@@ -169,18 +120,18 @@ const Events: React.FC<{ t: number; events: OperatorData["events"] }> = ({ t, ev
 
 export const GamesInstalled: React.FC<{ t: number; data: OperatorData }> = ({ t, data }) => {
   const top = data.games.slice(0, 3);
-  const rest = data.games.slice(3);
-  if (t >= EVENTS_AT || (t >= ALL_AT && rest.length === 0)) return <Events t={t - (rest.length ? EVENTS_AT : ALL_AT)} events={data.events} />;
-  if (t >= ALL_AT) return <Others t={t - ALL_AT} games={rest} total={data.games.length} />;
+  if (t >= EVENTS_AT) return <Events t={t - EVENTS_AT} events={data.events} />;
   if (top.length === 0) {
     return <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", ...caption, fontSize: 18 }}>No games reported</div>;
   }
-  const title = "GAMES INSTALLED";
+  const title = "MOST RUN GAMES";
   return (
     <>
       <div style={{ position: "absolute", left: 44, top: 40 }}>
         <Slam frame={t} at={0} text={title} style={display(fitDisplay(title, 48, 512), color.gold)} fill={color.gold} />
-        <div style={{ ...caption, marginTop: 12, opacity: snap(t, 6) }}>Most events run, by game</div>
+        <div style={{ ...caption, marginTop: 12, opacity: snap(t, 6) }}>
+          {data.games.length > top.length ? `Top ${top.length} of ${data.games.length} games, by events run` : "Most events run, by game"}
+        </div>
       </div>
       <div style={{ position: "absolute", left: 0, right: 0, top: 128, display: "flex", justifyContent: "center", gap: 14 }}>
         {top.map((g, i) => (
