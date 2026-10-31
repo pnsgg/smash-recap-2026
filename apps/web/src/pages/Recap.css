@@ -20,16 +20,8 @@
   font-size: var(--step-lead);
 }
 
-.recap__nav {
+.recap__bar .toggles {
   margin-left: auto;
-}
-
-.recap__bar-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
-  font-size: var(--step-small);
-  font-weight: 700;
 }
 
 .recap__main {
@@ -209,6 +201,11 @@
   }
 }
 
+.recap__another {
+  width: 100%;
+  margin-top: clamp(1rem, 3vh, 2rem);
+}
+
 .recap__note {
   font-size: var(--step-small);
   color: var(--muted);
@@ -239,8 +236,3 @@
   }
 }
 
-@media (max-width: 640px) {
-  .recap__nav {
-    display: none;
-  }
-}
