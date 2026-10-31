@@ -1,4 +1,4 @@
-/* The recap player's own screens: the start button whenever it isn't playing, a loading card while it buffers. */
+/* The recap player's own screens: the start button until the first play, a loading card while it buffers. */
 
 .player-cabinet {
   position: relative;
@@ -20,8 +20,9 @@
   pointer-events: none;
 }
 
-/* Covers the whole picture, so a click anywhere starts it, like the player's own click-to-play. */
+/* Covers the picture down to the control bar, so a click anywhere starts it, like the player's own click-to-play. */
 .player-overlay {
+  bottom: 3.5rem;
   margin: 0;
   padding: 0;
   border: 0;

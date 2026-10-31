@@ -34,9 +34,9 @@ const poster =
     );
 
 /**
- * The player with no control bar, like GitHub Unwrapped's: clicking the picture plays and pauses, and
- * whenever it isn't playing the cabinet's start button sits in the middle. Playing starts at frame 0,
- * the tube switching on.
+ * The player with its control bar; clicking the picture plays and pauses. Until the first play the
+ * cabinet's start button sits in the middle, leaving the bar free. Playing starts at frame 0, the
+ * tube switching on. The recaps are silent, so there is no volume control.
  */
 function CabinetPlayer<P extends Record<string, unknown>>({
   component,
@@ -52,21 +52,14 @@ function CabinetPlayer<P extends Record<string, unknown>>({
   slot: string;
 }) {
   const ref = useRef<PlayerRef>(null);
-  const [playing, setPlaying] = useState(false);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
     const player = ref.current;
     if (!player) return;
-    const onPlay = () => setPlaying(true);
-    const onPause = () => setPlaying(false);
+    const onPlay = () => setStarted(true);
     player.addEventListener("play", onPlay);
-    player.addEventListener("pause", onPause);
-    player.addEventListener("ended", onPause);
-    return () => {
-      player.removeEventListener("play", onPlay);
-      player.removeEventListener("pause", onPause);
-      player.removeEventListener("ended", onPause);
-    };
+    return () => player.removeEventListener("play", onPlay);
   }, []);
 
   return (
@@ -76,7 +69,8 @@ function CabinetPlayer<P extends Record<string, unknown>>({
         component={component}
         inputProps={props}
         {...video}
-        controls={false}
+        controls
+        showVolumeControls={false}
         clickToPlay
         loop
         style={FILL}
@@ -86,7 +80,7 @@ function CabinetPlayer<P extends Record<string, unknown>>({
         posterFillMode="player-size"
         renderPoster={poster(component, props, video, posterFrame)}
       />
-      {playing ? null : (
+      {started ? null : (
         <button type="button" className="player-overlay" onClick={() => ref.current?.play()}>
           <span className="player-start" aria-hidden="true" />
           <span className="player-label player-label--blink">{slot} PRESS START</span>
