@@ -115,7 +115,7 @@ export const StageSelect: React.FC<ActProps> = ({ t, data }) => {
   if (!topStage) {
     return (
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
-        <div style={display(32)}>STAGE SELECT</div>
+        <div style={display(32)}>YOUR STAGES</div>
         <div style={{ ...caption, fontSize: 18 }}>No stage data reported</div>
       </div>
     );
@@ -137,7 +137,7 @@ export const StageSelect: React.FC<ActProps> = ({ t, data }) => {
     return (
       <>
         <div style={{ position: "absolute", left: 40, top: 40, display: "flex", gap: 12, alignItems: "center", opacity: snap(t, 0) }}>
-          <div style={display(32)}>STAGE SELECT</div>
+          <div style={display(32)}>YOUR STAGES</div>
         </div>
         {shown.map((stage, i) => (
           <Tile key={stage.stageId} stage={stage} i={i} t={t} lit={i === 0 && t >= 36} />

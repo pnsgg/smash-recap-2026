@@ -189,7 +189,7 @@ export const BonusStage: React.FC<ActProps> = ({ t, data }) => {
       {card ? (
         <>
           <div style={{ position: "absolute", left: 0, right: 0, top: 150, display: "flex", justifyContent: "center" }}>
-            <Slam frame={t} at={2} text="BONUS STAGE" style={display(64, color.gold)} fill={color.gold} />
+            <Slam frame={t} at={2} text="BEST RESULTS" style={display(64, color.gold)} fill={color.gold} />
           </div>
           <div style={{ position: "absolute", left: 300 - 70, top: 300 + drop }}>
             <Sprite rows={CHEST[0]} palette={CHEST_PALETTE} px={10} />

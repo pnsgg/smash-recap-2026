@@ -42,7 +42,7 @@ export const deriveArcade = (recap: PlayerRecapProps) => {
     days: recap.dayOfWeekActivity,
     busiestMonth: busiest(recap.tournamentsByMonth),
     busiestDay: busiest(recap.dayOfWeekActivity),
-    series: recap.seriesPlayed.slice(0, 2),
+    series: recap.seriesPlayed.slice(0, 3),
     events: { singles, teams, total: singles + teams },
     disqualifications: recap.totalDisqualifications,
   };

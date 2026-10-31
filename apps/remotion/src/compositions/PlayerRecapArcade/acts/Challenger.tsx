@@ -41,8 +41,8 @@ const Warning: React.FC<{ t: number }> = ({ t }) => (
       </div>
     ))}
     <div style={{ position: "absolute", left: 0, right: 0, top: 230, display: "flex", flexDirection: "column", alignItems: "center", gap: 26 }}>
-      <Slam frame={t} at={4} text="WARNING!" style={display(64, color.accent)} fill={color.accent} />
-      <Slam frame={t} at={18} text="A NEW CHALLENGER" style={display(32)} />
+      <Slam frame={t} at={4} text="YOUR RIVAL" style={display(64, color.accent)} fill={color.accent} />
+      <Slam frame={t} at={18} text="THE OPPONENT YOU PLAYED MOST" style={display(32)} />
     </div>
   </>
 );
@@ -180,7 +180,7 @@ export const Challenger: React.FC<ActProps> = ({ t, data }) => {
   if (t < MATCHUPS_AT) {
     return (
       <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
-        <Slam frame={t - VS_AT} at={0} text="NO CHALLENGER" style={display(48, color.gold)} fill={color.gold} />
+        <Slam frame={t - VS_AT} at={0} text="NO RIVAL" style={display(48, color.gold)} fill={color.gold} />
         <div style={{ ...caption, fontSize: 18 }}>No opponent faced in 3+ sets</div>
       </div>
     );

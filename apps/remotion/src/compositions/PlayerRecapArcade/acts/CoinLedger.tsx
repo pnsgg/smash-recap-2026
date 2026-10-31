@@ -54,7 +54,7 @@ export type LedgerData = Pick<ArcadeData, "months" | "days" | "busiestMonth" | "
 const Series: React.FC<{ t: number; data: LedgerData }> = ({ t, data }) => (
   <>
     <div style={{ position: "absolute", left: 44, top: 44 }}>
-      <Slam frame={t} at={0} text="REGULAR AT" style={display(32, color.gold)} fill={color.gold} />
+      <Slam frame={t} at={0} text="YOUR SERIES" style={display(32, color.gold)} fill={color.gold} />
       <div style={{ ...caption, marginTop: 12, opacity: snap(t, 6) }}>Series you entered most</div>
     </div>
     {data.series.map((s, i) => {
@@ -65,15 +65,15 @@ const Series: React.FC<{ t: number; data: LedgerData }> = ({ t, data }) => (
           style={{
             position: "absolute",
             left: 44,
-            top: 150 + i * 170,
+            top: 132 + i * 150,
             display: "flex",
             alignItems: "center",
             gap: 24,
             transform: `translateX(${interpolate(snap(t, 6 + i * 10), [0, 1], [-560, 0])}px)`,
           }}
         >
-          <div style={{ width: 128, height: 128, flex: "none", outline: `5px solid ${i === 0 ? color.gold : color.casingDeep}`, backgroundColor: color.raised2 }}>
-            <PixelImage src={s.imageUrl} rows={32} px={4} mode="photo" levels={5} fallback={<Sprite rows={COIN_STACKED} palette={GOLD} px={12} />} />
+          <div style={{ width: 112, height: 112, flex: "none", outline: `5px solid ${i === 0 ? color.gold : color.casingDeep}`, backgroundColor: color.raised2 }}>
+            <PixelImage src={s.imageUrl} rows={28} px={4} mode="photo" levels={5} fallback={<Sprite rows={COIN_STACKED} palette={GOLD} px={10} />} />
           </div>
           <div>
             <div style={display(fitDisplay(name, 48, 360), i === 0 ? color.ink : color.muted)}>{name}</div>
