@@ -1,12 +1,16 @@
-export type ShareTarget = { id: string; label: string; href: (text: string, url: string) => string };
+import type { StillFormatKey } from "@video/stills/formats";
 
 const enc = encodeURIComponent;
 
-export const SHARE_TARGETS: ShareTarget[] = [
-  { id: "x", label: "X", href: (text, url) => `https://x.com/intent/post?text=${enc(text)}&url=${enc(url)}` },
-  { id: "bluesky", label: "Bluesky", href: (text, url) => `https://bsky.app/intent/compose?text=${enc(`${text} ${url}`)}` },
-  { id: "threads", label: "Threads", href: (text, url) => `https://www.threads.net/intent/post?text=${enc(`${text} ${url}`)}` },
-  { id: "reddit", label: "Reddit", href: (text, url) => `https://www.reddit.com/submit?url=${enc(url)}&title=${enc(text)}` },
-];
+const HASHTAG = "#SmashRecap";
 
-export const canShareNatively = () => typeof navigator !== "undefined" && typeof navigator.share === "function";
+/** The socials that can open a prefilled post from a link. Instagram and Stories have no such link. */
+const SHARE_INTENTS: Partial<Record<StillFormatKey, (text: string, url: string) => string>> = {
+  x: (text, url) => `https://x.com/intent/post?text=${enc(`${text} ${HASHTAG}`)}&url=${enc(url)}`,
+  bluesky: (text, url) => `https://bsky.app/intent/compose?text=${enc(`${text} ${HASHTAG} ${url}`)}`,
+  threads: (text, url) => `https://www.threads.net/intent/post?text=${enc(`${text} ${HASHTAG} ${url}`)}`,
+  // Reddit has no hashtags, and this text is the post's title.
+  reddit: (text, url) => `https://www.reddit.com/submit?url=${enc(url)}&title=${enc(text)}`,
+};
+
+export const shareIntent = (key: StillFormatKey, text: string, url: string) => SHARE_INTENTS[key]?.(text, url) ?? null;

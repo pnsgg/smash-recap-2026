@@ -21,7 +21,7 @@
   gap: 0.5rem;
 }
 
-/* The image row: which platform it is sized for, then the button that draws it. */
+/* The image row: which social it is sized for, then the button that draws it. */
 .actions__image {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -63,46 +63,11 @@
 
 .actions__status {
   font-size: var(--step-small);
+  color: var(--muted);
+}
+
+.actions__status--error {
   color: var(--accent-strong);
-}
-
-.actions__share {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.actions__chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
-  padding: 0.5rem 1rem;
-  border: 0;
-  background: var(--raised-2);
-  color: var(--ink);
-  font-size: var(--step-small);
-  font-weight: 600;
-  text-decoration: none;
-  transition:
-    background-color var(--t-hover) ease,
-    transform var(--t-press) var(--ease-out);
-}
-
-.actions__chip:active {
-  transform: scale(0.97);
-}
-
-.actions__chip[aria-disabled="true"],
-.actions__chip:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .actions__chip:not(:disabled):not([aria-disabled="true"]):hover {
-    background: var(--ink);
-    color: var(--ground);
-  }
 }
 
 @media (max-width: 420px) {
