@@ -5,12 +5,8 @@ import { SettingsToggles } from "./SettingsToggles";
 import { Wordmark } from "./Wordmark";
 import "./Hero.css";
 
-const LINES = ["Replay your", `${RECAP_YEAR} season`];
+const LINES = [`Your ${RECAP_YEAR} fighting season`, "as a recap video"];
 
-/**
- * The home page's cabinet: a lit marquee, the attract screen, and the control panel where you type
- * your tag. Scrolling on switches the tube off.
- */
 export function Hero() {
   return (
     <header className="cab">
@@ -18,9 +14,6 @@ export function Hero() {
         <div className="cab__marquee">
           <Wordmark className="cab__wordmark" />
           <nav className="cab__nav" aria-label="Main">
-            <a className="link" href="#whats-counted">
-              What’s counted
-            </a>
             <a className="link" href="#top-players">
               Top players
             </a>
@@ -28,56 +21,44 @@ export function Hero() {
           <SettingsToggles className="cab__toggles" />
         </div>
 
-        <div className="cab__screen">
+        <div className="cab__casing">
           <div className="cab__tube">
-            <div className="cab__power">
-            <div className="cab__backdrop">
-              <img
-                src="/media/hall-crt.jpg"
-                alt="Players at their setups during a Smash tournament"
-                width={1920}
-                height={1440}
-                fetchPriority="high"
-              />
-            </div>
-
-            <div className="cab__picture">
-              <h1 className="cab__title" aria-label={LINES.join(" ")}>
-                {LINES.map((line, i) => (
-                  <span key={line} className="cab__line" aria-hidden="true">
-                    <span
-                      className="cab__type misconverge"
-                      data-text={line}
-                      style={{ "--i": i, "--chars": line.length, "--glitch-delay": `${2.2 + i * 0.15}s` } as CSSProperties}
-                    >
-                      {line}
+            <div className="cab__power glass">
+              <div className="cab__picture">
+                <h1 className="cab__title" aria-label={LINES.join(" ")}>
+                  {LINES.map((line, i) => (
+                    <span key={line} className="cab__line" aria-hidden="true">
+                      <span
+                        className="cab__type misconverge"
+                        data-text={line}
+                        style={{ "--i": i, "--chars": line.length, "--glitch-delay": `${2.2 + i * 0.15}s` } as CSSProperties}
+                      >
+                        {line}
+                      </span>
                     </span>
-                  </span>
-                ))}
-              </h1>
-
-              <div className="cab__info">
-                <ul className="cab__facts">
-                  <li>Melee, Brawl, Ultimate, Rivals</li>
-                  <li>Every start.gg event of&nbsp;{RECAP_YEAR}</li>
-                  <li>For players and organisers</li>
-                </ul>
-                <div className="cab__copy">
-                  <p className="cab__lead">
-                    SmashRecap reads every set you played or bracket you ran on start.gg this year and turns it into
-                    your own recap video.
-                  </p>
-                  <p className="cab__attract blink">Type your gamer tag on the panel below to start</p>
-                </div>
+                  ))}
+                </h1>
+                <SearchConsole variant="panel" />
+              </div>
+              <div className="cab__hall">
+                <img
+                  src="/media/hall-crt.jpg"
+                  alt="Players at their setups during a Smash tournament"
+                  width={1920}
+                  height={1440}
+                  fetchPriority="high"
+                />
               </div>
             </div>
-            </div>
           </div>
-          <div className="cab__flash" aria-hidden="true" />
-        </div>
-
-        <div className="cab__panel">
-          <SearchConsole variant="panel" />
+          <div className="cab__lip" aria-hidden="true">
+            <span className="cab__led" />
+            <span className="cab__speaker">
+              {Array.from({ length: 7 }, (_, i) => (
+                <span key={i} />
+              ))}
+            </span>
+          </div>
         </div>
       </div>
     </header>
