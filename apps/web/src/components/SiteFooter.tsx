@@ -15,6 +15,21 @@ export function SiteFooter() {
         </h2>
 
         <div className="credits__groups">
+          <div className="credits__group" data-reveal>
+            <h3>Made by</h3>
+            <ul>
+              <li>
+                <a className="link" href="https://grld.dev" target="_blank" rel="noreferrer">
+                  Gérald Leban
+                </a>
+              </li>
+              <li>
+                <a className="link" href="https://clembs.com" target="_blank" rel="noreferrer">
+                  Clément Voisin
+                </a>
+              </li>
+            </ul>
+          </div>
           <div className="credits__group" data-reveal style={{ "--i": 1 } as CSSProperties}>
             <h3>Data</h3>
             <p>

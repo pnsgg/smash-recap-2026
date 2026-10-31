@@ -142,7 +142,7 @@ const organizerPanels = (d: OperatorData): PanelSpec[] => {
           render: ({ width, height }) => {
             const side = Math.min(130, height - 130);
             return (
-              <Panel label="Record crowd" tone={color.gold} width={width} height={height}>
+              <Panel label="Biggest tournament" tone={color.gold} width={width} height={height}>
                 <div style={{ position: "absolute", left: 22, top: 60, display: "flex", alignItems: "center", gap: 22 }}>
                   <Logo src={record.tournamentImageUrl} side={side} />
                   <div>

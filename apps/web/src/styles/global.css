@@ -402,12 +402,6 @@ button[disabled],
   }
 }
 
-/* Attract-mode blink for the one line that tells you what to do next. */
-@media (prefers-reduced-motion: no-preference) {
-  .blink {
-    animation: blink 1.1s steps(1) infinite;
-  }
-}
 
 /* Section entrances: parts arrive in reading order, once. Content stays visible without script. */
 @media (prefers-reduced-motion: no-preference) {

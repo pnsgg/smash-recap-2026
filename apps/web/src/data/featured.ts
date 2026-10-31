@@ -66,9 +66,3 @@ export const FEATURED_PLAYERS: FeaturedPlayer[] = [
     profilePictureUrl: "https://images.start.gg/images/user/37364/image-34bd862ac6385b1d82a904669d7f13fb-optimized.jpg",
   },
 ];
-
-/** Whose numbers fill "What's in your recap" on the player tab. */
-export const MENU_EXAMPLE_PLAYER = FEATURED_PLAYERS.find((p) => p.gamerTag === "Sparg0")!;
-
-/** Whose numbers fill "What's in your recap" on the organiser tab. */
-export const MENU_EXAMPLE_ORGANIZER = { discriminator: "541f04fd", prefix: "ARK", gamerTag: "Licane" };

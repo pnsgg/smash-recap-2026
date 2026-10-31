@@ -5,7 +5,6 @@ import type { ArcadeData } from "../data";
 import { Bevel, Chip, rollUp, snap, SpeedLines } from "../components/kit";
 import { PixelImage } from "../components/PixelImage";
 import { PixelText, Sprite } from "../components/Pixel";
-import { Slam } from "../components/Slam";
 import { CASING, HAND, LOCK, LOCK_PALETTE } from "../components/sprites";
 import { blink, caption, color, display, displayCase, fitDisplay } from "../theme";
 
@@ -102,7 +101,6 @@ export const PlayerSelect: React.FC<ActProps> = ({ t, data }) => {
     y: first.y + (1 - arrive) * 140 + (second.y - first.y) * hop - Math.sin(hop * Math.PI) * 24,
   };
   const cursorIn = snap(t, 30);
-  const ready = t >= ALSO + 24;
 
   return (
     <>
@@ -147,8 +145,7 @@ export const PlayerSelect: React.FC<ActProps> = ({ t, data }) => {
 
       {/* The select screen */}
       <div style={{ position: "absolute", left: GRID.x, top: 42, display: "flex", alignItems: "center", gap: 12, opacity: snap(t, 0) }}>
-        <div style={display(32)}>SELECT</div>
-        <Chip text="1P" />
+        <div style={display(32)}>YOUR CHARACTERS</div>
       </div>
       {Array.from({ length: GRID.cols * GRID.rows }, (_, i) => {
         const f = fighters[i];
@@ -205,7 +202,6 @@ export const PlayerSelect: React.FC<ActProps> = ({ t, data }) => {
       <div style={{ position: "absolute", left: GRID.x, top: 452, width: 250 }}>
         <div style={{ ...caption, opacity: snap(t, 20) }}>Most played fighters</div>
         <div style={{ ...caption, color: color.ink, marginTop: 4, opacity: snap(t, 24) }}>by games</div>
-        <div style={{ marginTop: 18, height: 32 }}>{ready ? <Slam frame={t} at={ALSO + 24} text="P1 READY" style={display(32, color.gold)} /> : null}</div>
       </div>
     </>
   );

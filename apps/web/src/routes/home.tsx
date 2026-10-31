@@ -1,20 +1,15 @@
-import { fetchPlayerRecap, fetchTournamentOrganizerRecap, settle } from "../api";
+import { fetchPlayerRecap, settle } from "../api";
 import { RECAP_YEAR } from "../config";
-import { FEATURED_PLAYERS, MENU_EXAMPLE_ORGANIZER, MENU_EXAMPLE_PLAYER } from "../data/featured";
+import { FEATURED_PLAYERS } from "../data/featured";
 import { pageMeta, siteOrigin } from "../lib/meta";
 import { Home } from "../pages/Home";
 import type { Route } from "./+types/home";
 
 export function loader({ request }: Route.LoaderArgs) {
   // Not awaited: every recap streams into the page as it arrives (instantly from the API's cache).
-  const players = new Map(FEATURED_PLAYERS.map((p) => [p.discriminator, settle(fetchPlayerRecap(p.discriminator))]));
   return {
     origin: siteOrigin(request),
-    featured: FEATURED_PLAYERS.map((p) => players.get(p.discriminator)!),
-    menu: {
-      player: players.get(MENU_EXAMPLE_PLAYER.discriminator)!,
-      organizer: settle(fetchTournamentOrganizerRecap(MENU_EXAMPLE_ORGANIZER.discriminator)),
-    },
+    featured: FEATURED_PLAYERS.map((p) => settle(fetchPlayerRecap(p.discriminator))),
   };
 }
 
@@ -32,5 +27,5 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export default function HomeRoute({ loaderData }: Route.ComponentProps) {
-  return <Home featured={loaderData.featured} menu={loaderData.menu} />;
+  return <Home featured={loaderData.featured} />;
 }

@@ -49,7 +49,7 @@ const SCENES: Record<Act, React.FC<ActProps>> = {
         { label: "TOURNAMENTS", value: data.totalTournaments },
         { label: "EVENTS", value: data.events.total, note: `${data.events.singles} singles · ${data.events.teams} teams` },
         { label: "GAMES", value: data.games.length },
-        ...(data.biggest[0] ? [{ label: "RECORD CROWD", value: data.biggest[0].attendees }] : []),
+        ...(data.biggest[0] ? [{ label: "MOST ATTENDEES", value: data.biggest[0].attendees }] : []),
       ]}
     />
   ),

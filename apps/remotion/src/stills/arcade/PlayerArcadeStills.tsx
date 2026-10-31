@@ -158,8 +158,8 @@ const playerPanels = (d: ArcadeData): PanelSpec[] => {
             const cols = Math.floor(areaW / pitch);
             const starPx = Math.max(1, Math.floor((pitch - 3) / 7));
             return (
-              <Panel label="Clean sweeps" tone={color.gold} width={width} height={height}>
-                <div style={{ position: "absolute", left: 22, top: 70, ...display(48, color.gold) }}>PERFECT</div>
+              <Panel label="Without dropping a game" tone={color.gold} width={width} height={height}>
+                <div style={{ position: "absolute", left: 22, top: 70, ...display(32, color.gold) }}>CLEAN SWEEPS</div>
                 <div style={{ position: "absolute", left: 22, bottom: 22 }}>
                   <StillFigure value={String(d.cleanSweeps)} px={8} unit="sets" />
                 </div>

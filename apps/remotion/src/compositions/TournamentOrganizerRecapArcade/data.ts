@@ -18,7 +18,7 @@ export const deriveOperator = (recap: TournamentOrganizerRecapProps) => {
     games: recap.gamesOrganized,
     events: { singles, teams, total },
     biggest: recap.biggestTournaments.filter((t) => t.attendees > 0),
-    series: recap.seriesOrganized.slice(0, 2),
+    series: recap.seriesOrganized.slice(0, 3),
     months: recap.tournamentsByMonth,
     days: recap.dayOfWeekActivity,
     busiestMonth: busiest(recap.tournamentsByMonth),

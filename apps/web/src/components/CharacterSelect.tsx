@@ -189,7 +189,7 @@ function ResolvedNumbers({ recap }: { recap: Promise<Settled<PlayerRecapProps>> 
   return <PlayerNumbers numbers={settled.status === "ok" ? settled.data : "unavailable"} />;
 }
 
-const STAT_LABELS = ["Clean sweeps", "Reverse sweeps won", "Deciding games won", "Best run"];
+const STAT_LABELS = ["Clean sweeps", "Reverse sweeps won", "Close sets won", "Best run"];
 
 /** The summary and four figures; "…" while the recap streams in, "–" if start.gg could not be reached. */
 function PlayerNumbers({ numbers }: { numbers: PlayerRecapProps | "unavailable" | null }) {

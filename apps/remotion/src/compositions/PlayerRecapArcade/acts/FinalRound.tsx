@@ -56,7 +56,7 @@ export const FinalRound: React.FC<ActProps> = ({ t, data }) => {
   const { deciding, cleanSweeps, reverseSweeps, main } = data;
   const screens: Screen[] = [
     {
-      word: "CLUTCH!",
+      word: "CLOSE SETS",
       figure: deciding.winCount,
       of: deciding.count,
       line: "SETS WON BY ONE GAME",
@@ -66,18 +66,18 @@ export const FinalRound: React.FC<ActProps> = ({ t, data }) => {
       accent: color.ground,
     },
     {
-      word: "PERFECT!",
+      word: "CLEAN SWEEPS",
       figure: cleanSweeps,
-      line: "CLEAN SWEEPS",
-      sub: "Sets won without dropping a game",
+      line: "SETS WON",
+      sub: "Without dropping a game",
       bg: color.gold,
       ink: color.ground,
       accent: color.accentEdge,
     },
     {
-      word: "COMEBACK!",
+      word: "REVERSE SWEEPS",
       figure: reverseSweeps.won,
-      line: "REVERSE SWEEPS",
+      line: "SETS WON",
       sub: `Won ${reverseSweeps.won} · lost ${reverseSweeps.lost}`,
       bg: color.osd,
       ink: color.ground,

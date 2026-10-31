@@ -67,8 +67,8 @@ export const HiScoreContinue: React.FC<{
   return (
     <>
       <div style={{ position: "absolute", left: 44, top: 40, display: "flex", alignItems: "center", gap: 14 }}>
-        <Slam frame={t} at={0} text="HI-SCORE" style={display(32, color.gold)} fill={color.gold} />
-        <div style={{ ...caption, opacity: snap(t, 4) }}>Season 2026</div>
+        <Slam frame={t} at={0} text="SEASON TOTALS" style={display(32, color.gold)} fill={color.gold} />
+        <div style={{ ...caption, opacity: snap(t, 4) }}>2026</div>
       </div>
 
       <div style={{ position: "absolute", left: 44, right: 44, top: 96, display: "flex", alignItems: "center", gap: 18, opacity: snap(t, 6) }}>

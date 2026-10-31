@@ -3,10 +3,9 @@ import { clamp } from "../../../lib/motion";
 import type { ActProps } from "../../PlayerRecapArcade";
 import { Chip, snap } from "../components/kit";
 import { PixelImage } from "../components/PixelImage";
-import { PixelText, Sprite } from "../components/Pixel";
+import { PixelText } from "../components/Pixel";
 import { Slam } from "../components/Slam";
-import { COIN, cycle, GOLD } from "../components/sprites";
-import { blink, caption, color, display, displayCase, fitDisplay, font } from "../theme";
+import { blink, color, display, displayCase, fitDisplay, font } from "../theme";
 
 const TEST_AT = 30;
 const PAINT_AT = 130;
@@ -116,8 +115,6 @@ export const Intro: React.FC<IntroProps> = ({ t, tag, prefix, avatarUrl, slot, r
   const name = displayCase(tag);
   const nameSize = fitDisplay(name, 96, 500);
   const enter = since - PAINT_FRAMES;
-  const coinT = interpolate(enter, [24, 40], [0, 1], clamp);
-  const credit = enter >= 40 ? "01" : "00";
 
   return (
     <>
@@ -132,7 +129,6 @@ export const Intro: React.FC<IntroProps> = ({ t, tag, prefix, avatarUrl, slot, r
       <div style={{ position: "absolute", inset: 0, backgroundColor: color.ground, opacity: interpolate(enter, [0, 8], [0, 0.35], clamp) }} />
 
       {/* Player 1 enters */}
-      {/* A role too long for the row beside CREDIT gets its own line under the chip, at the same size */}
       <div
         style={{
           position: "absolute",
@@ -147,15 +143,6 @@ export const Intro: React.FC<IntroProps> = ({ t, tag, prefix, avatarUrl, slot, r
       >
         <Chip text={slot} size={32} />
         <div style={{ ...display(32), textShadow: `4px 4px 0 ${color.ground}` }}>{role}</div>
-      </div>
-      <div style={{ position: "absolute", right: 44, top: 52, display: "flex", alignItems: "center", gap: 12, opacity: enter >= 20 ? 1 : 0 }}>
-        {coinT > 0 && coinT < 1 ? (
-          <div style={{ transform: `translateY(${interpolate(coinT, [0, 1], [-30, 0])}px)` }}>
-            <Sprite rows={cycle(COIN, t, 3)} palette={GOLD} px={3} />
-          </div>
-        ) : null}
-        <div style={{ ...caption, fontSize: 18, color: color.osd, textShadow: `2px 2px 0 ${color.ground}` }}>Credit</div>
-        <PixelText text={credit} px={5} fill={color.osd} />
       </div>
 
       <div
