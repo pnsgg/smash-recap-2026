@@ -44,13 +44,11 @@ function CabinetPlayer<P extends Record<string, unknown>>({
   props,
   video,
   posterFrame,
-  slot,
 }: {
   component: React.FC<P>;
   props: P;
   video: Video;
   posterFrame: number;
-  slot: string;
 }) {
   const ref = useRef<PlayerRef>(null);
   const [started, setStarted] = useState(false);
@@ -84,7 +82,7 @@ function CabinetPlayer<P extends Record<string, unknown>>({
       {started ? null : (
         <button type="button" className="player-overlay" onClick={() => ref.current?.play()}>
           <span className="player-start" aria-hidden="true" />
-          <span className="player-label player-label--blink">{slot} PRESS START</span>
+          <span className="player-label player-label--blink">PRESS START</span>
           <span className="visually-hidden">Play the recap</span>
         </button>
       )}
@@ -106,7 +104,6 @@ export default function RecapPlayer({ input }: { input: RecapData }) {
           compositionHeight: PLAYER_RECAP_ARCADE.height,
         }}
         posterFrame={PLAYER_RECAP_ARCADE.posterFrame}
-        slot="1P"
       />
     );
   }
@@ -121,7 +118,6 @@ export default function RecapPlayer({ input }: { input: RecapData }) {
         compositionHeight: TOURNAMENT_ORGANIZER_RECAP_ARCADE.height,
       }}
       posterFrame={TOURNAMENT_ORGANIZER_RECAP_ARCADE.posterFrame}
-      slot="TO"
     />
   );
 }
