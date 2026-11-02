@@ -112,14 +112,8 @@ const FullView: React.FC<{ view: View; t: number }> = ({ view, t }) => {
 export const StageSelect: React.FC<ActProps> = ({ t, data }) => {
   const { stages, topStage, bestStage, worstStage } = data;
 
-  if (!topStage) {
-    return (
-      <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
-        <div style={display(32)}>YOUR STAGES</div>
-        <div style={{ ...caption, fontSize: 18 }}>No stage data reported</div>
-      </div>
-    );
-  }
+  // A recap with no stages skips this act (timing.ts).
+  if (!topStage) return null;
 
   const views: View[] = [
     { kind: "top", stage: topStage, mood: tileMood(topStage.stageId), label: "Most played stage" },

@@ -1,6 +1,7 @@
 import { canRenderMediaOnWeb, renderMediaOnWeb, type WebRendererContainer } from "@remotion/web-renderer";
 import { PLAYER_RECAP_ARCADE, TOURNAMENT_ORGANIZER_RECAP_ARCADE } from "@video/constants";
 import { PlayerRecapArcadeComponent } from "@video/compositions/PlayerRecapArcade";
+import { timeline } from "@video/compositions/PlayerRecapArcade/timing";
 import { TournamentOrganizerRecapArcadeComponent } from "@video/compositions/TournamentOrganizerRecapArcade";
 import type { RecapData } from "../pages/Recap";
 import { fileSafe, recapGameSuffix } from "./recapImage";
@@ -30,7 +31,7 @@ export async function renderRecapVideo(
   } as const;
   const composition = {
     id: config.id,
-    durationInFrames: config.durationInFrames,
+    durationInFrames: input.kind === "player" ? timeline(input.recap).duration : config.durationInFrames,
     fps: config.fps,
     width,
     height,

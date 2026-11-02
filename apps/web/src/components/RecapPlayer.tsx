@@ -1,6 +1,7 @@
 import { Player, Thumbnail, type PlayerRef, type RenderPoster } from "@remotion/player";
 import { PLAYER_RECAP_ARCADE, TOURNAMENT_ORGANIZER_RECAP_ARCADE } from "@video/constants";
 import { PlayerRecapArcadeComponent } from "@video/compositions/PlayerRecapArcade";
+import { timeline } from "@video/compositions/PlayerRecapArcade/timing";
 import { TournamentOrganizerRecapArcadeComponent } from "@video/compositions/TournamentOrganizerRecapArcade";
 import { useEffect, useRef, useState } from "react";
 import type { RecapData } from "../pages/Recap";
@@ -99,7 +100,7 @@ export default function RecapPlayer({ input }: { input: RecapData }) {
         component={PlayerRecapArcadeComponent}
         props={input.recap}
         video={{
-          durationInFrames: PLAYER_RECAP_ARCADE.durationInFrames,
+          durationInFrames: timeline(input.recap).duration,
           fps: PLAYER_RECAP_ARCADE.fps,
           compositionWidth: PLAYER_RECAP_ARCADE.width,
           compositionHeight: PLAYER_RECAP_ARCADE.height,
