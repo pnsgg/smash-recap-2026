@@ -1,3 +1,4 @@
+import type { PlayerRecapProps } from "@shared";
 import { BAR } from "../../lib/motion";
 
 export const FPS = 30;
@@ -24,6 +25,19 @@ export const START = Object.fromEntries(
 export const LENGTH = Object.fromEntries(ACTS.map((n) => [n, ACT_BARS[n] * BAR])) as Record<Act, number>;
 
 export const DURATION = ACTS.reduce((sum, n) => sum + ACT_BARS[n] * BAR, 0);
+
+/** The acts this recap plays, when each starts and how long it runs: no characters or no stages, no act. */
+export const timeline = (recap: Pick<PlayerRecapProps, "mostPlayedCharacters" | "stageActivity">) => {
+  const acts = ACTS.filter(
+    (name) =>
+      !(name === "playerSelect" && recap.mostPlayedCharacters.length === 0) &&
+      !(name === "stageSelect" && recap.stageActivity.length === 0),
+  );
+  const start = Object.fromEntries(
+    acts.map((name, i) => [name, acts.slice(0, i).reduce((sum, n) => sum + LENGTH[n], 0)]),
+  ) as Partial<Record<Act, number>>;
+  return { acts, start, duration: acts.reduce((sum, n) => sum + LENGTH[n], 0) };
+};
 
 export const POWER_ON = 42;
 export const POWER_OFF = 30;

@@ -17,7 +17,7 @@ import { preloadImages } from "./PlayerRecapArcade/components/PixelImage";
 import { stageArt } from "./PlayerRecapArcade/components/StageView";
 import { deriveArcade, type ArcadeData } from "./PlayerRecapArcade/data";
 import { color } from "./PlayerRecapArcade/theme";
-import { ACTS, START, type Act } from "./PlayerRecapArcade/timing";
+import { timeline, type Act } from "./PlayerRecapArcade/timing";
 
 loadFonts();
 
@@ -33,8 +33,6 @@ const SCENES: Record<Act, React.FC<ActProps>> = {
   coinLedger: CoinLedger,
   continue: Continue,
 };
-
-const CUTS = ACTS.slice(1).map((act) => START[act]);
 
 const pictures = (d: ArcadeData) => [
   d.avatarUrl,
@@ -55,12 +53,13 @@ export const PlayerRecapArcadeComponent: React.FC<PlayerRecapProps> = (recap) =>
   // The recap fully determines the list.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => preloadImages(pictures(data)), [recap]);
-  const act = [...ACTS].reverse().find((name) => frame >= START[name]) ?? "insertCoin";
+  const { acts, start, duration } = timeline(recap);
+  const act = [...acts].reverse().find((name) => frame >= start[name]!) ?? "insertCoin";
   const Scene = SCENES[act];
   return (
-    <Crt frame={frame} cuts={CUTS}>
+    <Crt frame={frame} cuts={acts.slice(1).map((name) => start[name]!)} duration={duration}>
       <AbsoluteFill style={{ backgroundColor: color.ground, overflow: "hidden" }}>
-        <Scene t={frame - START[act]} frame={frame} data={data} />
+        <Scene t={frame - start[act]!} frame={frame} data={data} />
       </AbsoluteFill>
     </Crt>
   );
@@ -75,5 +74,6 @@ export const PlayerRecapArcade: React.FC = () => (
     width={PLAYER_RECAP_ARCADE.width}
     height={PLAYER_RECAP_ARCADE.height}
     defaultProps={licanePlayerRecap}
+    calculateMetadata={({ props }) => ({ durationInFrames: timeline(props).duration })}
   />
 );
