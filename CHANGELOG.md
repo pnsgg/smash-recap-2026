@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.5.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.4.0...smash-recap-v1.5.0) (2026-11-02)
+
+
+### Features
+
+* **web:** merge image download and sharing into one social media flow ([97f76d9](https://github.com/pnsgg/smash-recap-2026/commit/97f76d9ca4087a7d4607fc90f297d49a801e25d0))
+* **web:** move look up another player to a button under the actions ([a73016b](https://github.com/pnsgg/smash-recap-2026/commit/a73016b4781b61c2362a614b4e1f72b3c8aa92f4))
+
+
+### Bug Fixes
+
+* **recap:** remove slot text prefix and only show "PRESS START" ([#101](https://github.com/pnsgg/smash-recap-2026/issues/101)) ([7acdfb9](https://github.com/pnsgg/smash-recap-2026/commit/7acdfb976f21e97be835878578534a2048f59686))
+* **recap:** skip the character and stage acts when there is no data ([#100](https://github.com/pnsgg/smash-recap-2026/issues/100)) ([392086b](https://github.com/pnsgg/smash-recap-2026/commit/392086b9cde018090c82bf240dd70b79a8b03708))
+* **web:** stop aria-disabled buttons reacting to hover and press ([9f0cc6e](https://github.com/pnsgg/smash-recap-2026/commit/9f0cc6e52e3ae83e00347188d45f7029fa4f0185))
+* **web:** unclutter the UI and rework the share workflow ([9160ffe](https://github.com/pnsgg/smash-recap-2026/commit/9160ffedfae2b561bda6ad4c49306849d14e459e))
+
 ## [1.4.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.3.2...smash-recap-v1.4.0) (2026-10-31)
 
 
