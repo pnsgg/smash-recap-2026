@@ -1,7 +1,7 @@
 import { STILL_FORMATS, type StillFormatKey } from "@video/stills/formats";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RECAP_YEAR } from "../config";
-import { canShareNatively, SHARE_TARGETS } from "../lib/share";
+import { shareIntent } from "../lib/share";
 import type { RecapData } from "../pages/Recap";
 import "./RecapActions.css";
 
@@ -15,39 +15,20 @@ type Props = {
   recap?: RecapData;
 };
 
-const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
-const ratio = (width: number, height: number) => `${width / gcd(width, height)}:${height / gcd(width, height)}`;
-const IMAGE_FORMATS = (Object.keys(STILL_FORMATS) as StillFormatKey[]).map((key) => ({
-  key,
-  label: `${STILL_FORMATS[key].platform} · ${ratio(STILL_FORMATS[key].width, STILL_FORMATS[key].height)}`,
-}));
+const SOCIALS = Object.keys(STILL_FORMATS) as StillFormatKey[];
 
 export function RecapActions({ ready, shareUrl, name, recap }: Props) {
-  const [copied, setCopied] = useState(false);
-
-  // The phone's share sheet only exists in some browsers, so it is offered after hydration.
-  const [nativeShare, setNativeShare] = useState(false);
-  useEffect(() => setNativeShare(canShareNatively()), []);
-
   const season = recap?.kind === "player" ? recap.game.short : "Smash";
   const shareText = `${name}’s ${RECAP_YEAR} ${season} season, replayed on SmashRecap`;
 
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2400);
-    } catch {
-      window.prompt("Copy this link", shareUrl);
-    }
-  };
-
-  const shareNatively = () => navigator.share({ title: shareText, text: shareText, url: shareUrl }).catch(() => {});
-
+  // One flow: the social sets the image's size, the image is saved, then the post opens to attach it to.
   // The image is drawn in the browser by Remotion; its renderer only loads on the first click.
-  const [imageFormat, setImageFormat] = useState<StillFormatKey>("x");
+  const [social, setSocial] = useState<StillFormatKey | null>(null);
+  const [savedFor, setSavedFor] = useState<StillFormatKey | null>(null);
   const [imageStatus, setImageStatus] = useState<"idle" | "rendering" | "failed">("idle");
   const canRenderImage = ready && Boolean(recap);
+  const postUrl = social && shareIntent(social, shareText, shareUrl);
+  const saved = social !== null && savedFor === social;
 
   // The video is rendered in the browser too, frame by frame; it takes a while, so the button shows progress.
   const [videoProgress, setVideoProgress] = useState<number | null>(null);
@@ -74,12 +55,13 @@ export function RecapActions({ ready, shareUrl, name, recap }: Props) {
   };
 
   const downloadImage = async () => {
-    if (!recap) return;
+    if (!recap || !social) return;
     setImageStatus("rendering");
     try {
       const { renderRecapImage, recapImageName, downloadBlob } = await import("../lib/recapImage");
-      const png = await renderRecapImage(recap, imageFormat);
-      downloadBlob(png, recapImageName(recap, imageFormat));
+      const png = await renderRecapImage(recap, social);
+      downloadBlob(png, recapImageName(recap, social));
+      setSavedFor(social);
       setImageStatus("idle");
     } catch (error) {
       console.error(error);
@@ -90,19 +72,22 @@ export function RecapActions({ ready, shareUrl, name, recap }: Props) {
   return (
     <div className="actions">
       <div className="actions__group">
-        <h2 className="actions__title">Keep it</h2>
+        <h2 className="actions__title">Share on social media</h2>
         <div className="actions__downloads">
           <div className="actions__image">
             <label className="actions__format">
-              <span className="visually-hidden">Image size for</span>
+              <span className="visually-hidden">Social to share on</span>
               <select
-                value={imageFormat}
-                onChange={(event) => setImageFormat(event.target.value as StillFormatKey)}
+                value={social ?? ""}
+                onChange={(event) => setSocial(event.target.value as StillFormatKey)}
                 disabled={!canRenderImage || rendering}
               >
-                {IMAGE_FORMATS.map((format) => (
-                  <option key={format.key} value={format.key}>
-                    {format.label}
+                <option value="" disabled hidden>
+                  Select a social
+                </option>
+                {SOCIALS.map((key) => (
+                  <option key={key} value={key}>
+                    {STILL_FORMATS[key].platform}
                   </option>
                 ))}
               </select>
@@ -111,56 +96,38 @@ export function RecapActions({ ready, shareUrl, name, recap }: Props) {
               type="button"
               className="button button--ink"
               onClick={downloadImage}
-              disabled={!canRenderImage || rendering}
+              disabled={!canRenderImage || rendering || !social}
             >
               {imageStatus === "rendering" ? "Drawing…" : "Download image"}
             </button>
           </div>
-          <button type="button" className="button" onClick={downloadVideo} disabled={!canRenderImage || rendering}>
-            {videoProgress === null ? "Download video" : `Rendering ${Math.floor(videoProgress * 100)}%`}
-          </button>
+          {(postUrl || !social) && (
+            <a className="button" href={saved && postUrl ? postUrl : undefined} target="_blank" rel="noreferrer" aria-disabled={!saved}>
+              {social ? `Post on ${STILL_FORMATS[social].platform}` : "Post"}
+            </a>
+          )}
         </div>
-        <p className="actions__status" role="status">
+        <p className={imageStatus === "failed" ? "actions__status actions__status--error" : "actions__status"} role="status">
           {imageStatus === "failed"
             ? "The image could not be drawn. Try again."
-            : videoFailed
-              ? "The video could not be rendered in this browser. Try again, or use Chrome or Firefox."
-              : videoProgress !== null
-                ? "Rendering the video on your device. Keep this tab open."
-                : ""}
+            : saved && !postUrl
+              ? "Image saved. Post it from the app."
+              : ""}
         </p>
       </div>
 
       <div className="actions__group">
-        <h2 className="actions__title">Share it</h2>
-        <ul className="actions__share">
-          {SHARE_TARGETS.map((target) => (
-            <li key={target.id}>
-              <a
-                className="actions__chip"
-                href={target.href(shareText, shareUrl)}
-                target="_blank"
-                rel="noreferrer"
-                aria-disabled={!ready}
-                onClick={(event) => !ready && event.preventDefault()}
-              >
-                {target.label}
-              </a>
-            </li>
-          ))}
-          <li>
-            <button type="button" className="actions__chip" onClick={copyLink} disabled={!ready}>
-              {copied ? "Link copied" : "Copy link"}
-            </button>
-          </li>
-          {nativeShare && (
-            <li>
-              <button type="button" className="actions__chip" onClick={shareNatively} disabled={!ready}>
-                More…
-              </button>
-            </li>
-          )}
-        </ul>
+        <h2 className="actions__title">Keep the video</h2>
+        <button type="button" className="button button--ink" onClick={downloadVideo} disabled={!canRenderImage || rendering}>
+          {videoProgress === null ? "Download video" : `Rendering ${Math.floor(videoProgress * 100)}%`}
+        </button>
+        <p className={videoFailed ? "actions__status actions__status--error" : "actions__status"} role="status">
+          {videoFailed
+            ? "The video could not be rendered in this browser. Try again, or use Chrome or Firefox."
+            : videoProgress !== null
+              ? "Rendering the video on your device. Keep this tab open."
+              : ""}
+        </p>
       </div>
     </div>
   );

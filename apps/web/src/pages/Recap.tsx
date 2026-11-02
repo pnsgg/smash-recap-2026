@@ -104,11 +104,6 @@ function RecapScreen({ kind, game = DEFAULT_GAME, initialName = null, shareUrl, 
     <div className="recap">
       <header className="recap__bar">
         <Wordmark />
-        <nav aria-label="Recap" className="recap__nav">
-          <Link className="link recap__bar-link" to="/">
-            Look up another player
-          </Link>
-        </nav>
         <SettingsToggles />
       </header>
 
@@ -219,6 +214,10 @@ function RecapScreen({ kind, game = DEFAULT_GAME, initialName = null, shareUrl, 
               />
             </>
           )}
+
+          <Link className="button button--raised recap__another" to="/">
+            Look up another player
+          </Link>
 
           {loaded?.kind === "player" && loaded.recap.skippedEventCount > 0 && (
             <p className="recap__note">

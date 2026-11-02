@@ -239,11 +239,11 @@ button[disabled],
   transition: transform var(--t-press) var(--ease-out);
 }
 
-.button:active:not([disabled]) {
+.button:active:not([disabled], [aria-disabled="true"]) {
   transform: translateY(5px);
 }
 
-.button:active:not([disabled])::after {
+.button:active:not([disabled], [aria-disabled="true"])::after {
   transform: scaleY(0.17);
 }
 
@@ -271,19 +271,19 @@ button[disabled],
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .button:not([disabled]):hover {
+  .button:not([disabled], [aria-disabled="true"]):hover {
     background: var(--accent-strong);
   }
 
-  .button--ink:not([disabled]):hover {
+  .button--ink:not([disabled], [aria-disabled="true"]):hover {
     background: #ffffff;
   }
 
-  .button--casing:not([disabled]):hover {
+  .button--casing:not([disabled], [aria-disabled="true"]):hover {
     background: #e2e0db;
   }
 
-  .button--raised:not([disabled]):hover {
+  .button--raised:not([disabled], [aria-disabled="true"]):hover {
     background: #2a352f;
   }
 }
