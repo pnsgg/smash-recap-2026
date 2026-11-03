@@ -51,7 +51,18 @@ function CabinetPlayer<P extends Record<string, unknown>>({
   posterFrame: number;
 }) {
   const ref = useRef<PlayerRef>(null);
+  const cabinet = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const onAnimationEnd = (event: AnimationEvent) => {
+      if (event.target instanceof Node && cabinet.current && event.target.contains(cabinet.current)) {
+        window.dispatchEvent(new Event("resize"));
+      }
+    };
+    document.addEventListener("animationend", onAnimationEnd);
+    return () => document.removeEventListener("animationend", onAnimationEnd);
+  }, []);
 
   useEffect(() => {
     const player = ref.current;
@@ -62,7 +73,7 @@ function CabinetPlayer<P extends Record<string, unknown>>({
   }, []);
 
   return (
-    <div className="player-cabinet">
+    <div className="player-cabinet" ref={cabinet}>
       <Player
         ref={ref}
         component={component}
@@ -94,7 +105,9 @@ function CabinetPlayer<P extends Record<string, unknown>>({
 export default function RecapPlayer({ input }: { input: RecapData }) {
   if (input.kind === "player") {
     return (
+      // A fresh player per recap: switching recap or game must not keep the last one's duration and position.
       <CabinetPlayer
+        key={`player-${input.recap.id}-${input.game.id}`}
         component={PlayerRecapArcadeComponent}
         props={input.recap}
         video={{
@@ -109,6 +122,7 @@ export default function RecapPlayer({ input }: { input: RecapData }) {
   }
   return (
     <CabinetPlayer
+      key={`organizer-${input.recap.id}`}
       component={TournamentOrganizerRecapArcadeComponent}
       props={input.recap}
       video={{
