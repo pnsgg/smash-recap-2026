@@ -103,6 +103,7 @@ const Events: React.FC<{ t: number; events: OperatorData["events"] }> = ({ t, ev
       <div style={{ display: "flex", height: 34, marginTop: 30, outline: `4px solid ${color.casingDeep}`, backgroundColor: color.raised }}>
         <div style={{ width: `${share(events.singles) * grow * 100}%`, backgroundColor: color.ink }} />
         <div style={{ width: `${share(events.teams) * grow * 100}%`, backgroundColor: color.gold }} />
+        <div style={{ width: `${share(events.mixed) * grow * 100}%`, backgroundColor: color.osd }} />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 18, opacity: snap(t, 30) }}>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
@@ -113,6 +114,12 @@ const Events: React.FC<{ t: number; events: OperatorData["events"] }> = ({ t, ev
           <PixelText text={String(events.teams)} px={5} fill={color.gold} />
           <div style={{ ...caption, lineHeight: 1 }}>teams</div>
         </div>
+        {events.mixed > 0 ? (
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
+            <PixelText text={String(events.mixed)} px={5} fill={color.osd} />
+            <div style={{ ...caption, lineHeight: 1 }}>mixed</div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

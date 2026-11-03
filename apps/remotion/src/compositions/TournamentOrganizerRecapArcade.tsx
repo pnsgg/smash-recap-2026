@@ -47,7 +47,7 @@ const SCENES: Record<Act, React.FC<ActProps>> = {
       slot="TO"
       rows={[
         { label: "TOURNAMENTS", value: data.totalTournaments },
-        { label: "EVENTS", value: data.events.total, note: `${data.events.singles} singles · ${data.events.teams} teams` },
+        { label: "EVENTS", value: data.events.total, note: `${data.events.singles} singles · ${data.events.teams} teams${data.events.mixed ? ` · ${data.events.mixed} mixed` : ""}` },
         { label: "GAMES", value: data.games.length },
         ...(data.biggest[0] ? [{ label: "MOST ATTENDEES", value: data.biggest[0].attendees }] : []),
       ]}
