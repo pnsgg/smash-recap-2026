@@ -86,6 +86,17 @@ export const playerRecapResponseSchema = t.Object({
       tournamentImageUrl: t.Nullable(t.String()),
       eventName: t.String(),
       factor: t.Number(),
+      playerSeed: t.Nullable(t.Number()),
+      /** The player beaten. Name and avatar come from their profile and may be missing. */
+      opponent: t.Nullable(
+        t.Object({
+          opponentPlayerId: t.String(),
+          seed: t.Number(),
+          prefix: t.Nullable(t.String()),
+          gamerTag: t.Nullable(t.String()),
+          avatarUrl: t.Nullable(t.String()),
+        })
+      ),
     })
   ),
   stageActivity: t.Array(

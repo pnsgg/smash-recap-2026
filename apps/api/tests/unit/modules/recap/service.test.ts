@@ -6,6 +6,7 @@ import { SetFactory } from '#tests/factories/set_factory'
 import { TournamentFactory } from '#tests/factories/tournament_factory'
 import type { Player } from '#recap/domain/player'
 import type { PlayerRepository } from '#recap/domain/ports/player_repository'
+import { BracketType } from '#recap/domain/bracket_type'
 import { SetPlayer } from '#recap/domain/set'
 import { PlayerRecapService } from '#recap/service'
 import { asPlayerId, asUserSlug, asVideogameId, type PlayerId } from '#libs/ids'
@@ -27,6 +28,28 @@ const playerWithNemesis = () =>
             .set(PLAYER, setPlayer(PLAYER, 0))
             .set(NEMESIS, setPlayer(NEMESIS, 3)),
           winnerId: NEMESIS,
+        }),
+      }),
+    }),
+  })
+
+const UPSET_OPPONENT = asPlayerId('3')
+
+const seeded = (playerId: PlayerId, score: number, initialSeed: number) =>
+  new SetPlayer({ isDisqualified: false, playerId, score, seed: SeedFactory.build({ initialSeed }) })
+
+/** A player seeded 33rd who beat the 1st seed: a big upset. */
+const playerWithUpset = () =>
+  PlayerFactory.build({
+    id: PLAYER,
+    tournaments: TournamentFactory.buildList(1, {
+      events: EventFactory.buildList(1, {
+        sets: SetFactory.buildList(1, {
+          bracketType: BracketType.DOUBLE_ELIMINATION,
+          competitors: new Map()
+            .set(PLAYER, seeded(PLAYER, 2, 33))
+            .set(UPSET_OPPONENT, seeded(UPSET_OPPONENT, 0, 1)),
+          winnerId: PLAYER,
         }),
       }),
     }),
@@ -75,6 +98,17 @@ describe('PlayerRecapService', () => {
 
     expect(asked).toEqual([NEMESIS])
     expect(recap.rivalProfile).toEqual(profile)
+  })
+
+  test('looks up who the biggest upset was against', async () => {
+    const profile = { prefix: 'ZETA', gamerTag: 'Top Seed', avatarUrl: null }
+    const { repository, asked } = repositoryFor(playerWithUpset(), async () => profile)
+
+    const recap = await getRecap(repository)
+
+    expect(recap.player.highestUpset()?.factor).toBeGreaterThan(0)
+    expect(asked).toEqual([UPSET_OPPONENT])
+    expect(recap.upsetOpponentProfile).toEqual(profile)
   })
 
   test('asks nothing when there is no nemesis', async () => {

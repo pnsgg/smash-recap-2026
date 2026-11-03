@@ -20,17 +20,24 @@ export class PlayerRecapService {
     skippedEventCount: number
     nemesisProfile: PlayerProfile | null
     rivalProfile: PlayerProfile | null
+    upsetOpponentProfile: PlayerProfile | null
   }> {
     const recap = await this.repository.getPlayerRecap(slug, year, videogameId)
     const lookup = (id: PlayerId | undefined) =>
       id ? this.repository.getPlayerProfile(id).catch(() => null) : Promise.resolve(null)
     const nemesisId = recap.player.nemesis()?.opponentPlayerId
     const rivalId = recap.player.rival()?.opponentPlayerId
-    const [nemesisProfile, rivalProfile] =
-      nemesisId === rivalId
-        ? await lookup(nemesisId).then((profile) => [profile, profile])
-        : await Promise.all([lookup(nemesisId), lookup(rivalId)])
-    return { ...recap, nemesisProfile, rivalProfile }
+    const upsetOpponentId = recap.player.highestUpset()?.set.opponentOf(recap.player.id)?.playerId
+    // One lookup per distinct opponent: the nemesis, the rival and the upset's loser are often the same player.
+    const ids = [...new Set([nemesisId, rivalId, upsetOpponentId].filter((id): id is PlayerId => Boolean(id)))]
+    const profiles = new Map(await Promise.all(ids.map(async (id) => [id, await lookup(id)] as const)))
+    const profileOf = (id: PlayerId | undefined) => (id ? (profiles.get(id) ?? null) : null)
+    return {
+      ...recap,
+      nemesisProfile: profileOf(nemesisId),
+      rivalProfile: profileOf(rivalId),
+      upsetOpponentProfile: profileOf(upsetOpponentId),
+    }
   }
 }
 
