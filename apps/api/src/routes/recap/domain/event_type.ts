@@ -1,6 +1,7 @@
 export enum EventType {
   SINGLES = 1,
   TEAMS = 5,
+  MIXED = 7,
 }
 
 export class EventTypeHelper {

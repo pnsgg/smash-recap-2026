@@ -117,6 +117,7 @@ export class TournamentOrganizer {
     const counts: Record<EventType, number> = {
       [EventType.SINGLES]: 0,
       [EventType.TEAMS]: 0,
+      [EventType.MIXED]: 0,
     }
 
     for (const tournament of this.tournaments) {

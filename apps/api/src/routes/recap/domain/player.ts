@@ -412,15 +412,15 @@ export class Player {
   /**
    * Returns a breakdown of event types (singles vs. teams) played by this player.
    */
-  eventTypeBreakdown(): Record<EventType, number> {
-    const counts: Record<EventType, number> = {
+  eventTypeBreakdown(): Partial<Record<EventType, number>> {
+    const counts: Partial<Record<EventType, number>> = {
       [EventType.SINGLES]: 0,
       [EventType.TEAMS]: 0,
     }
 
     for (const tournament of this.tournaments) {
       for (const event of tournament.events) {
-        if (event.eventType !== null) counts[event.eventType]++
+        if (event.eventType !== null) counts[event.eventType] = (counts[event.eventType] ?? 0) + 1
       }
     }
 
