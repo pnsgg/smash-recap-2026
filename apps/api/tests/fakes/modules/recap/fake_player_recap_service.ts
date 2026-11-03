@@ -32,6 +32,7 @@ export class FakePlayerRecapService extends PlayerRecapService {
     skippedEventCount: number
     nemesisProfile: PlayerProfile | null
     rivalProfile: PlayerProfile | null
+    upsetOpponentProfile: PlayerProfile | null
   }> {
     this.lastVideogameId = videogameId
 
@@ -53,6 +54,7 @@ export class FakePlayerRecapService extends PlayerRecapService {
       skippedEventCount: 0,
       nemesisProfile: null,
       rivalProfile: null,
+      upsetOpponentProfile: null,
     }
   }
 }

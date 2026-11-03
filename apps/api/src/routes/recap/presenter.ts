@@ -6,7 +6,8 @@ export function presentPlayerRecap(
   player: Player,
   skippedEventCount: number,
   nemesisProfile: PlayerProfile | null = null,
-  rivalProfile: PlayerProfile | null = null
+  rivalProfile: PlayerProfile | null = null,
+  upsetOpponentProfile: PlayerProfile | null = null
 ) {
   const nemesis = player.nemesis()
   const rival = player.rival()
@@ -51,14 +52,19 @@ export function presentPlayerRecap(
     })),
     highestUpset: (() => {
       const upset = player.highestUpset()
-      return upset
-        ? {
-            tournamentName: upset.tournament.name,
-            tournamentImageUrl: upset.tournament.imageUrl,
-            eventName: upset.event.name,
-            factor: upset.factor,
-          }
-        : null
+      if (!upset) return null
+      const mine = upset.set.competitors.get(player.id)
+      const theirs = upset.set.opponentOf(player.id)
+      return {
+        tournamentName: upset.tournament.name,
+        tournamentImageUrl: upset.tournament.imageUrl,
+        eventName: upset.event.name,
+        factor: upset.factor,
+        playerSeed: mine?.seed.initialSeed ?? null,
+        opponent: theirs
+          ? { opponentPlayerId: theirs.playerId, seed: theirs.seed.initialSeed, ...named(upsetOpponentProfile) }
+          : null,
+      }
     })(),
     stageActivity: player.stageActivity().map((stat) => ({
       stageId: stat.stage.id,
