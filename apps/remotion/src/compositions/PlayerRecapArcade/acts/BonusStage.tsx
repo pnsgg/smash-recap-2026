@@ -2,7 +2,7 @@ import { interpolate, spring } from "remotion";
 import { clamp, springPresets } from "../../../lib/motion";
 import type { ActProps } from "../../PlayerRecapArcade";
 import type { ArcadeData } from "../data";
-import { snap, Stripes } from "../components/kit";
+import { Chip, snap, Stripes } from "../components/kit";
 import { PixelImage } from "../components/PixelImage";
 import { PixelText, Sprite } from "../components/Pixel";
 import { Slam } from "../components/Slam";
@@ -149,26 +149,46 @@ const Runs: React.FC<{ t: number; data: ArcadeData }> = ({ t, data }) => {
 const Upset: React.FC<{ t: number; data: ArcadeData }> = ({ t, data }) => {
   const upset = data.upset!;
   const name = displayCase(upset.tournamentName);
+  const opponent = upset.opponent;
+  const beaten = opponent?.gamerTag ? displayCase(opponent.gamerTag) : null;
+  const seeds =
+    upset.playerSeed !== null && opponent ? `Seed ${upset.playerSeed} beat seed ${opponent.seed}` : null;
   return (
     <>
-      <div style={{ position: "absolute", left: 300 - 144, top: 120, opacity: t < 12 ? 1 : 0.35 }}>
+      <div style={{ position: "absolute", left: 300 - 144, top: 100, opacity: t < 12 ? 1 : 0.35 }}>
         <Sprite rows={cycle(BOOM, Math.min(t, 11), 3)} palette={BOOM_PALETTE} px={18} />
       </div>
       <div style={{ position: "absolute", left: 0, right: 0, top: 44, display: "flex", justifyContent: "center" }}>
         <Slam frame={t} at={0} text="BIGGEST UPSET" style={display(48, color.ink)} />
       </div>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 150, display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 124, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
         <div style={{ ...caption, fontSize: 18, color: color.gold, opacity: snap(t, 6) }}>Upset factor</div>
         <div style={{ transform: `scale(${interpolate(spring({ frame: t - 6, fps: FPS, config: springPresets.heavy }), [0, 1], [2, 1])})`, opacity: t >= 6 ? 1 : 0 }}>
-          <PixelText text={String(upset.factor)} px={20} fill={color.gold} />
+          <PixelText text={String(upset.factor)} px={16} fill={color.gold} />
         </div>
       </div>
-      <div style={{ position: "absolute", left: 44, right: 44, top: 380, display: "flex", alignItems: "center", gap: 20, opacity: snap(t, 18) }}>
-        <div style={{ width: 96, height: 96, flex: "none", outline: `4px solid ${color.casingDeep}`, backgroundColor: color.raised2 }}>
-          <PixelImage src={upset.tournamentImageUrl} rows={24} px={4} mode="photo" levels={5} />
+      {opponent ? (
+        <div style={{ position: "absolute", left: 44, right: 44, top: 304, display: "flex", alignItems: "center", gap: 20, opacity: snap(t, 16) }}>
+          <div style={{ width: 96, height: 96, flex: "none", outline: `4px solid ${color.accent}`, backgroundColor: color.raised2 }}>
+            <PixelImage src={opponent.avatarUrl} rows={24} px={4} mode="photo" levels={5} fallback={<div style={{ width: 96, height: 96, display: "flex", alignItems: "center", justifyContent: "center" }}><Chip text="VS" size={32} /></div>} />
+          </div>
+          <div style={{ minWidth: 0 }}>
+            {seeds ? <div style={{ ...caption, fontSize: 18, color: color.accent }}>{seeds}</div> : null}
+            {beaten ? (
+              <div style={{ marginTop: 10 }}>
+                {opponent.prefix ? <div style={display(16, color.muted)}>{displayCase(opponent.prefix)}</div> : null}
+                <div style={{ ...display(fitDisplay(beaten, 48, 380)), marginTop: opponent.prefix ? 6 : 0 }}>{beaten}</div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+      <div style={{ position: "absolute", left: 44, right: 44, top: opponent ? 440 : 380, display: "flex", alignItems: "center", gap: 20, opacity: snap(t, 24) }}>
+        <div style={{ width: 80, height: 80, flex: "none", outline: `4px solid ${color.casingDeep}`, backgroundColor: color.raised2 }}>
+          <PixelImage src={upset.tournamentImageUrl} rows={20} px={4} mode="photo" levels={5} />
         </div>
         <div style={{ minWidth: 0 }}>
-          <div style={display(fitDisplay(name, 32, 380))}>{name}</div>
+          <div style={display(fitDisplay(name, 32, 400))}>{name}</div>
           <div style={{ ...caption, marginTop: 12, whiteSpace: "normal" }}>{upset.eventName}</div>
         </div>
       </div>

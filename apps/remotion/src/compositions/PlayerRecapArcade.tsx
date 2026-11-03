@@ -43,6 +43,7 @@ const pictures = (d: ArcadeData) => [
   ...d.bestRuns.map((r) => r.tournamentImageUrl),
   d.worstRun?.tournamentImageUrl,
   d.upset?.tournamentImageUrl,
+  d.upset?.opponent?.avatarUrl,
   ...d.series.map((s) => s.imageUrl),
 ];
 

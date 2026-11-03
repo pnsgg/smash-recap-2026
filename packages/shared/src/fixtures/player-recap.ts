@@ -114,6 +114,15 @@ export const licanePlayerRecap: PlayerRecapProps = {
     tournamentImageUrl: "https://images.start.gg/images/tournament/867887/image-43bca985008b994286d4a63591ac2842-optimized.png",
     eventName: "1v1 Ultimate (FULL BO5)",
     factor: 9,
+    playerSeed: 32,
+    opponent: {
+      opponentPlayerId: "1666454",
+      seed: 1,
+      prefix: null,
+      gamerTag: "lucali",
+      avatarUrl:
+        "https://images.start.gg/images/user/1019092/image-0edefb9cb0867d9bf7d9eaf3eea1a2d2.png?ehk=MCfijEQ1qekmfOdRGszsPeuFMzry5AUsPHgC%2Bhy%2B6y8%3D&ehkOptimized=TyhZRkN0rGtCG8Jp%2F5Brm5jPV8vDrKZK5eWm6oAXv7U%3D",
+    },
   },
   stageActivity: [
     { stageId: "348", stageName: "Kalos Pokémon League", count: 18, winRate: 0.3333333333333333 },
