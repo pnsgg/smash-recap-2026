@@ -48,13 +48,13 @@ export const HiScoreContinue: React.FC<{
     return (
       <>
         <div style={{ position: "absolute", left: 0, right: 0, top: 60, display: "flex", justifyContent: "center" }}>
-          <Slam frame={since} at={0} text="CONTINUE?" style={display(64, color.accent)} fill={color.accent} />
+          <Slam frame={since} at={0} text="GET YOUR RECAP" style={display(48, color.accent)} fill={color.accent} />
         </div>
         <div style={{ position: "absolute", left: 0, right: 0, top: 156, display: "flex", justifyContent: "center", opacity: snap(since, 4) }}>
           <PixelText text={String(count)} px={22} fill={color.ink} />
         </div>
         <div style={{ position: "absolute", left: 0, right: 0, top: 344, display: "flex", flexDirection: "column", alignItems: "center", gap: 18 }}>
-          <Slam frame={since} at={10} text="YOUR TURN!" style={display(32, color.gold)} fill={color.gold} />
+          <Slam frame={since} at={10} text="FOR PLAYERS AND ORGANISERS" style={display(32, color.gold)} fill={color.gold} />
           <div style={{ ...display(fitDisplay(SITE, 48, 500)), opacity: snap(since, 16) }}>{SITE}</div>
           <div style={{ ...caption, fontSize: 18, color: blink(since) ? color.ink : color.muted, opacity: snap(since, 22) }}>Look up any start.gg tag</div>
         </div>
