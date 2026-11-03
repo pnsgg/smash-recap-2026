@@ -216,7 +216,7 @@ function RecapScreen({ kind, game = DEFAULT_GAME, initialName = null, shareUrl, 
           )}
 
           <Link className="button button--raised recap__another" to="/">
-            Look up another player
+            {kind === "player" ? "Look up another player" : "Look up another organiser"}
           </Link>
 
           {loaded?.kind === "player" && loaded.recap.skippedEventCount > 0 && (
