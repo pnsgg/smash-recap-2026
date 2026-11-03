@@ -174,31 +174,58 @@ export function SearchConsole({ variant = "compact", defaultKind = "player", def
           <label className="console__label" htmlFor={`${id}-input`}>
             Your start.gg gamer tag
           </label>
-          <input
-            id={`${id}-input`}
-            ref={inputRef}
-            className="console__input"
-            type="text"
-            inputMode="search"
-            autoComplete="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            autoFocus={autoFocus}
-            placeholder="Sparg0, Zomba, your tag…"
-            value={text}
-            role="combobox"
-            aria-expanded={showList}
-            aria-controls={listId}
-            aria-autocomplete="list"
-            aria-activedescendant={showList && active >= 0 ? `${listId}-${active}` : undefined}
-            onChange={(event) => {
-              setText(event.target.value);
-              setActive(-1);
-              setOpen(true);
-            }}
-            onFocus={() => setOpen(true)}
-            onKeyDown={onKeyDown}
-          />
+          {/* The results open from the field itself: above it on the home page, below it elsewhere. */}
+          <div className="console__control">
+            <input
+              id={`${id}-input`}
+              ref={inputRef}
+              className="console__input"
+              type="text"
+              inputMode="search"
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              autoFocus={autoFocus}
+              placeholder="Sparg0, Zomba, your tag…"
+              value={text}
+              role="combobox"
+              aria-expanded={showList}
+              aria-controls={listId}
+              aria-autocomplete="list"
+              aria-activedescendant={showList && active >= 0 ? `${listId}-${active}` : undefined}
+              onChange={(event) => {
+                setText(event.target.value);
+                setActive(-1);
+                setOpen(true);
+              }}
+              onFocus={() => setOpen(true)}
+              onKeyDown={onKeyDown}
+            />
+            <ul id={listId} className="console__results" role="listbox" hidden={!showList} aria-label="Matching start.gg players">
+              {results.map((result, index) => (
+                <li
+                  key={result.id}
+                  id={`${listId}-${index}`}
+                  role="option"
+                  aria-selected={index === active}
+                  className="console__result"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => choose(result)}
+                  onMouseEnter={() => {
+                    if (index !== active) play("blip");
+                    setActive(index);
+                  }}
+                >
+                  <Avatar result={result} />
+                  <span className="console__result-name">{displayName(result.prefix, result.gamerTag)}</span>
+                  <span className="console__result-meta">
+                    {[result.country, `${formatNumber(result.nbEvents)} events`].filter(Boolean).join(", ")}
+                  </span>
+                  <span className="console__result-id">user/{toDiscriminator(result.slug)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         <button className="button console__submit" type="submit">
           Find my recap
@@ -209,30 +236,6 @@ export function SearchConsole({ variant = "compact", defaultKind = "player", def
         {status}
       </p>
 
-      <ul id={listId} className="console__results" role="listbox" hidden={!showList} aria-label="Matching start.gg players">
-        {results.map((result, index) => (
-          <li
-            key={result.id}
-            id={`${listId}-${index}`}
-            role="option"
-            aria-selected={index === active}
-            className="console__result"
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => choose(result)}
-            onMouseEnter={() => {
-              if (index !== active) play("blip");
-              setActive(index);
-            }}
-          >
-            <Avatar result={result} />
-            <span className="console__result-name">{displayName(result.prefix, result.gamerTag)}</span>
-            <span className="console__result-meta">
-              {[result.country, `${formatNumber(result.nbEvents)} events`].filter(Boolean).join(", ")}
-            </span>
-            <span className="console__result-id">user/{toDiscriminator(result.slug)}</span>
-          </li>
-        ))}
-      </ul>
     </form>
   );
 }

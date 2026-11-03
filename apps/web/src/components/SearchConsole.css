@@ -149,8 +149,14 @@
   grid-column: -3;
 }
 
-.console__input {
+/* The tag field and the results that open from it. */
+.console__control {
+  position: relative;
+  display: grid;
   align-self: stretch;
+}
+
+.console__input {
   width: 100%;
   min-height: 3.25rem;
   padding: 0.625rem 1rem;
@@ -268,6 +274,13 @@
 }
 
 @media (min-width: 641px) {
+  /* The search sits low on the hero, so its results open upward from the field, not past the screen. */
+  .console--panel .console__results {
+    top: auto;
+    bottom: calc(100% + 0.25rem);
+    max-height: min(22rem, 45svh);
+  }
+
   .console--panel .console__row--game {
     grid-template-columns: minmax(0, 1fr) auto;
   }
@@ -292,7 +305,7 @@
     margin-top: 0.5rem;
   }
 
-  .console--panel .console__field > .console__input {
+  .console--panel .console__field > .console__control {
     grid-row: 4;
     grid-column: 1;
   }

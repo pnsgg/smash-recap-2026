@@ -4,7 +4,7 @@ import type { TournamentOrganizerRecapProps } from "@shared";
 import { licaneTournamentOrganiserRecap } from "@shared/fixtures/tournament-organiser-recap";
 import { PixelImage } from "../../compositions/PlayerRecapArcade/components/PixelImage";
 import { PixelText, Sprite } from "../../compositions/PlayerRecapArcade/components/Pixel";
-import { COIN_STACKED, CROWN, GOLD, TICKET, TICKET_PALETTE } from "../../compositions/PlayerRecapArcade/components/sprites";
+import { COIN_STACKED, CROWN, GOLD } from "../../compositions/PlayerRecapArcade/components/sprites";
 import { dayName } from "../../compositions/PlayerRecapArcade/data";
 import { caption, color, display, displayCase, fitDisplay, font } from "../../compositions/PlayerRecapArcade/theme";
 import { deriveOperator, type OperatorData } from "../../compositions/TournamentOrganizerRecapArcade/data";
@@ -177,27 +177,17 @@ const organizerPanels = (d: OperatorData): PanelSpec[] => {
           key: "series",
           render: ({ width, height }) => {
             const side = Math.min(110, height - 140);
-            const ticketPx = 2;
-            const ticketW = 12 * ticketPx + 4;
-            const cols = Math.floor((width - 44) / ticketW);
-            const shown = Math.min(series.count, cols * 2);
             return (
-              <Panel label="Your series · editions" tone={color.gold} width={width} height={height}>
+              <Panel label="Your series" tone={color.gold} width={width} height={height}>
                 <div style={{ position: "absolute", left: 22, top: 58, display: "flex", alignItems: "center", gap: 20 }}>
                   <Logo src={series.imageUrl} side={side} />
                   <div>
                     <div style={display(fitDisplay(displayCase(series.name), 32, width - side - 80))}>{displayCase(series.name)}</div>
-                    <div style={{ marginTop: 12 }}>
+                    <div style={{ display: "flex", alignItems: "flex-end", gap: 10, marginTop: 12 }}>
                       <PixelText text={String(series.count)} px={7} fill={color.gold} />
+                      <div style={{ ...caption, lineHeight: 1 }}>{series.count === 1 ? "edition" : "editions"}</div>
                     </div>
                   </div>
-                </div>
-                <div style={{ position: "absolute", left: 22, bottom: 22 }}>
-                  {Array.from({ length: shown }, (_, i) => (
-                    <div key={i} style={{ position: "absolute", left: (i % cols) * ticketW, bottom: Math.floor(i / cols) * (7 * ticketPx + 4) }}>
-                      <Sprite rows={TICKET} palette={TICKET_PALETTE} px={ticketPx} />
-                    </div>
-                  ))}
                 </div>
               </Panel>
             );
