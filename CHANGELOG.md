@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.6.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.5.0...smash-recap-v1.6.0) (2026-11-03)
+
+
+### Features
+
+* **recap:** name the closing call to action literally ([139d896](https://github.com/pnsgg/smash-recap-2026/commit/139d896777ab579faedbe0d4bdab25588cc7e5ae))
+* **recap:** remove the edition tickets from the series still ([2af4b32](https://github.com/pnsgg/smash-recap-2026/commit/2af4b320b8895e2ccaf57790d127f965ea3bcbee))
+
+
+### Bug Fixes
+
+* **recap:** Count mixed event ([9a69b24](https://github.com/pnsgg/smash-recap-2026/commit/9a69b24837c97c1230a95f20cdec3e64af81881b))
+* **recap:** count start.gg type 7 events as mixed in organiser recaps ([216cae8](https://github.com/pnsgg/smash-recap-2026/commit/216cae839d3dbb69bff08507581724bea73eeb14))
+* **recap:** show mixed events in the organiser recap's event split ([4c3e827](https://github.com/pnsgg/smash-recap-2026/commit/4c3e82740bfbdaa5500eca06ba74c30a2b39c47e))
+* **web:** keep the player's seek bar full width after switching recap ([0c88021](https://github.com/pnsgg/smash-recap-2026/commit/0c88021bc0efcaf4e9fa8e2ec0027f4e1b42bba9))
+* **web:** open hero search results just above the tag field ([407b965](https://github.com/pnsgg/smash-recap-2026/commit/407b96573629be5f31f799ad0b2c734cebc93007))
+* **web:** say organiser on the organiser recap's look up button ([9f6d80b](https://github.com/pnsgg/smash-recap-2026/commit/9f6d80b1b064950236d78eb0b521f5d71bb41806))
+
 ## [1.5.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.4.0...smash-recap-v1.5.0) (2026-11-02)
 
 
