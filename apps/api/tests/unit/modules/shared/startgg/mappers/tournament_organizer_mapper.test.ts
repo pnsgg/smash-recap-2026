@@ -198,6 +198,34 @@ describe('TournamentOrganizerMapper', () => {
     expect(tournament?.events[0]?.eventType).toBeNull()
   })
 
+  test('maps start.gg event type 7 to mixed', () => {
+    const rawTournaments: TournamentDetailsResult[] = [
+      {
+        id: 'tournament-1',
+        name: 'Genesis 10',
+        startAt: 1785276620,
+        timezone: null,
+        numAttendees: 1500,
+        images: null,
+        events: [
+          {
+            id: 'event-1',
+            name: '2XKO Mixed',
+            type: 7,
+            videogame: { id: '1', name: 'Game', images: null },
+            isOnline: false,
+            numEntrants: 10,
+            phaseGroups: [{ bracketType: 'DOUBLE_ELIMINATION' }],
+          },
+        ],
+      },
+    ]
+
+    const [tournament] = mapTournamentOrganizer(slug, gamerTag, rawTournaments).tournaments
+    expect(tournament?.events).toHaveLength(1)
+    expect(tournament?.events[0]?.eventType).toBe(EventType.MIXED)
+  })
+
   test('throws error when bracketType is missing, null, or invalid', () => {
     const makeRawPayload = (bracketType: any): TournamentDetailsResult[] => [
       {

@@ -216,10 +216,12 @@ const organizerPanels = (d: OperatorData): PanelSpec[] => {
                 <div style={{ position: "absolute", left: 22, right: 22, bottom: 64, height: 26, display: "flex", border: `4px solid ${color.casingDeep}` }}>
                   <div style={{ width: `${(d.events.singles / d.events.total) * 100}%`, backgroundColor: color.ink }} />
                   <div style={{ width: `${(d.events.teams / d.events.total) * 100}%`, backgroundColor: color.gold }} />
+                  <div style={{ width: `${(d.events.mixed / d.events.total) * 100}%`, backgroundColor: color.osd }} />
                 </div>
                 <div style={{ position: "absolute", left: 22, right: 22, bottom: 20, display: "flex", justifyContent: "space-between" }}>
                   <StillFigure value={String(d.events.singles)} px={4} unit="singles" />
                   <StillFigure value={String(d.events.teams)} px={4} unit="teams" fill={color.gold} />
+                  {d.events.mixed > 0 ? <StillFigure value={String(d.events.mixed)} px={4} unit="mixed" fill={color.osd} /> : null}
                 </div>
               </Panel>
             );
