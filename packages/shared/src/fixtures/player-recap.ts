@@ -234,4 +234,14 @@ export const licanePlayerRecap: PlayerRecapProps = {
     },
   ],
   skippedEventCount: 0,
+  // KID's real 2026 ranking (user/be651aa3): Licane has none, and the fixture should show the screen.
+  rankings: [
+    {
+      rank: 14,
+      previousRank: 10,
+      seriesName: "European Power Rankings",
+      title: "2026 Half Year",
+      imageUrl: "https://images.start.gg/images/RankingSeries/4196/image-4800d685540e1323710749d3a5cdc714-optimized.png",
+    },
+  ],
 };

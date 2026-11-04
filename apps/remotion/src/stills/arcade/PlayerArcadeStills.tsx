@@ -12,6 +12,7 @@ import { loadFonts } from "../../lib/fonts";
 import type { StillFormatKey } from "../formats";
 import { STILL_FORMAT_KEYS, STILL_FORMATS, stillIdSuffix } from "../formats";
 import { Panel, StillFigure, StillPage, type PanelSpec } from "./kit";
+import { ordinal } from "../../compositions/PlayerRecapArcade/acts/Rankings";
 
 loadFonts();
 
@@ -48,6 +49,29 @@ const playerPanels = (d: ArcadeData): PanelSpec[] => {
               </div>
             </Panel>
           ),
+        }
+      : null,
+    d.rankings[0]
+      ? {
+          key: "ranking",
+          render: ({ width, height }) => {
+            const r = d.rankings[0]!;
+            // The figure and logo share the space between the label and the two lines of names.
+            const px = Math.max(4, Math.min(12, Math.floor((height - 150) / 7)));
+            const side = px * 7;
+            return (
+              <Panel label="Ranking" tone={color.gold} width={width} height={height}>
+                <div style={{ position: "absolute", left: 22, top: 58, display: "flex", alignItems: "center", gap: 18 }}>
+                  <Logo src={r.imageUrl} side={side} />
+                  <StillFigure value={String(r.rank)} px={px} unit={ordinal(r.rank).slice(String(r.rank).length)} fill={color.gold} />
+                </div>
+                <div style={{ position: "absolute", left: 22, right: 22, bottom: 22 }}>
+                  <Name text={r.seriesName} width={width - 44} max={32} />
+                  <div style={{ ...caption, marginTop: 8 }}>{r.title}</div>
+                </div>
+              </Panel>
+            );
+          },
         }
       : null,
     d.topStage
