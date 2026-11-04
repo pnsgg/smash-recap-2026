@@ -1,5 +1,6 @@
 import type { Player } from '#recap/domain/player'
 import type { PlayerProfile } from '#recap/domain/player_profile'
+import type { PlayerRanking } from '#recap/domain/player_ranking'
 import type { TournamentOrganizer } from '#recap/domain/tournament_organizer'
 
 export function presentPlayerRecap(
@@ -7,7 +8,8 @@ export function presentPlayerRecap(
   skippedEventCount: number,
   nemesisProfile: PlayerProfile | null = null,
   rivalProfile: PlayerProfile | null = null,
-  upsetOpponentProfile: PlayerProfile | null = null
+  upsetOpponentProfile: PlayerProfile | null = null,
+  rankings: PlayerRanking[] = []
 ) {
   const nemesis = player.nemesis()
   const rival = player.rival()
@@ -90,6 +92,13 @@ export function presentPlayerRecap(
       imageUrl: series.tournaments.find((t) => t.imageUrl)?.imageUrl ?? null,
     })),
     skippedEventCount,
+    rankings: rankings.map((r) => ({
+      rank: r.rank,
+      previousRank: r.previousRank,
+      seriesName: r.seriesName,
+      title: r.title,
+      imageUrl: r.imageUrl,
+    })),
   }
 }
 

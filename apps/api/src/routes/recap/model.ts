@@ -129,6 +129,16 @@ export const playerRecapResponseSchema = t.Object({
     })
   ),
   skippedEventCount: t.Number(),
+  /** Published rankings whose period overlaps the recap's year, as start.gg orders them. */
+  rankings: t.Array(
+    t.Object({
+      rank: t.Number(),
+      previousRank: t.Nullable(t.Number()),
+      seriesName: t.String(),
+      title: t.String(),
+      imageUrl: t.Nullable(t.String()),
+    })
+  ),
 })
 export type PlayerRecapResponse = UnwrapSchema<typeof playerRecapResponseSchema>
 
