@@ -100,6 +100,11 @@ export class Set {
     return Seed.upsetFactor(winner.seed.initialSeed, loser.seed.initialSeed, this.bracketType)
   }
 
+  /** The competitor facing `playerId` in this set, if there is one. */
+  opponentOf(playerId: PlayerId): SetPlayer | null {
+    return Array.from(this.competitors.values()).find((c) => c.playerId !== playerId) ?? null
+  }
+
   /**
    * Checks if this set was won with a clean sweep (opponent score was exactly 0).
    * Excludes disqualified sets.

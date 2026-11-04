@@ -1,5 +1,6 @@
 import type { Player } from '#recap/domain/player'
 import type { PlayerProfile } from '#recap/domain/player_profile'
+import type { PlayerRanking } from '#recap/domain/player_ranking'
 import type { PlayerRepository } from '#recap/domain/ports/player_repository'
 import { UserNotFoundError } from '#recap/domain/user_not_found_error'
 import { SearchPlayerResult } from '#search/domain/player_search_result'
@@ -15,6 +16,7 @@ import { mapSearchPlayerResult } from '#libs/startgg/mappers/search_player_resul
 import { getEvent } from '#libs/startgg/queries/get_event'
 import { getPlayerEventIds } from '#libs/startgg/queries/get_player_event_ids'
 import { getPlayerProfile } from '#libs/startgg/queries/get_player_profile'
+import { getPlayerRankings } from '#libs/startgg/queries/get_player_rankings'
 import { getPlayerUserId } from '#libs/startgg/queries/get_player_user_id'
 import { getVideogameCharacters } from '#libs/startgg/queries/get_videogame_characters'
 import { searchPlayerByGamerTag } from '#libs/startgg/queries/search_player_by_gamertag'
@@ -154,6 +156,26 @@ export class StartggPlayerRepository implements PlayerRepository {
       gamerTag: player.gamerTag,
       avatarUrl: player.user?.images?.[0]?.url ?? null,
     }
+  }
+
+  async getPlayerRankings(playerId: PlayerId, videoGameId: VideogameId): Promise<PlayerRanking[]> {
+    const { data } = await this.fetcher.fetch(getPlayerRankings, { playerId, videogameId: videoGameId })
+    return (data?.player?.rankings ?? []).flatMap((ranking) => {
+      const iteration = ranking?.iteration
+      const name = iteration?.series?.name
+      if (!ranking?.rank || !iteration?.startAt || !iteration.endAt || !name) return []
+      return [
+        {
+          rank: ranking.rank,
+          previousRank: ranking.previousRank ?? null,
+          seriesName: name,
+          title: iteration.title ?? name,
+          startAt: new Date(Number(iteration.startAt) * 1000),
+          endAt: new Date(Number(iteration.endAt) * 1000),
+          imageUrl: iteration.series?.images?.[0]?.url ?? null,
+        },
+      ]
+    })
   }
 
   /**

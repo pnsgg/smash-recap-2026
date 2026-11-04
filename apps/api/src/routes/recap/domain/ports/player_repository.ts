@@ -1,5 +1,6 @@
 import type { Player } from '#recap/domain/player'
 import type { PlayerProfile } from '#recap/domain/player_profile'
+import type { PlayerRanking } from '#recap/domain/player_ranking'
 import type { SearchPlayerResult } from '#search/domain/player_search_result'
 import type { PlayerId, UserSlug, VideogameId } from '#libs/ids'
 
@@ -29,4 +30,11 @@ export interface PlayerRepository {
    * @returns A promise that resolves to the profile, or null if start.gg doesn't know the player
    */
   getPlayerProfile: (playerId: PlayerId) => Promise<PlayerProfile | null>
+
+  /**
+   * Fetches the rankings a player appears in for a game, every period start.gg has published
+   * @param playerId The start.gg player ID
+   * @param videoGameId The game the rankings are for
+   */
+  getPlayerRankings: (playerId: PlayerId, videoGameId: VideogameId) => Promise<PlayerRanking[]>
 }

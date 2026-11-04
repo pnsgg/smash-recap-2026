@@ -114,6 +114,15 @@ export const licanePlayerRecap: PlayerRecapProps = {
     tournamentImageUrl: "https://images.start.gg/images/tournament/867887/image-43bca985008b994286d4a63591ac2842-optimized.png",
     eventName: "1v1 Ultimate (FULL BO5)",
     factor: 9,
+    playerSeed: 32,
+    opponent: {
+      opponentPlayerId: "1666454",
+      seed: 1,
+      prefix: null,
+      gamerTag: "lucali",
+      avatarUrl:
+        "https://images.start.gg/images/user/1019092/image-0edefb9cb0867d9bf7d9eaf3eea1a2d2.png?ehk=MCfijEQ1qekmfOdRGszsPeuFMzry5AUsPHgC%2Bhy%2B6y8%3D&ehkOptimized=TyhZRkN0rGtCG8Jp%2F5Brm5jPV8vDrKZK5eWm6oAXv7U%3D",
+    },
   },
   stageActivity: [
     { stageId: "348", stageName: "Kalos Pokémon League", count: 18, winRate: 0.3333333333333333 },
@@ -225,4 +234,14 @@ export const licanePlayerRecap: PlayerRecapProps = {
     },
   ],
   skippedEventCount: 0,
+  // KID's real 2026 ranking (user/be651aa3): Licane has none, and the fixture should show the screen.
+  rankings: [
+    {
+      rank: 14,
+      previousRank: 10,
+      seriesName: "European Power Rankings",
+      title: "2026 Half Year",
+      imageUrl: "https://images.start.gg/images/RankingSeries/4196/image-4800d685540e1323710749d3a5cdc714-optimized.png",
+    },
+  ],
 };

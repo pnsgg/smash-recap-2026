@@ -23,12 +23,9 @@ export class RecapStore {
 
   player(slug: UserSlug, year: number, videogameId: VideogameId): Promise<PlayerRecap> {
     return this.cached(`recap:player:${year}:${videogameId}:${slug}`, async () => {
-      const { player, skippedEventCount, nemesisProfile, rivalProfile } = await this.players.getRecap(
-        slug,
-        new Date(year, 0, 1),
-        videogameId
-      )
-      return presentPlayerRecap(player, skippedEventCount, nemesisProfile, rivalProfile)
+      const { player, skippedEventCount, nemesisProfile, rivalProfile, upsetOpponentProfile, rankings } =
+        await this.players.getRecap(slug, new Date(year, 0, 1), videogameId)
+      return presentPlayerRecap(player, skippedEventCount, nemesisProfile, rivalProfile, upsetOpponentProfile, rankings)
     })
   }
 

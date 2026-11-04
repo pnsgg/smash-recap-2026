@@ -11,6 +11,7 @@ import { Continue } from "./PlayerRecapArcade/acts/Continue";
 import { FinalRound } from "./PlayerRecapArcade/acts/FinalRound";
 import { InsertCoin } from "./PlayerRecapArcade/acts/InsertCoin";
 import { PlayerSelect } from "./PlayerRecapArcade/acts/PlayerSelect";
+import { Rankings } from "./PlayerRecapArcade/acts/Rankings";
 import { StageSelect } from "./PlayerRecapArcade/acts/StageSelect";
 import { Crt } from "./PlayerRecapArcade/components/Crt";
 import { preloadImages } from "./PlayerRecapArcade/components/PixelImage";
@@ -31,6 +32,7 @@ const SCENES: Record<Act, React.FC<ActProps>> = {
   finalRound: FinalRound,
   bonusStage: BonusStage,
   coinLedger: CoinLedger,
+  rankings: Rankings,
   continue: Continue,
 };
 
@@ -43,7 +45,9 @@ const pictures = (d: ArcadeData) => [
   ...d.bestRuns.map((r) => r.tournamentImageUrl),
   d.worstRun?.tournamentImageUrl,
   d.upset?.tournamentImageUrl,
+  d.upset?.opponent?.avatarUrl,
   ...d.series.map((s) => s.imageUrl),
+  ...d.rankings.map((r) => r.imageUrl),
 ];
 
 export const PlayerRecapArcadeComponent: React.FC<PlayerRecapProps> = (recap) => {

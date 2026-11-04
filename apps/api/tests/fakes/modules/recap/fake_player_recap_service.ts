@@ -3,6 +3,7 @@ import { PlayerRecapService } from '#recap/service'
 import type { Player } from '#recap/domain/player'
 import type { PlayerProfile } from '#recap/domain/player_profile'
 import { type UserSlug, type VideogameId, asPlayerId } from '#libs/ids'
+import type { PlayerRanking } from '#recap/domain/player_ranking'
 
 export const LICANE_DATA = {
   id: asPlayerId('1960701'),
@@ -32,6 +33,8 @@ export class FakePlayerRecapService extends PlayerRecapService {
     skippedEventCount: number
     nemesisProfile: PlayerProfile | null
     rivalProfile: PlayerProfile | null
+    upsetOpponentProfile: PlayerProfile | null
+    rankings: PlayerRanking[]
   }> {
     this.lastVideogameId = videogameId
 
@@ -53,6 +56,8 @@ export class FakePlayerRecapService extends PlayerRecapService {
       skippedEventCount: 0,
       nemesisProfile: null,
       rivalProfile: null,
+      upsetOpponentProfile: null,
+      rankings: [],
     }
   }
 }

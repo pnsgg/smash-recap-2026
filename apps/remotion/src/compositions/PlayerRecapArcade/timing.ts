@@ -12,6 +12,7 @@ const ACT_BARS = {
   finalRound: 5,
   bonusStage: 5,
   coinLedger: 5,
+  rankings: 4,
   continue: 5,
 } as const;
 
@@ -26,12 +27,13 @@ export const LENGTH = Object.fromEntries(ACTS.map((n) => [n, ACT_BARS[n] * BAR])
 
 export const DURATION = ACTS.reduce((sum, n) => sum + ACT_BARS[n] * BAR, 0);
 
-/** The acts this recap plays, when each starts and how long it runs: no characters or no stages, no act. */
-export const timeline = (recap: Pick<PlayerRecapProps, "mostPlayedCharacters" | "stageActivity">) => {
+/** The acts this recap plays, when each starts and how long it runs: no characters, stages or rankings, no act. */
+export const timeline = (recap: Pick<PlayerRecapProps, "mostPlayedCharacters" | "stageActivity" | "rankings">) => {
   const acts = ACTS.filter(
     (name) =>
       !(name === "playerSelect" && recap.mostPlayedCharacters.length === 0) &&
-      !(name === "stageSelect" && recap.stageActivity.length === 0),
+      !(name === "stageSelect" && recap.stageActivity.length === 0) &&
+      !(name === "rankings" && recap.rankings.length === 0),
   );
   const start = Object.fromEntries(
     acts.map((name, i) => [name, acts.slice(0, i).reduce((sum, n) => sum + LENGTH[n], 0)]),
