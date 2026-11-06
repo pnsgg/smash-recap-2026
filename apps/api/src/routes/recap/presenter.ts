@@ -62,8 +62,9 @@ export function presentPlayerRecap(
         tournamentImageUrl: upset.tournament.imageUrl,
         eventName: upset.event.name,
         factor: upset.factor,
-        playerSeed: mine?.seed.initialSeed ?? null,
-        opponent: theirs
+        playerSeed: mine?.seed?.initialSeed ?? null,
+        // An upset needs both event seeds, so the opponent always has one here.
+        opponent: theirs?.seed
           ? { opponentPlayerId: theirs.playerId, seed: theirs.seed.initialSeed, ...named(upsetOpponentProfile) }
           : null,
       }

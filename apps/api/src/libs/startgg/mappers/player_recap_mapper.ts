@@ -307,7 +307,9 @@ function mapSet(
 
     entrantIdToPlayerId.set(entrant.id.toString(), playerId)
 
-    const initialSeed = slot.seed?.seedNum || 1
+    // Upsets compare event seeds: `slot.seed` is the seed in the set's phase, which events
+    // reset for Top 32 / Top 8 / secondary brackets.
+    const eventSeed = entrant.initialSeedNum || null
     const rawScore = slot.standing?.stats?.score?.value ?? 0
     const score = Math.max(0, rawScore)
     const finalPlacement = entrant.standing?.placement || 1
@@ -316,9 +318,11 @@ function mapSet(
       playerId,
       new SetPlayer({
         playerId,
-        seed: new Seed(initialSeed, finalPlacement),
+        seed: eventSeed === null ? null : new Seed(eventSeed, finalPlacement),
         score,
-        isDisqualified: !!entrant.isDisqualified,
+        // `entrant.isDisqualified` is a DQ from the whole event; start.gg marks a DQ in this set
+        // alone with a score of -1 (the set's displayScore reads "DQ").
+        isDisqualified: !!entrant.isDisqualified || rawScore < 0,
       })
     )
 
@@ -330,7 +334,7 @@ function mapSet(
           id: asParticipantId(entrant.id.toString()),
           playerId,
           name: entrant.name,
-          seed: new Seed(initialSeed, finalPlacement),
+          seed: new Seed(eventSeed ?? (slot.seed?.seedNum || 1), finalPlacement),
         })
       )
     }
@@ -363,6 +367,7 @@ function mapSet(
     winnerId,
     round: rawSet.round || 0,
     fullRoundText,
+    bestOf: rawSet.bestOf ?? null,
     games,
     completedAt: rawSet.completedAt ? new Date((rawSet.completedAt as number) * 1000) : null,
     bracketType,

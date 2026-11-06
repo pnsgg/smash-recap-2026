@@ -7,14 +7,15 @@ import type { EventId, PlayerId, SetId } from '#libs/ids'
 
 export type SetPlayerParams = {
   playerId: PlayerId
-  seed: Seed
+  /** Seed in the event, or null when start.gg has none. */
+  seed: Seed | null
   score: number
   isDisqualified: boolean
 }
 
 export class SetPlayer {
   public readonly playerId: PlayerId
-  public readonly seed: Seed
+  public readonly seed: Seed | null
   public readonly score: number
   public readonly isDisqualified: boolean
 
@@ -41,6 +42,8 @@ export type SetParams = {
   winnerId: PlayerId
   round: number
   fullRoundText: string
+  /** Games in the format, e.g. 3 for Bo3; null when start.gg doesn't say. */
+  bestOf: number | null
   games: Game[]
   completedAt: Date | null
 }
@@ -53,6 +56,8 @@ export class Set {
   public readonly winnerId: PlayerId
   public readonly round: number
   public readonly fullRoundText: string
+  /** Games in the format, e.g. 3 for Bo3; null when start.gg doesn't say. */
+  public readonly bestOf: number | null
   public readonly games: Game[]
   public readonly completedAt: Date | null
 
@@ -66,6 +71,7 @@ export class Set {
     this.winnerId = params.winnerId
     this.round = params.round
     this.fullRoundText = params.fullRoundText
+    this.bestOf = params.bestOf
     this.games = [...params.games].sort((a, b) => a.orderNum - b.orderNum)
     this.completedAt = params.completedAt
   }
@@ -90,13 +96,15 @@ export class Set {
 
   /**
    * Computes the upset factor of this set.
-   * Returns a positive number if it was an upset, a negative number if it was expected, or null if unsupported.
+   * Returns a positive number if it was an upset, a negative number if it was expected, or null if
+   * unsupported or if either competitor has no seed.
    */
   upsetFactor(): number | null {
     const winner = this.competitors.get(this.winnerId)
     const loser = Array.from(this.competitors.values()).find((c) => c.playerId !== this.winnerId)
     if (!winner || !loser) return null
     if (winner.isDisqualified || loser.isDisqualified) return null
+    if (!winner.seed || !loser.seed) return null
     return Seed.upsetFactor(winner.seed.initialSeed, loser.seed.initialSeed, this.bracketType)
   }
 
@@ -135,6 +143,13 @@ export class Set {
   isPlayerDisqualified(playerId: PlayerId): boolean {
     const competitor = this.competitors.get(playerId)
     return competitor ? competitor.isDisqualified : false
+  }
+
+  /**
+   * Checks if either competitor was disqualified in this set, i.e. the set was not actually played.
+   */
+  hasDisqualification(): boolean {
+    return Array.from(this.competitors.values()).some((c) => c.isDisqualified)
   }
 
   /**

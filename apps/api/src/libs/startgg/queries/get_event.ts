@@ -50,6 +50,7 @@ export const getEvent = graphql(`
             id
             round
             fullRoundText
+            bestOf
             completedAt
             winnerId
             phaseGroup {
@@ -60,6 +61,7 @@ export const getEvent = graphql(`
                 id
                 name
                 isDisqualified
+                initialSeedNum
                 players {
                   id
                 }

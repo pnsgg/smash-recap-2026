@@ -170,6 +170,7 @@ const fetcher = new InMemoryFetcher()
                   id: 'set-1',
                   round: 3,
                   fullRoundText: 'Winners Semis',
+                  bestOf: null,
                   completedAt: 1785276620,
                   winnerId: 1001,
                   phaseGroup: {
@@ -181,6 +182,7 @@ const fetcher = new InMemoryFetcher()
                         id: '1001',
                         name: 'Glutonny',
                         isDisqualified: false,
+                        initialSeedNum: 4,
                         players: [{ id: 'user-glutonny-id' }],
                         standing: { placement: 3 },
                       },
@@ -192,6 +194,7 @@ const fetcher = new InMemoryFetcher()
                         id: '1002',
                         name: 'MKLeo',
                         isDisqualified: false,
+                        initialSeedNum: 1,
                         players: [{ id: 'user-mkleo-id' }],
                         standing: { placement: 5 },
                       },
