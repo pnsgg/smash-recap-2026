@@ -666,6 +666,28 @@ describe('Set - reverse sweeps', () => {
     expect(bo3SweepSet.isReverseSweepWon(p1Id)).toBe(true)
     expect(bo3SweepSet.isReverseSweepLost(p2Id)).toBe(true)
   })
+
+  test('a comeback from 0-1 in a Bo5 is not a reverse sweep: the loser never reached match point', () => {
+    const p1Id = asPlayerId('player-1')
+    const p2Id = asPlayerId('player-2')
+
+    const set = SetFactory.build({
+      competitors: new Map([
+        [p1Id, new SetPlayer({ playerId: p1Id, seed: new Seed(1, 5), score: 3, isDisqualified: false })],
+        [p2Id, new SetPlayer({ playerId: p2Id, seed: new Seed(2, 5), score: 1, isDisqualified: false })],
+      ]),
+      winnerId: p1Id,
+      games: [
+        GameFactory.build({ orderNum: 1, winnerId: p2Id }),
+        GameFactory.build({ orderNum: 2, winnerId: p1Id }),
+        GameFactory.build({ orderNum: 3, winnerId: p1Id }),
+        GameFactory.build({ orderNum: 4, winnerId: p1Id }),
+      ],
+    })
+
+    expect(set.isReverseSweepWon(p1Id)).toBe(false)
+    expect(set.isReverseSweepLost(p2Id)).toBe(false)
+  })
 })
 
 describe('Set - upsetFactor & isUpset', () => {
