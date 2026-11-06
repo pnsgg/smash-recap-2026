@@ -271,15 +271,17 @@ scalar Timestamp
 
 """specification for a widget that can be placed on profile pages"""
 type ProfileWidget {
+  id: String
+
   """All of the fields for the widget configuration form"""
   configGqlFields: [String]
-  id: String
   defaultConfig: JSON
   description: String
   disableAdd: Boolean
   icon: String
   name: String
   supportedLayouts: [String]
+  supportedPages: [String]
   widgetComponentsNodeModule: String
 }
 
@@ -323,7 +325,12 @@ type Image {
   ratio: Float
   type: String
   uploadedBy: Int
-  url: String
+  url(
+    """
+    Widest the image will be drawn, in device pixels. Banners get a smaller copy when one covers it.
+    """
+    width: Int
+  ): String
   width: Float
 }
 
@@ -573,9 +580,6 @@ enum StreamType {
   TWITCH
 
   """"""
-  MIXER
-
-  """"""
   YOUTUBE
 }
 
@@ -662,10 +666,10 @@ enum SocialConnectionType {
   DISCORD
 
   """"""
-  MIXER
+  XBOX
 
   """"""
-  XBOX
+  MIXER
 }
 
 input UserEventsPaginationQuery {
@@ -705,6 +709,9 @@ type EventConnection {
 """An event in a tournament"""
 type Event {
   id: ID
+
+  """Every Network that can be enabled for registration on this Event"""
+  availableNetworks: [Network]
 
   """true if brackets are published for this event"""
   bracketsPublished: Boolean
@@ -1000,9 +1007,26 @@ type Event {
   ): Entrant
 
   """
+  The phase group the logged in User's userNextMatchTime came from. Null when
+  the time fell back to the event/tournament start.
+  """
+  userNextMatchPhaseGroup: PhaseGroup
+
+  """
+  Effective ActivityState of the Set userNextMatchTime came from — a CREATED
+  Set with an active task (check-in, reporting) for the user is reported as
+  ACTIVE. Distinguishes an actionable match from a scheduled time that has
+  passed without the bracket being started.
+  """
+  userNextMatchSetState: Int
+
+  """
   Returns the logged in User's next match start time. This is the end-all-be-all source of truth. I promise.
   """
   userNextMatchTime: Timestamp
+
+  """Where userNextMatchTime came from: 'set', 'round', 'wave', or 'event'"""
+  userNextMatchTimeSource: String
 
   """Return list of Sets that the current user is participating in"""
   userSets(
@@ -1027,6 +1051,15 @@ type Event {
 
   """The entrant that won this event"""
   winnerEntrant: Entrant
+}
+
+"""A network through which a videogame can be played on a platform"""
+type Network {
+  id: ID
+  connectName: String
+  createdAt: Timestamp
+  displayName: String
+  updatedAt: Timestamp
 }
 
 """Links an event to a circuit, and holds data about the relation"""
@@ -1618,6 +1651,11 @@ type Set {
 
   """The possible inputs to the external API for fetching results"""
   apiReportingInputOptions: JSON
+
+  """
+  If setGamesType is in best of mode, this is the number of games one must win a majority out of to win the set.
+  """
+  bestOf: Int
   bracketLink: String
   bracketName: String
 
@@ -1932,9 +1970,10 @@ union StandingContainer = Tournament | Event | PhaseGroup | Set
 
 """A tournament"""
 type Tournament {
+  id: ID
+
   """Is there action required for this tournament to operate."""
   actionRequired: Boolean
-  id: ID
   addrState: String
 
   """Build Tournament admin URL"""
@@ -2107,6 +2146,11 @@ type Tournament {
 
   """The slug used to form the url"""
   slug: String
+
+  """
+  If this tournament was cloned, the id of the tournament it was cloned from
+  """
+  srcTournamentId: Int
 
   """When the tournament Starts"""
   startAt: Timestamp
@@ -2631,6 +2675,9 @@ type Player {
 
     """When true, only standings from singles events are returned."""
     onlySinglesEvents: Boolean
+
+    """When true, standings from offline events are excluded."""
+    excludeOfflineEvents: Boolean
   ): [Standing]
 
   """Player's region"""
@@ -2640,6 +2687,14 @@ type Player {
   sets(
     page: Int
     perPage: Int
+
+    """
+    Only return Sets where this player and the given opponent player were on
+    opposing entrants (head-to-head history), most recent first. Only completed
+    Sets unless the state filter is set. Only the eventIds, tournamentIds,
+    phaseGroupIds and state filters can be combined with this argument
+    """
+    opponentId: ID
 
     """Supported filter options to filter down set results."""
     filters: SetFilters
@@ -2727,6 +2782,21 @@ type RankingIteration {
   endAt: Timestamp
   images(type: String): [Image]
 
+  """
+  Whether offline event results count toward Recent Placements. Null if the owner never chose (treat as true).
+  """
+  includeOfflinePlacements: Boolean
+
+  """
+  Whether online event results count toward Recent Placements. Null if the owner never chose (treat as false).
+  """
+  includeOnlinePlacements: Boolean
+
+  """
+  Whether team event results count toward Recent Placements. Null if the owner never chose (treat as false).
+  """
+  includeTeamPlacements: Boolean
+
   """Paginated, queryable list of player ranks"""
   playerRanks(query: PlayerRankPaginationQuery!): PlayerRankConnection
   published: Boolean
@@ -2805,15 +2875,6 @@ type Platform {
 
   """Networks that a videogame can be played on through this platform"""
   networks(videogameId: ID!): [Network]
-}
-
-"""A network through which a videogame can be played on a platform"""
-type Network {
-  id: ID
-  connectName: String
-  createdAt: Timestamp
-  displayName: String
-  updatedAt: Timestamp
 }
 
 """Video Stage"""
@@ -3081,9 +3142,6 @@ enum StreamSource {
 
   """Stream is on a stream.me channel"""
   STREAMME
-
-  """Stream is on a mixer.com channel"""
-  MIXER
 
   """Stream is on a youtube.com channel"""
   YOUTUBE
@@ -3415,6 +3473,11 @@ type League {
   """Whether standings for this league should be visible"""
   showStandings: Boolean
   slug: String
+
+  """
+  If this tournament was cloned, the id of the tournament it was cloned from
+  """
+  srcTournamentId: Int
   standing(
     """Entrant in an event connected to this league"""
     entrantId: ID!
@@ -4318,6 +4381,9 @@ type ShopVotingOptionConfig {
   goalAmount: Float
   name: String
   numSelected: Int
+
+  """Multi-round voting: [{ endAt, numSelected, numEliminated }]"""
+  rounds: JSON
   voteRatio: Float
 }
 
@@ -4325,6 +4391,10 @@ type ShopVotingOptionConfig {
 type ShopVotingOptionValue {
   id: ID
   name: String
+
+  """The player this option represents, if linked"""
+  player: Player
+  playerId: ID
   subname: String
 }
 
@@ -5103,7 +5173,6 @@ enum UserNamePublishingState {
 type UserProfileAuthorizationPublishingSettings {
   discord: UserProfileAuthorizationPublishState
   displayFirst: AuthorizationType
-  mixer: UserProfileAuthorizationPublishState
   twitch: UserProfileAuthorizationPublishState
   twitter: UserProfileAuthorizationPublishState
   xbox: UserProfileAuthorizationPublishState
@@ -5465,6 +5534,11 @@ type ProfileWidgetPageLayout {
   id: String
   config: JSON
   images(type: String): [Image]
+
+  """
+  Whether the layout has been saved since it was created from the page template
+  """
+  isCustomized: Boolean
   rows: JSON
   version: Int
 }
@@ -5777,6 +5851,11 @@ type VideogameConnection {
 type Mutation {
   acceptAccountInvite(userToken: String, userId: ID, regParams: regParams, updatePlayerParams: updatePlayerParams, msaUserParams: msaUserParams, contactInfoParams: contactInfoParams): User
 
+  """
+  Estimate the sales tax for a shop checkout. Rechecked when the order is placed.
+  """
+  calculateShopOrderTax(shopId: ID!, cart: JSON!, address: JSON, shipping: Float): Float
+
   """Completes a User Confirmation."""
   confirmUserConfirmation(value: String!, email: String!): UserConfirmation
 
@@ -5814,6 +5893,11 @@ type Mutation {
 
     """Client session UUID used to uniquely identify checkout session"""
     sessionId: String!
+
+    """
+    Request the automatic-capture intent shape (only honored for whitelisted tournaments).
+    """
+    autoCapture: Boolean
   ): PaymentIntent
 
   """Update an oauth application"""
@@ -6029,9 +6113,6 @@ enum MatchConfigVerificationMethod {
 
   """"""
   ANY
-
-  """"""
-  MIXER
 
   """"""
   YOUTUBE
