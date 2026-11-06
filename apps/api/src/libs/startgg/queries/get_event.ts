@@ -50,6 +50,7 @@ export const getEvent = graphql(`
             id
             round
             fullRoundText
+            bestOf
             completedAt
             winnerId
             phaseGroup {

@@ -170,6 +170,7 @@ const fetcher = new InMemoryFetcher()
                   id: 'set-1',
                   round: 3,
                   fullRoundText: 'Winners Semis',
+                  bestOf: null,
                   completedAt: 1785276620,
                   winnerId: 1001,
                   phaseGroup: {

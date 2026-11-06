@@ -15,6 +15,7 @@ type SetOverrides = {
   winnerId?: PlayerId
   round?: number
   fullRoundText?: string
+  bestOf?: number | null
   games?: Game[]
   completedAt?: Date | null
 }
@@ -27,6 +28,7 @@ export const SetFactory = Factory.define<Set, any, Set, SetOverrides>(({ sequenc
   const fullRoundText =
     params.fullRoundText ??
     faker.helpers.arrayElement(['Winners Semis', 'Losers Quarterfinals', 'Grand Finals'])
+  const bestOf = params.bestOf ?? null
   const games = params.games ?? ([] as Game[])
   const completedAt = params.completedAt === undefined ? faker.date.past() : params.completedAt
 
@@ -69,6 +71,7 @@ export const SetFactory = Factory.define<Set, any, Set, SetOverrides>(({ sequenc
     winnerId,
     round,
     fullRoundText,
+    bestOf,
     games,
     completedAt,
   })

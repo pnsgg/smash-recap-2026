@@ -82,6 +82,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
                 winnerId: 22253157,
                 round: 2,
                 fullRoundText: 'Winners Round 2',
+                bestOf: 3,
                 completedAt: 1785278000,
                 phaseGroup: {
                   bracketType: 'DOUBLE_ELIMINATION',
@@ -228,6 +229,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
     expect(set.id).toBe(asSetId('set-1'))
     expect(set.round).toBe(2)
     expect(set.fullRoundText).toBe('Winners Round 2')
+    expect(set.bestOf).toBe(3)
     expect(set.winnerId).toBe(asPlayerId('3739330'))
     expect(set.bracketType).toBe(BracketType.DOUBLE_ELIMINATION)
     expect(set.games).toHaveLength(1)
@@ -435,6 +437,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
                 winnerId: 22253157,
                 round: 2,
                 fullRoundText: 'Winners Round 2',
+                bestOf: null,
                 completedAt: 1785278000,
                 phaseGroup: { bracketType: 'DOUBLE_ELIMINATION' },
                 slots: [],
@@ -497,6 +500,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
                 winnerId: 12345,
                 round: 2,
                 fullRoundText: 'Winners Round 2',
+                bestOf: null,
                 completedAt: 1785278000,
                 phaseGroup: { bracketType: 'DOUBLE_ELIMINATION' },
                 slots: [
@@ -914,6 +918,7 @@ describe('PlayerRecapMapper - set seeds', () => {
             winnerId: 1,
             round: 1,
             fullRoundText: 'Winners Round 1',
+            bestOf: null,
             completedAt: 1783190000,
             phaseGroup: { bracketType: 'DOUBLE_ELIMINATION' },
             slots: [
@@ -953,6 +958,15 @@ describe('PlayerRecapMapper - set seeds', () => {
     const { player } = mapPlayerRecap(playerId, playerHeader, [eventWithSet(mine, theirs)])
     return player.tournaments[0].events[0].sets[0]
   }
+
+  test('bestOf is null when start.gg leaves it out', () => {
+    const event = eventWithSet({ phaseSeed: 1, eventSeed: 1 }, { phaseSeed: 2, eventSeed: 2 })
+    const rawSet = event.userEntrant!.paginatedSets!.nodes![0]!
+    delete (rawSet as { bestOf?: number | null }).bestOf
+
+    const { player } = mapPlayerRecap(playerId, playerHeader, [event])
+    expect(player.tournaments[0].events[0].sets[0].bestOf).toBeNull()
+  })
 
   test('compares event seeds, not the seeds of the phase the set is played in', () => {
     // A secondary bracket reseeded 1-32: phase seed 32 beats phase seed 1,

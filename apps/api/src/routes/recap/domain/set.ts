@@ -42,6 +42,8 @@ export type SetParams = {
   winnerId: PlayerId
   round: number
   fullRoundText: string
+  /** Games in the format, e.g. 3 for Bo3; null when start.gg doesn't say. */
+  bestOf: number | null
   games: Game[]
   completedAt: Date | null
 }
@@ -54,6 +56,8 @@ export class Set {
   public readonly winnerId: PlayerId
   public readonly round: number
   public readonly fullRoundText: string
+  /** Games in the format, e.g. 3 for Bo3; null when start.gg doesn't say. */
+  public readonly bestOf: number | null
   public readonly games: Game[]
   public readonly completedAt: Date | null
 
@@ -67,6 +71,7 @@ export class Set {
     this.winnerId = params.winnerId
     this.round = params.round
     this.fullRoundText = params.fullRoundText
+    this.bestOf = params.bestOf
     this.games = [...params.games].sort((a, b) => a.orderNum - b.orderNum)
     this.completedAt = params.completedAt
   }

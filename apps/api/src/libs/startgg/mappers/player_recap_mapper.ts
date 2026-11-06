@@ -367,6 +367,7 @@ function mapSet(
     winnerId,
     round: rawSet.round || 0,
     fullRoundText,
+    bestOf: rawSet.bestOf ?? null,
     games,
     completedAt: rawSet.completedAt ? new Date((rawSet.completedAt as number) * 1000) : null,
     bracketType,
