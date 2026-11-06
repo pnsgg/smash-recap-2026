@@ -334,6 +334,7 @@ export class Player {
   /**
    * Computes the player's head-to-head records against opponents faced.
    * Returns a list of opponents, including the number of sets won and lost, total sets played, and win rate.
+   * Excludes sets where either competitor was disqualified: they were not played.
    *
    * @param limit The maximum number of opponents to return.
    * @param sortBy The criterion to sort the records by:
@@ -347,7 +348,7 @@ export class Player {
     for (const tournament of this.tournaments) {
       for (const event of tournament.events) {
         for (const set of event.sets) {
-          if (!set.competitors.has(this.id)) continue
+          if (!set.competitors.has(this.id) || set.hasDisqualification()) continue
 
           const opponentId = Array.from(set.competitors.keys()).find((id) => id !== this.id)
           if (!opponentId) continue

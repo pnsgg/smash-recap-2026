@@ -598,6 +598,42 @@ describe('Player - headToHead', () => {
     expect(resultDiff[0].opponentPlayerId).toBe(opponent2Id)
     expect(resultDiff[1].opponentPlayerId).toBe(opponent1Id)
   })
+
+  test('should ignore sets where either competitor was disqualified', () => {
+    const playerId = asPlayerId('1')
+    const opponentId = asPlayerId('2')
+    const dqOnlyOpponentId = asPlayerId('3')
+
+    const set = (opponent: typeof opponentId, winnerId: typeof playerId, playerDq: boolean, opponentDq: boolean) =>
+      SetFactory.build({
+        competitors: new Map()
+          .set(playerId, new SetPlayer({ isDisqualified: playerDq, playerId, score: 2, seed: SeedFactory.build() }))
+          .set(opponent, new SetPlayer({ isDisqualified: opponentDq, playerId: opponent, score: 1, seed: SeedFactory.build() })),
+        winnerId,
+      })
+
+    const player = PlayerFactory.build({
+      id: playerId,
+      tournaments: [
+        TournamentFactory.build({
+          events: [
+            EventFactory.build({
+              sets: [
+                set(opponentId, playerId, false, false),
+                set(opponentId, playerId, false, true),
+                set(opponentId, opponentId, true, false),
+                set(dqOnlyOpponentId, playerId, false, true),
+              ],
+            }),
+          ],
+        }),
+      ],
+    })
+
+    expect(player.headToHead(10)).toEqual([
+      { opponentPlayerId: opponentId, playerWonSet: 1, opponentWonSet: 0, totalSets: 1, winRate: 1 },
+    ])
+  })
 })
 
 describe('Player - highestUpset', () => {
@@ -1300,6 +1336,39 @@ describe('Player - totalSets', () => {
                     .set(playerId, new SetPlayer({ isDisqualified: true, playerId, score: 0, seed: SeedFactory.build() }))
                     .set(opponentId, new SetPlayer({ isDisqualified: false, playerId: opponentId, score: 0, seed: SeedFactory.build() })),
                   winnerId: opponentId,
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    })
+
+    expect(player.totalSets()).toBe(1)
+  })
+
+  test('should not count sets won because the opponent was disqualified', () => {
+    const playerId = asPlayerId('1')
+    const opponentId = asPlayerId('2')
+
+    const player = PlayerFactory.build({
+      id: playerId,
+      tournaments: [
+        TournamentFactory.build({
+          events: [
+            EventFactory.build({
+              sets: [
+                SetFactory.build({
+                  competitors: new Map()
+                    .set(playerId, new SetPlayer({ isDisqualified: false, playerId, score: 3, seed: SeedFactory.build() }))
+                    .set(opponentId, new SetPlayer({ isDisqualified: false, playerId: opponentId, score: 2, seed: SeedFactory.build() })),
+                  winnerId: playerId,
+                }),
+                SetFactory.build({
+                  competitors: new Map()
+                    .set(playerId, new SetPlayer({ isDisqualified: false, playerId, score: 0, seed: SeedFactory.build() }))
+                    .set(opponentId, new SetPlayer({ isDisqualified: true, playerId: opponentId, score: 0, seed: SeedFactory.build() })),
+                  winnerId: playerId,
                 }),
               ],
             }),

@@ -141,6 +141,13 @@ export class Set {
   }
 
   /**
+   * Checks if either competitor was disqualified in this set, i.e. the set was not actually played.
+   */
+  hasDisqualification(): boolean {
+    return Array.from(this.competitors.values()).some((c) => c.isDisqualified)
+  }
+
+  /**
    * Retrieves characters played by a player in this set.
    */
   getPlayerCharacters(playerId: PlayerId): Character[] {

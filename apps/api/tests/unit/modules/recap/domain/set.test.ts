@@ -512,6 +512,29 @@ describe('Set - isDecidingGameSet', () => {
   })
 })
 
+describe('Set - hasDisqualification', () => {
+  const setWith = (p1Dq: boolean, p2Dq: boolean) => {
+    const p1Id = asPlayerId('player-1')
+    const p2Id = asPlayerId('player-2')
+    return SetFactory.build({
+      competitors: new Map([
+        [p1Id, new SetPlayer({ playerId: p1Id, seed: new Seed(8, 5), score: 0, isDisqualified: p1Dq })],
+        [p2Id, new SetPlayer({ playerId: p2Id, seed: new Seed(2, 5), score: 0, isDisqualified: p2Dq })],
+      ]),
+      winnerId: p2Id,
+    })
+  }
+
+  test('is true when either competitor was disqualified', () => {
+    expect(setWith(true, false).hasDisqualification()).toBe(true)
+    expect(setWith(false, true).hasDisqualification()).toBe(true)
+  })
+
+  test('is false when nobody was disqualified', () => {
+    expect(setWith(false, false).hasDisqualification()).toBe(false)
+  })
+})
+
 describe('Set - isPlayerDisqualified', () => {
   test('isPlayerDisqualified checks correctly', () => {
     const p1Id = asPlayerId('player-1')

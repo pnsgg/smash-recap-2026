@@ -111,10 +111,11 @@ export class Event {
 
   /**
    * Counts total sets played by a player in this event.
+   * Excludes sets where either competitor was disqualified: they were not played.
    */
   getPlayerSetsCount(playerId: PlayerId): number {
     return this.sets.filter(
-      (set) => set.competitors.has(playerId) && !set.isPlayerDisqualified(playerId)
+      (set) => set.competitors.has(playerId) && !set.hasDisqualification()
     ).length
   }
 
