@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.7.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.6.0...smash-recap-v1.7.0) (2026-11-06)
+
+
+### Features
+
+* **recap:** add a rankings screen and still panel ([865a116](https://github.com/pnsgg/smash-recap-2026/commit/865a116503bd10f4b4238c50af3d23af2b32593a))
+* **recap:** fetch each set's best-of from start.gg ([9a954fb](https://github.com/pnsgg/smash-recap-2026/commit/9a954fb1992fdef9ab2997d12b8d5cc5dda05d86))
+* **recap:** return the opponent and seeds of the biggest upset ([09bfa27](https://github.com/pnsgg/smash-recap-2026/commit/09bfa27c39960ed8bc93662181eec27e22bcbebb))
+* **recap:** return the player's rankings published for the recap year ([a20e1c0](https://github.com/pnsgg/smash-recap-2026/commit/a20e1c02e209d94be77db00f2fa37cef25c2135f))
+* **recap:** show who the biggest upset was against ([48d4202](https://github.com/pnsgg/smash-recap-2026/commit/48d4202f350d779c08704cf07aa3a41b1adeb19b))
+
+
+### Bug Fixes
+
+* **recap:** compare event seeds, not phase seeds, for upsets ([dcab978](https://github.com/pnsgg/smash-recap-2026/commit/dcab9786f4abe21eed5b5c438f1836d8160adefe))
+* **recap:** don't count 1-0 sets as deciding game sets ([2a15a97](https://github.com/pnsgg/smash-recap-2026/commit/2a15a97a829c3a9e5becec2a2935834c1361932e))
+* **recap:** don't count sets reported without a score as clean sweeps ([d37fb82](https://github.com/pnsgg/smash-recap-2026/commit/d37fb82408e3c72cb6154fff536a85fbba87bf0f))
+* **recap:** leave sets with a DQ out of sets played and head-to-head ([349e5d9](https://github.com/pnsgg/smash-recap-2026/commit/349e5d990d018a514acbb1c3e8918317431122c2))
+* **recap:** only count reverse sweeps where the loser reached match point ([98aa3fa](https://github.com/pnsgg/smash-recap-2026/commit/98aa3fa9d86567c02fe104a8aeadd34e9b59f5bc))
+* **recap:** treat a set score of -1 as a DQ in that set ([f584b55](https://github.com/pnsgg/smash-recap-2026/commit/f584b55f9aac586ed2df8f19dda39421d2f29eab))
+
 ## [1.6.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.5.0...smash-recap-v1.6.0) (2026-11-03)
 
 
