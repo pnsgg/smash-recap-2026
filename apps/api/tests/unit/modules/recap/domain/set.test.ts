@@ -780,4 +780,43 @@ describe('Set - upsetFactor & isUpset', () => {
     expect(set.isUpset()).toBe(false)
     expect(set.upsetFactor()).toBeNull()
   })
+
+  test.each([
+    { winnerSeed: 33, loserSeed: null },
+    { winnerSeed: null, loserSeed: 1 },
+  ])(
+    'returns null upsetFactor and false isUpset when a seed is unknown - winnerSeed: $winnerSeed, loserSeed: $loserSeed',
+    ({ winnerSeed, loserSeed }) => {
+      const p1Id = asPlayerId('player-1')
+      const p2Id = asPlayerId('player-2')
+
+      const set = SetFactory.build({
+        bracketType: BracketType.DOUBLE_ELIMINATION,
+        competitors: new Map([
+          [
+            p1Id,
+            new SetPlayer({
+              playerId: p1Id,
+              seed: winnerSeed === null ? null : new Seed(winnerSeed, 5),
+              score: 2,
+              isDisqualified: false,
+            }),
+          ],
+          [
+            p2Id,
+            new SetPlayer({
+              playerId: p2Id,
+              seed: loserSeed === null ? null : new Seed(loserSeed, 5),
+              score: 0,
+              isDisqualified: false,
+            }),
+          ],
+        ]),
+        winnerId: p1Id,
+      })
+
+      expect(set.isUpset()).toBe(false)
+      expect(set.upsetFactor()).toBeNull()
+    }
+  )
 })

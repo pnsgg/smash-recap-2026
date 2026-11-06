@@ -60,6 +60,7 @@ export const getEvent = graphql(`
                 id
                 name
                 isDisqualified
+                initialSeedNum
                 players {
                   id
                 }

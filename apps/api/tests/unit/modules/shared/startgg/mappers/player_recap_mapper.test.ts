@@ -92,6 +92,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
                       id: '22253157',
                       name: 'Dapoce',
                       isDisqualified: false,
+                      initialSeedNum: 19,
                       players: [
                         {
                           id: '3739330',
@@ -117,6 +118,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
                       id: 'entrant-1',
                       name: 'PNS | Rouxchov',
                       isDisqualified: false,
+                      initialSeedNum: 10,
                       players: [
                         {
                           id: 'player-123',
@@ -503,6 +505,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
                       id: '12345',
                       name: 'Rouxchov',
                       isDisqualified: false,
+                      initialSeedNum: null,
                       standing: { placement: 9 },
                       players: [{ id: 'player-123' }],
                     },
@@ -596,6 +599,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
                       id?: string | null
                       name?: string | null
                       isDisqualified?: boolean | null
+                      initialSeedNum?: number | null
                       standing?: {
                         placement?: number | null
                       } | null
@@ -861,5 +865,125 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
     }
     const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
     expect(skippedEventCount).toBe(1)
+  })
+})
+
+describe('PlayerRecapMapper - set seeds', () => {
+  const playerId = asPlayerId('player-123')
+  const opponentId = asPlayerId('player-456')
+  const playerHeader = { gamerTag: 'Licane', prefix: null }
+
+  type SlotSeeds = { phaseSeed: number | null; eventSeed: number | null }
+
+  /** One event with a single set the player won against the opponent. */
+  const eventWithSet = (mine: SlotSeeds, theirs: SlotSeeds): EventResult => ({
+    id: 'event-1',
+    name: '1v1 Ultimate (FULL BO5)',
+    type: 1,
+    isOnline: false,
+    videogame: { id: '1386', name: 'Super Smash Bros. Ultimate' },
+    phases: [
+      {
+        phaseOrder: 1,
+        phaseGroups: { nodes: [{ id: null, bracketType: 'DOUBLE_ELIMINATION' }] },
+      },
+    ],
+    tournament: {
+      id: 'tournament-1',
+      name: 'Le Parthenon #6',
+      lat: null,
+      lng: null,
+      city: null,
+      addrState: null,
+      countryCode: null,
+      startAt: 1783188000,
+      timezone: null,
+      images: null,
+    },
+    userEntrant: {
+      id: '1',
+      name: 'Licane',
+      isDisqualified: false,
+      initialSeedNum: mine.eventSeed ?? 1,
+      players: [{ id: playerId }],
+      standing: { placement: 17 },
+      paginatedSets: {
+        nodes: [
+          {
+            id: 'set-1',
+            winnerId: 1,
+            round: 1,
+            fullRoundText: 'Winners Round 1',
+            completedAt: 1783190000,
+            phaseGroup: { bracketType: 'DOUBLE_ELIMINATION' },
+            slots: [
+              {
+                entrant: {
+                  id: '1',
+                  name: 'Licane',
+                  isDisqualified: false,
+                  initialSeedNum: mine.eventSeed,
+                  players: [{ id: playerId }],
+                  standing: { placement: 17 },
+                },
+                seed: mine.phaseSeed === null ? null : { seedNum: mine.phaseSeed },
+                standing: { stats: { score: { value: 3 } } },
+              },
+              {
+                entrant: {
+                  id: '2',
+                  name: 'lucali',
+                  isDisqualified: false,
+                  initialSeedNum: theirs.eventSeed,
+                  players: [{ id: opponentId }],
+                  standing: { placement: 25 },
+                },
+                seed: theirs.phaseSeed === null ? null : { seedNum: theirs.phaseSeed },
+                standing: { stats: { score: { value: 1 } } },
+              },
+            ],
+            games: [],
+          },
+        ],
+      },
+    },
+  })
+
+  const mapSet = (mine: SlotSeeds, theirs: SlotSeeds) => {
+    const { player } = mapPlayerRecap(playerId, playerHeader, [eventWithSet(mine, theirs)])
+    return player.tournaments[0].events[0].sets[0]
+  }
+
+  test('compares event seeds, not the seeds of the phase the set is played in', () => {
+    // A secondary bracket reseeded 1-32: phase seed 32 beats phase seed 1,
+    // but in the event the winner was seeded 96 and the loser 128.
+    const set = mapSet({ phaseSeed: 32, eventSeed: 96 }, { phaseSeed: 1, eventSeed: 128 })
+
+    expect(set.competitors.get(playerId)?.seed?.initialSeed).toBe(96)
+    expect(set.competitors.get(opponentId)?.seed?.initialSeed).toBe(128)
+    expect(set.upsetFactor()).toBeLessThanOrEqual(0)
+    expect(set.isUpset()).toBe(false)
+  })
+
+  test('still finds an upset between event seeds', () => {
+    const set = mapSet({ phaseSeed: 1, eventSeed: 33 }, { phaseSeed: 2, eventSeed: 1 })
+    expect(set.upsetFactor()).toBeGreaterThan(0)
+  })
+
+  test('an opponent without an event seed has no seed instead of seed 1', () => {
+    const set = mapSet({ phaseSeed: 32, eventSeed: 96 }, { phaseSeed: null, eventSeed: null })
+
+    expect(set.competitors.get(opponentId)?.seed).toBeNull()
+    expect(set.upsetFactor()).toBeNull()
+    expect(set.isUpset()).toBe(false)
+  })
+
+  test('the opponent participant falls back to the phase seed when the event seed is missing', () => {
+    const { player } = mapPlayerRecap(playerId, playerHeader, [
+      eventWithSet({ phaseSeed: 32, eventSeed: 96 }, { phaseSeed: 1, eventSeed: null }),
+    ])
+    const opponent = player.tournaments[0].events[0].participants.find((p) => p.playerId === opponentId)
+    expect(opponent?.seed.initialSeed).toBe(1)
+    expect(opponent?.seed.finalPlacement).toBe(25)
   })
 })

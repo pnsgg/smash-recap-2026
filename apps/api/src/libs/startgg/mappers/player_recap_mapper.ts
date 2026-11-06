@@ -307,7 +307,9 @@ function mapSet(
 
     entrantIdToPlayerId.set(entrant.id.toString(), playerId)
 
-    const initialSeed = slot.seed?.seedNum || 1
+    // Upsets compare event seeds: `slot.seed` is the seed in the set's phase, which events
+    // reset for Top 32 / Top 8 / secondary brackets.
+    const eventSeed = entrant.initialSeedNum || null
     const rawScore = slot.standing?.stats?.score?.value ?? 0
     const score = Math.max(0, rawScore)
     const finalPlacement = entrant.standing?.placement || 1
@@ -316,7 +318,7 @@ function mapSet(
       playerId,
       new SetPlayer({
         playerId,
-        seed: new Seed(initialSeed, finalPlacement),
+        seed: eventSeed === null ? null : new Seed(eventSeed, finalPlacement),
         score,
         isDisqualified: !!entrant.isDisqualified,
       })
@@ -330,7 +332,7 @@ function mapSet(
           id: asParticipantId(entrant.id.toString()),
           playerId,
           name: entrant.name,
-          seed: new Seed(initialSeed, finalPlacement),
+          seed: new Seed(eventSeed ?? (slot.seed?.seedNum || 1), finalPlacement),
         })
       )
     }

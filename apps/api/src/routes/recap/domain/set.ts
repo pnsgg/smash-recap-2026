@@ -7,14 +7,15 @@ import type { EventId, PlayerId, SetId } from '#libs/ids'
 
 export type SetPlayerParams = {
   playerId: PlayerId
-  seed: Seed
+  /** Seed in the event, or null when start.gg has none. */
+  seed: Seed | null
   score: number
   isDisqualified: boolean
 }
 
 export class SetPlayer {
   public readonly playerId: PlayerId
-  public readonly seed: Seed
+  public readonly seed: Seed | null
   public readonly score: number
   public readonly isDisqualified: boolean
 
@@ -90,13 +91,15 @@ export class Set {
 
   /**
    * Computes the upset factor of this set.
-   * Returns a positive number if it was an upset, a negative number if it was expected, or null if unsupported.
+   * Returns a positive number if it was an upset, a negative number if it was expected, or null if
+   * unsupported or if either competitor has no seed.
    */
   upsetFactor(): number | null {
     const winner = this.competitors.get(this.winnerId)
     const loser = Array.from(this.competitors.values()).find((c) => c.playerId !== this.winnerId)
     if (!winner || !loser) return null
     if (winner.isDisqualified || loser.isDisqualified) return null
+    if (!winner.seed || !loser.seed) return null
     return Seed.upsetFactor(winner.seed.initialSeed, loser.seed.initialSeed, this.bracketType)
   }
 
