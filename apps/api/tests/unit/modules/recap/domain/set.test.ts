@@ -383,7 +383,23 @@ describe('Set - getStageActivity', () => {
   })
 })
 
+const setWithScores = (winnerScore: number, loserScore: number) => {
+  const winnerId = asPlayerId('player-1')
+  const loserId = asPlayerId('player-2')
+  return SetFactory.build({
+    competitors: new Map([
+      [winnerId, new SetPlayer({ playerId: winnerId, seed: new Seed(1, 1), score: winnerScore, isDisqualified: false })],
+      [loserId, new SetPlayer({ playerId: loserId, seed: new Seed(2, 2), score: loserScore, isDisqualified: false })],
+    ]),
+    winnerId,
+  })
+}
+
 describe('Set - isCleanSweep', () => {
+  test('a set reported without a score (0-0) is not a clean sweep', () => {
+    expect(setWithScores(0, 0).isCleanSweep()).toBe(false)
+  })
+
   test('isCleanSweep checks correctly', () => {
     const p1Id = asPlayerId('player-1')
     const p2Id = asPlayerId('player-2')

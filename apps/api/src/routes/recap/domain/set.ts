@@ -114,14 +114,15 @@ export class Set {
   }
 
   /**
-   * Checks if this set was won with a clean sweep (opponent score was exactly 0).
-   * Excludes disqualified sets.
+   * Checks if this set was won with a clean sweep: the winner won games and the opponent none.
+   * Excludes disqualified sets and sets reported without a score (0-0).
    */
   isCleanSweep(): boolean {
     const winner = this.competitors.get(this.winnerId)
     const loser = Array.from(this.competitors.values()).find((c) => c.playerId !== this.winnerId)
     if (!winner || !loser) return false
-    return !winner.isDisqualified && !loser.isDisqualified && loser.score === 0
+    if (winner.isDisqualified || loser.isDisqualified) return false
+    return winner.score > 0 && loser.score === 0
   }
 
   /**
