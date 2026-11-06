@@ -876,7 +876,7 @@ describe('PlayerRecapMapper - set seeds', () => {
   type SlotSeeds = { phaseSeed: number | null; eventSeed: number | null }
 
   /** One event with a single set the player won against the opponent. */
-  const eventWithSet = (mine: SlotSeeds, theirs: SlotSeeds): EventResult => ({
+  const eventWithSet = (mine: SlotSeeds, theirs: SlotSeeds, theirScore = 1): EventResult => ({
     id: 'event-1',
     name: '1v1 Ultimate (FULL BO5)',
     type: 1,
@@ -939,7 +939,7 @@ describe('PlayerRecapMapper - set seeds', () => {
                   standing: { placement: 25 },
                 },
                 seed: theirs.phaseSeed === null ? null : { seedNum: theirs.phaseSeed },
-                standing: { stats: { score: { value: 1 } } },
+                standing: { stats: { score: { value: theirScore } } },
               },
             ],
             games: [],
@@ -976,6 +976,20 @@ describe('PlayerRecapMapper - set seeds', () => {
     expect(set.competitors.get(opponentId)?.seed).toBeNull()
     expect(set.upsetFactor()).toBeNull()
     expect(set.isUpset()).toBe(false)
+  })
+
+  test('an opponent DQ in this set (score -1) is no upset, even if they are not DQ from the event', () => {
+    // Slay O'Clock #62 Losers Final: event seed 11 beats seed 1 by DQ, displayScore "DQ", no games.
+    const { player } = mapPlayerRecap(playerId, playerHeader, [
+      eventWithSet({ phaseSeed: 3, eventSeed: 11 }, { phaseSeed: 1, eventSeed: 1 }, -1),
+    ])
+    const set = player.tournaments[0].events[0].sets[0]
+
+    expect(set.isPlayerDisqualified(opponentId)).toBe(true)
+    expect(set.isPlayerDisqualified(playerId)).toBe(false)
+    expect(set.competitors.get(opponentId)?.score).toBe(0)
+    expect(set.upsetFactor()).toBeNull()
+    expect(set.isCleanSweep()).toBe(false)
   })
 
   test('the opponent participant falls back to the phase seed when the event seed is missing', () => {

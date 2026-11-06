@@ -320,7 +320,9 @@ function mapSet(
         playerId,
         seed: eventSeed === null ? null : new Seed(eventSeed, finalPlacement),
         score,
-        isDisqualified: !!entrant.isDisqualified,
+        // `entrant.isDisqualified` is a DQ from the whole event; start.gg marks a DQ in this set
+        // alone with a score of -1 (the set's displayScore reads "DQ").
+        isDisqualified: !!entrant.isDisqualified || rawScore < 0,
       })
     )
 
