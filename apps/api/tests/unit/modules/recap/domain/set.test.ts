@@ -445,6 +445,10 @@ describe('Set - isCleanSweep', () => {
 })
 
 describe('Set - isDecidingGameSet', () => {
+  test('a 1-0 is not a deciding game set: the loser never won a game', () => {
+    expect(setWithScores(1, 0).isDecidingGameSet()).toBe(false)
+  })
+
   test('isDecidingGameSet checks correctly', () => {
     const p1Id = asPlayerId('player-1')
     const p2Id = asPlayerId('player-2')

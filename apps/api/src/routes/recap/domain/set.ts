@@ -126,7 +126,8 @@ export class Set {
   }
 
   /**
-   * Checks if this set went to the deciding game (score difference is exactly 1).
+   * Checks if this set went to the deciding game: both players won games and the score
+   * difference is exactly 1 (2-1, 3-2...). A 1-0 is not a deciding game set.
    * Excludes disqualified sets.
    */
   isDecidingGameSet(): boolean {
@@ -135,7 +136,7 @@ export class Set {
     const c1 = competitors[0]
     const c2 = competitors[1]
     if (c1.isDisqualified || c2.isDisqualified) return false
-    return Math.abs(c1.score - c2.score) === 1
+    return Math.min(c1.score, c2.score) > 0 && Math.abs(c1.score - c2.score) === 1
   }
 
   /**
