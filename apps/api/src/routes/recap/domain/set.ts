@@ -114,18 +114,20 @@ export class Set {
   }
 
   /**
-   * Checks if this set was won with a clean sweep (opponent score was exactly 0).
-   * Excludes disqualified sets.
+   * Checks if this set was won with a clean sweep: the winner won games and the opponent none.
+   * Excludes disqualified sets and sets reported without a score (0-0).
    */
   isCleanSweep(): boolean {
     const winner = this.competitors.get(this.winnerId)
     const loser = Array.from(this.competitors.values()).find((c) => c.playerId !== this.winnerId)
     if (!winner || !loser) return false
-    return !winner.isDisqualified && !loser.isDisqualified && loser.score === 0
+    if (winner.isDisqualified || loser.isDisqualified) return false
+    return winner.score > 0 && loser.score === 0
   }
 
   /**
-   * Checks if this set went to the deciding game (score difference is exactly 1).
+   * Checks if this set went to the deciding game: both players won games and the score
+   * difference is exactly 1 (2-1, 3-2...). A 1-0 is not a deciding game set.
    * Excludes disqualified sets.
    */
   isDecidingGameSet(): boolean {
@@ -134,7 +136,7 @@ export class Set {
     const c1 = competitors[0]
     const c2 = competitors[1]
     if (c1.isDisqualified || c2.isDisqualified) return false
-    return Math.abs(c1.score - c2.score) === 1
+    return Math.min(c1.score, c2.score) > 0 && Math.abs(c1.score - c2.score) === 1
   }
 
   /**
@@ -223,8 +225,9 @@ export class Set {
 
   /**
    * Checks if the specified player won this set via a reverse sweep.
-   * A reverse sweep is when a player wins all remaining games in a set after being down
-   * (e.g., down 0-1 in Bo3, 0-2 in Bo5, 0-3 in Bo7) without winning any games first.
+   * A reverse sweep is when a player loses every game until the opponent is one game from
+   * winning the set (0-1 in Bo3, 0-2 in Bo5, 0-3 in Bo7), then wins every remaining game.
+   * The final score is therefore N to N-1: losing game 1 then winning 3 in a Bo5 is not one.
    */
   isReverseSweepWon(playerId: PlayerId): boolean {
     if (this.winnerId !== playerId) return false
@@ -239,8 +242,8 @@ export class Set {
     const playerWins = winners.filter((w) => w === playerId).length
     const opponentWins = winners.filter((w) => w === opponentId).length
 
-    // Winner must have won more games, and loser must have won at least 1 game
-    if (playerWins <= opponentWins || opponentWins === 0) return false
+    // Loser must have reached match point: exactly one game fewer than the winner
+    if (opponentWins === 0 || playerWins !== opponentWins + 1) return false
 
     // Sequence must be: all opponent wins first, followed by all player wins
     for (let i = 0; i < opponentWins; i++) {
@@ -269,8 +272,8 @@ export class Set {
     const playerWins = winners.filter((w) => w === playerId).length
     const opponentWins = winners.filter((w) => w === opponentId).length
 
-    // Winner (opponent) must have won more games, and loser (player) must have won at least 1 game
-    if (opponentWins <= playerWins || playerWins === 0) return false
+    // Loser (player) must have reached match point: exactly one game fewer than the winner
+    if (playerWins === 0 || opponentWins !== playerWins + 1) return false
 
     // Sequence must be: all player wins first, followed by all opponent wins
     for (let i = 0; i < playerWins; i++) {

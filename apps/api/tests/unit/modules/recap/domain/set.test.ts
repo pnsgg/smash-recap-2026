@@ -383,7 +383,23 @@ describe('Set - getStageActivity', () => {
   })
 })
 
+const setWithScores = (winnerScore: number, loserScore: number) => {
+  const winnerId = asPlayerId('player-1')
+  const loserId = asPlayerId('player-2')
+  return SetFactory.build({
+    competitors: new Map([
+      [winnerId, new SetPlayer({ playerId: winnerId, seed: new Seed(1, 1), score: winnerScore, isDisqualified: false })],
+      [loserId, new SetPlayer({ playerId: loserId, seed: new Seed(2, 2), score: loserScore, isDisqualified: false })],
+    ]),
+    winnerId,
+  })
+}
+
 describe('Set - isCleanSweep', () => {
+  test('a set reported without a score (0-0) is not a clean sweep', () => {
+    expect(setWithScores(0, 0).isCleanSweep()).toBe(false)
+  })
+
   test('isCleanSweep checks correctly', () => {
     const p1Id = asPlayerId('player-1')
     const p2Id = asPlayerId('player-2')
@@ -429,6 +445,10 @@ describe('Set - isCleanSweep', () => {
 })
 
 describe('Set - isDecidingGameSet', () => {
+  test('a 1-0 is not a deciding game set: the loser never won a game', () => {
+    expect(setWithScores(1, 0).isDecidingGameSet()).toBe(false)
+  })
+
   test('isDecidingGameSet checks correctly', () => {
     const p1Id = asPlayerId('player-1')
     const p2Id = asPlayerId('player-2')
@@ -665,6 +685,28 @@ describe('Set - reverse sweeps', () => {
 
     expect(bo3SweepSet.isReverseSweepWon(p1Id)).toBe(true)
     expect(bo3SweepSet.isReverseSweepLost(p2Id)).toBe(true)
+  })
+
+  test('a comeback from 0-1 in a Bo5 is not a reverse sweep: the loser never reached match point', () => {
+    const p1Id = asPlayerId('player-1')
+    const p2Id = asPlayerId('player-2')
+
+    const set = SetFactory.build({
+      competitors: new Map([
+        [p1Id, new SetPlayer({ playerId: p1Id, seed: new Seed(1, 5), score: 3, isDisqualified: false })],
+        [p2Id, new SetPlayer({ playerId: p2Id, seed: new Seed(2, 5), score: 1, isDisqualified: false })],
+      ]),
+      winnerId: p1Id,
+      games: [
+        GameFactory.build({ orderNum: 1, winnerId: p2Id }),
+        GameFactory.build({ orderNum: 2, winnerId: p1Id }),
+        GameFactory.build({ orderNum: 3, winnerId: p1Id }),
+        GameFactory.build({ orderNum: 4, winnerId: p1Id }),
+      ],
+    })
+
+    expect(set.isReverseSweepWon(p1Id)).toBe(false)
+    expect(set.isReverseSweepLost(p2Id)).toBe(false)
   })
 })
 
