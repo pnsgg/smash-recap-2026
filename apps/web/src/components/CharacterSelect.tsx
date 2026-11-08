@@ -8,7 +8,6 @@ import { useReveal } from "../hooks/useReveal";
 import { play } from "../lib/sound";
 import { displayName, formatNumber, formatPercent, formatSigned, playerSummary } from "../lib/stats";
 import { PixelNumber } from "./PixelNumber";
-import { Static } from "./Static";
 import "./CharacterSelect.css";
 
 type Props = {
@@ -16,7 +15,7 @@ type Props = {
   recaps: Promise<Settled<PlayerRecapProps>>[];
 };
 
-/** Top players as a character select screen: portraits, a P1 token that follows you, the pick on a monitor. */
+/** Top players as a character select screen: portraits, a P1 token that follows you, the pick's numbers beside them. */
 export function CharacterSelect({ recaps }: Props) {
   const sectionRef = useReveal<HTMLElement>();
   const [index, setIndex] = useState(0);
@@ -41,9 +40,17 @@ export function CharacterSelect({ recaps }: Props) {
     setIndex(i);
   };
 
+  const tap = (i: number) => {
+    pick(i);
+    if (!window.matchMedia("(max-width: 640px)").matches) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById("player-panel")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  };
+
   const onKey = (event: KeyboardEvent<HTMLButtonElement>) => {
     const last = FEATURED_PLAYERS.length - 1;
-    const cols = 3;
+    const grid = gridRef.current;
+    const cols = grid ? getComputedStyle(grid).gridTemplateColumns.split(" ").length : 3;
     const moves: Record<string, number> = {
       ArrowRight: index === last ? 0 : index + 1,
       ArrowLeft: index === 0 ? last : index - 1,
@@ -67,9 +74,6 @@ export function CharacterSelect({ recaps }: Props) {
         <h2 id="select-title" data-reveal>
           Top players’ recaps
         </h2>
-        <p data-reveal style={{ "--i": 1 } as CSSProperties}>
-          Pick a player to see their {RECAP_YEAR} in numbers, then watch the full recap.
-        </p>
       </div>
 
       <div className="select__body">
@@ -93,7 +97,7 @@ export function CharacterSelect({ recaps }: Props) {
               aria-controls="player-panel"
               tabIndex={i === index ? 0 : -1}
               className="select__tile"
-              onClick={() => pick(i)}
+              onClick={() => tap(i)}
               onKeyDown={onKey}
               onPointerEnter={() => {
                 if (i !== pointed) play("blip");
@@ -104,6 +108,9 @@ export function CharacterSelect({ recaps }: Props) {
             >
               <Portrait player={p} className="select__portrait" />
               <span className="select__plate">{p.gamerTag}</span>
+              <span className="select__pick" aria-hidden="true">
+                P1
+              </span>
             </button>
           ))}
           {token && (
@@ -154,13 +161,6 @@ function PlayerStage({
 
   return (
     <div id="player-panel" role="tabpanel" aria-labelledby={`player-tab-${index}`} className="select__stage">
-      <div className="select__monitor">
-        <div className="select__glass glass" key={player.discriminator}>
-          <Portrait player={player} className="select__big" />
-          <Static className="select__snow" running={false} density={0.6} />
-        </div>
-      </div>
-
       <div className="select__info" key={`info-${player.discriminator}`}>
         <h3 className="select__name">{name}</h3>
         <Suspense fallback={<PlayerNumbers numbers={null} />}>
