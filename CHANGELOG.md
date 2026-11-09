@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.1](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.7.0...smash-recap-v1.7.1) (2026-11-08)
+
+
+### Bug Fixes
+
+* display a list of players instead of cards ([61cb08f](https://github.com/pnsgg/smash-recap-2026/commit/61cb08f4a54c6f31cbeeee49da6ff2ed11417463))
+* **web:** display a list of players instead of cards on small screens ([a2c538d](https://github.com/pnsgg/smash-recap-2026/commit/a2c538d8bd7ec6385232a30110fbf832aea472c5))
+
 ## [1.7.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.6.0...smash-recap-v1.7.0) (2026-11-06)
 
 
