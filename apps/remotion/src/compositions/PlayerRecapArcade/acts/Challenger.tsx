@@ -9,8 +9,9 @@ import { Slam } from "../components/Slam";
 import { cycle, SIREN, SIREN_PALETTE } from "../components/sprites";
 import { blink, caption, color, display, displayCase, fitDisplay } from "../theme";
 
-export const VS_AT = 45;
-export const MATCHUPS_AT = 145;
+// The alert holds 3 s so its subtitle can be read, then the versus and the matchups (timing.ts: 6 bars).
+export const VS_AT = 90;
+export const MATCHUPS_AT = 200;
 
 const Hazard: React.FC<{ t: number; y: number; dir: 1 | -1 }> = ({ t, y, dir }) => (
   <div

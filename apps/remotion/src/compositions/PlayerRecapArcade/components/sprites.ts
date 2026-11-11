@@ -124,26 +124,6 @@ export const STAR = [
   "kk...kk",
 ] as const;
 
-export const STORM = [
-  [
-    ".....kkkk.......",
-    "...kkwwwwkk.....",
-    "..kwwwwwwwwkkk..",
-    ".kwwwwwwwwwwwwk.",
-    "kwwwwwwwwwwwwwwk",
-    "kqqwwwwwwwwwwqqk",
-    ".kqqqqqqqqqqqqk.",
-    "..kkkkkkkkkkkk..",
-    "......kak.......",
-    ".....kak........",
-    "....kaaak.......",
-    "......kak.......",
-    ".....kak........",
-    ".....kk.........",
-  ],
-] as const;
-export const STORM_PALETTE = { k: outline, w: color.muted, q: color.cardMuted, a: color.gold } as const;
-
 export const SIREN = [
   [
     "...kkkk...",
@@ -175,22 +155,6 @@ export const SPARK = [
 ] as const;
 export const SPARK_PALETTE = { a: color.gold, b: color.accent, w: color.ink } as const;
 
-export const CHEST = [
-  [
-    "..kkkkkkkkkk..",
-    ".kcccccccccck.",
-    "kcaaaaaaaaaack",
-    "kccccckkkcccck",
-    "kkkkkkbakkkkkk",
-    "kddddkbakddddk",
-    "kddddkkkkddddk",
-    "kddddddddddddk",
-    "kcccccccccccck",
-    "kkkkkkkkkkkkkk",
-  ],
-] as const;
-export const CHEST_PALETTE = { ...GOLD, d: "#6b3f1d" } as const;
-
 export const CRATE = [
   [
     "kkkkkkkkkkkkkkkk",
@@ -212,62 +176,6 @@ export const CRATE = [
   ],
 ] as const;
 export const CRATE_PALETTE = { k: outline, w: "#a8743a", p: "#7a4f24" } as const;
-
-export const BOOM = [
-  [
-    "................",
-    "................",
-    "................",
-    "......aaaa......",
-    ".....abbbba.....",
-    "....abwwwwba....",
-    "....abwwwwba....",
-    "....abwwwwba....",
-    ".....abbbba.....",
-    "......aaaa......",
-    "................",
-  ],
-  [
-    "......a..a......",
-    "...a.aabbaa.a...",
-    "....abbbbbbba...",
-    "..aabbwwwwbbaa..",
-    "..abbwwwwwwbba..",
-    ".aabwwwwwwwwbaa.",
-    "..abbwwwwwwbba..",
-    "..aabbwwwwbbaa..",
-    "....abbbbbbba...",
-    "...a.aabbaa.a...",
-    "......a..a......",
-  ],
-  [
-    "..a...a..a...a..",
-    "a..aabb..bbaa..a",
-    "..abb..aa..bba..",
-    ".ab..aabbaa..ba.",
-    "ab..ab....ba..ba",
-    ".a.ab......ba.a.",
-    "ab..ab....ba..ba",
-    ".ab..aabbaa..ba.",
-    "..abb..aa..bba..",
-    "a..aabb..bbaa..a",
-    "..a...a..a...a..",
-  ],
-  [
-    "a..............a",
-    "...a..b..b..a...",
-    ".b............b.",
-    "....a......a....",
-    "..b..........b..",
-    "a..............a",
-    "..b..........b..",
-    "....a......a....",
-    ".b............b.",
-    "...a..b..b..a...",
-    "a..............a",
-  ],
-] as const;
-export const BOOM_PALETTE = { a: color.accent, b: color.gold, w: "#fff1b8" } as const;
 
 export const ARROW_UP = ["...k...", "..kak..", ".kaaak.", "kaaaaak", "kkaaakk", "..kak..", "..kak..", "..kkk.."] as const;
 export const ARROW_DOWN = [...ARROW_UP].reverse();

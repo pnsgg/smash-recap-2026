@@ -1,194 +1,166 @@
 import { interpolate, spring } from "remotion";
-import { clamp, springPresets } from "../../../lib/motion";
+import { springPresets } from "../../../lib/motion";
 import type { ActProps } from "../../PlayerRecapArcade";
-import type { ArcadeData } from "../data";
-import { Chip, snap, Stripes } from "../components/kit";
+import { bonusPlan, type ArcadeData } from "../data";
+import { Chip, snap } from "../components/kit";
 import { PixelImage } from "../components/PixelImage";
-import { PixelText, Sprite } from "../components/Pixel";
+import { PixelText } from "../components/Pixel";
 import { Slam } from "../components/Slam";
-import { BOOM, BOOM_PALETTE, CHEST, CHEST_PALETTE, cycle } from "../components/sprites";
 import { FPS } from "../timing";
-import { caption, color, display, displayCase, fitDisplay, font, uncapped } from "../theme";
+import { caption, color, display, displayCase, fitDisplay, font } from "../theme";
 
-const RUNS_AT = 40;
-const UPSET_AT = 225;
-
-const Bricks: React.FC = () => (
-  <svg width={600} height={600} shapeRendering="crispEdges" style={{ position: "absolute", inset: 0, ...uncapped }}>
-    <defs>
-      <pattern id="arcade-bricks" width={64} height={32} patternUnits="userSpaceOnUse">
-        <rect width={64} height={32} fill="#070908" />
-        {[
-          [0, 0],
-          [-32, 16],
-          [32, 16],
-        ].map(([x, y]) => (
-          <g key={`${x}-${y}`}>
-            <rect x={x} y={y} width={60} height={12} fill="#2a1d15" />
-            <rect x={x} y={y} width={60} height={2} fill="#3b2a1e" />
-          </g>
-        ))}
-      </pattern>
-    </defs>
-    <rect width={600} height={600} fill="url(#arcade-bricks)" />
-  </svg>
-);
-
-type RunEntry = { name: string; src: string | null; spr: number; worst: boolean };
-
-// Each run is a ladder from the seed line: one rung per placement round above seed, down for the worst run.
-const SEED_Y = 392;
-const AREA = { left: 40, width: 520, up: 240, down: 104 } as const;
-const BUILD_AT = 16;
-const BUILD_EACH = 20;
-const LOGO = 52;
+// The best run gets the screen to itself, then the other runs and the worst one as a list that stays up.
+const ROW = { top: 132, pitch: 66, logo: 52 } as const;
 
 const signed = (spr: number) => (spr > 0 ? `+${spr}` : String(spr));
 
 const Logo: React.FC<{ src: string | null; side: number; edge: string }> = ({ src, side, edge }) => (
-  <div style={{ width: side, height: side, outline: `4px solid ${edge}`, backgroundColor: color.raised2 }}>
+  <div style={{ width: side, height: side, flex: "none", outline: `4px solid ${edge}`, backgroundColor: color.raised2 }}>
     <PixelImage src={src} rows={side / 4} px={4} mode="photo" levels={5} />
   </div>
 );
 
-/** A ladder `rungs` high (or deep), drawn as pixel rails and rungs; `shown` of them built so far. */
-const Ladder: React.FC<{ x: number; rungs: number; shown: number; step: number; down: boolean; tone: string; rail: string }> = ({
-  x,
-  rungs,
-  shown,
-  step,
-  down,
-  tone,
-  rail,
-}) => {
-  const height = shown * step;
-  return (
-    <div style={{ position: "absolute", left: x - 20, top: down ? SEED_Y : SEED_Y - height, width: 40, height }}>
-      <div style={{ position: "absolute", left: 0, top: 0, width: 6, height, backgroundColor: rail }} />
-      <div style={{ position: "absolute", right: 0, top: 0, width: 6, height, backgroundColor: rail }} />
-      {Array.from({ length: Math.min(rungs, Math.ceil(shown)) }, (_, k) => (
-        <div key={k} style={{ position: "absolute", left: 6, right: 6, top: down ? (k + 0.5) * step - 3 : height - (k + 0.5) * step - 3, height: 6, backgroundColor: tone }} />
-      ))}
-    </div>
-  );
-};
+type Run = ArcadeData["bestRuns"][number];
 
-const Runs: React.FC<{ t: number; data: ArcadeData }> = ({ t, data }) => {
-  const runs: RunEntry[] = [
-    ...data.bestRuns.map((r) => ({ name: r.tournamentName, src: r.tournamentImageUrl, spr: r.spr, worst: false })),
-    ...(data.worstRun ? [{ name: data.worstRun.tournamentName, src: data.worstRun.tournamentImageUrl, spr: data.worstRun.spr, worst: true }] : []),
-  ];
-  const pitch = AREA.width / Math.max(1, runs.length);
-  const maxUp = Math.max(1, ...runs.map((r) => r.spr));
-  const maxDown = Math.max(1, ...runs.map((r) => -r.spr));
-  const upStep = Math.min(40, (AREA.up - LOGO - 40) / maxUp);
-  const downStep = Math.min(30, (AREA.down - 10) / maxDown);
-  const builtAt = (i: number) => BUILD_AT + i * BUILD_EACH;
-  const building = runs.findIndex((_, i) => t < builtAt(i) + BUILD_EACH);
-  // While the ladders build, the line under them names the one going up; then it settles on the best run.
-  const named = building === -1 ? runs.find((r) => !r.worst) ?? runs[0]! : runs[building]!;
-
+const BestRun: React.FC<{ t: number; run: Run }> = ({ t, run }) => {
+  const name = displayCase(run.tournamentName);
   return (
     <>
       <div style={{ position: "absolute", left: 44, top: 40 }}>
-        <Slam frame={t} at={0} text="BEST RUNS" style={display(32, color.gold)} fill={color.gold} />
-        <div style={{ ...caption, marginTop: 12, opacity: snap(t, 6) }}>Rounds you finished above your seed</div>
+        <Slam frame={t} at={0} text="BEST RUN" style={display(48, color.gold)} fill={color.gold} />
       </div>
-
-      {/* The seed line */}
-      <div style={{ position: "absolute", left: 24, right: 24, top: SEED_Y - 2, height: 4, opacity: snap(t, 4) }}>
-        <Stripes width={552} height={4} angle={0} period={16} band={10} fill={color.muted} />
-      </div>
-      <div style={{ position: "absolute", left: 26, top: SEED_Y + 10, ...caption, fontSize: 14, opacity: snap(t, 8) }}>Your seed</div>
-
-      {runs.map((r, i) => {
-        const x = AREA.left + pitch * (i + 0.5);
-        const rungs = Math.abs(r.spr);
-        const step = r.worst ? downStep : upStep;
-        const shown = interpolate(t, [builtAt(i), builtAt(i) + BUILD_EACH - 4], [0, rungs], { ...clamp, easing: (v) => 1 - (1 - v) ** 2 });
-        const end = r.worst ? SEED_Y + shown * step : SEED_Y - shown * step;
-        const visible = t >= builtAt(i);
-        const done = t >= builtAt(i) + BUILD_EACH - 4;
-        const tone = r.worst ? color.accent : color.gold;
-        return visible ? (
-          <div key={i}>
-            <Ladder x={x} rungs={rungs} shown={shown} step={step} down={r.worst} tone={tone} rail={r.worst ? color.accentEdge : color.casingDeep} />
-            <div style={{ position: "absolute", left: x - LOGO / 2, top: r.worst ? end + 4 : end - LOGO - 4, opacity: snap(t, builtAt(i)) }}>
-              <Logo src={r.src} side={LOGO} edge={r.worst ? color.accent : named === r ? color.gold : color.casingDeep} />
-            </div>
-            <div
-              style={{
-                position: "absolute",
-                left: r.worst ? x - LOGO / 2 - 78 : x - 40,
-                width: r.worst ? 66 : 80,
-                top: r.worst ? end + 4 + LOGO / 2 - 14 : end - LOGO - 40,
-                display: "flex",
-                justifyContent: r.worst ? "flex-end" : "center",
-                opacity: done ? 1 : 0,
-              }}
-            >
-              <PixelText text={signed(r.spr)} px={4} fill={tone} />
-            </div>
-          </div>
-        ) : null;
-      })}
-
-      {/* Which run this is */}
-      {named ? (
-        <div style={{ position: "absolute", left: 44, right: 44, top: 520, opacity: snap(t, BUILD_AT) }}>
-          <div style={{ ...caption, color: named.worst ? color.accent : color.gold }}>{named.worst ? "Worst run" : building === -1 ? "Best run" : "Climbing"}</div>
-          <div style={{ fontFamily: font.text, fontWeight: 800, fontSize: 24, color: color.ink, marginTop: 6, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-            {named.name} · {signed(named.spr)}
-          </div>
+      <div
+        style={{
+          position: "absolute",
+          left: 44,
+          top: 128,
+          display: "flex",
+          alignItems: "center",
+          gap: 36,
+          transform: `translateX(${interpolate(snap(t, 4), [0, 1], [-400, 0])}px)`,
+        }}
+      >
+        <Logo src={run.tournamentImageUrl} side={176} edge={color.gold} />
+        <div style={{ transform: `scale(${interpolate(spring({ frame: t - 10, fps: FPS, config: springPresets.heavy }), [0, 1], [2, 1])})`, opacity: t >= 10 ? 1 : 0 }}>
+          <PixelText text={signed(run.spr)} px={14} fill={color.gold} />
         </div>
+      </div>
+      <div style={{ position: "absolute", left: 44, right: 44, top: 350, opacity: snap(t, 14) }}>
+        <div style={{ ...display(fitDisplay(name, 48, 512)), whiteSpace: "normal", lineHeight: 1.15 }}>{name}</div>
+        <div style={{ ...caption, fontSize: 18, marginTop: 18 }}>Rounds finished above your seed</div>
+      </div>
+    </>
+  );
+};
+
+const RunRow: React.FC<{ run: Run; top: number; t: number; at: number; worst?: boolean }> = ({ run, top, t, at, worst = false }) => (
+  <div
+    style={{
+      position: "absolute",
+      left: 44,
+      right: 44,
+      top,
+      display: "flex",
+      alignItems: "center",
+      gap: 20,
+      opacity: t >= at ? 1 : 0,
+      transform: `translateX(${interpolate(snap(t, at), [0, 1], [-300, 0])}px)`,
+    }}
+  >
+    <Logo src={run.tournamentImageUrl} side={ROW.logo} edge={worst ? color.accent : color.casingDeep} />
+    <div style={{ flex: 1, minWidth: 0, fontFamily: font.text, fontWeight: 800, fontSize: 24, color: color.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+      {run.tournamentName}
+    </div>
+    <PixelText text={signed(run.spr)} px={5} fill={worst ? color.accent : color.gold} />
+  </div>
+);
+
+const OtherRuns: React.FC<{ t: number; runs: Run[]; worst: Run | null }> = ({ t, runs, worst }) => {
+  const rowAt = (i: number) => 6 + i * 6;
+  const worstTop = ROW.top + runs.length * ROW.pitch + (runs.length > 0 ? 30 : 0);
+  return (
+    <>
+      <div style={{ position: "absolute", left: 44, top: 40 }}>
+        <Slam frame={t} at={0} text={runs.length > 0 ? "MORE RUNS" : "WORST RUN"} style={display(32, runs.length > 0 ? color.gold : color.accent)} fill={runs.length > 0 ? color.gold : color.accent} />
+        <div style={{ ...caption, marginTop: 12, opacity: snap(t, 4) }}>Rounds finished above or below your seed</div>
+      </div>
+      {runs.map((run, i) => (
+        <RunRow key={i} run={run} top={ROW.top + i * ROW.pitch} t={t} at={rowAt(i)} />
+      ))}
+      {worst ? (
+        <>
+          {runs.length > 0 ? (
+            <div style={{ position: "absolute", left: 44, right: 44, top: worstTop - 22, display: "flex", alignItems: "center", gap: 14, opacity: snap(t, rowAt(runs.length)) }}>
+              <div style={{ ...caption, color: color.accent, flex: "none" }}>Worst run</div>
+              <div style={{ flex: 1, height: 4, backgroundColor: color.accentEdge }} />
+            </div>
+          ) : null}
+          <RunRow run={worst} top={worstTop + (runs.length > 0 ? 10 : 0)} t={t} at={rowAt(runs.length) + 4} worst />
+        </>
       ) : null}
     </>
   );
 };
 
+const Runs: React.FC<{ t: number; data: ArcadeData; listAt: number }> = ({ t, data, listAt }) => {
+  const [best, ...others] = data.bestRuns;
+  const hasList = others.length > 0 || data.worstRun !== null;
+  if (best && (t < listAt || !hasList)) return <BestRun t={t} run={best} />;
+  return <OtherRuns t={t - listAt} runs={others} worst={data.worstRun} />;
+};
+
+/** The player beaten is the story: their face and name big, the seeds that made it an upset, then where. */
 const Upset: React.FC<{ t: number; data: ArcadeData }> = ({ t, data }) => {
   const upset = data.upset!;
-  const name = displayCase(upset.tournamentName);
   const opponent = upset.opponent;
-  const beaten = opponent?.gamerTag ? displayCase(opponent.gamerTag) : null;
-  const seeds =
-    upset.playerSeed !== null && opponent ? `Seed ${upset.playerSeed} beat seed ${opponent.seed}` : null;
+  const beaten = opponent?.gamerTag ? displayCase(opponent.gamerTag) : "A higher seed";
+  const seeds = upset.playerSeed !== null && opponent ? displayCase(`Seed ${upset.playerSeed} beat seed ${opponent.seed}`) : null;
+  const tournament = displayCase(upset.tournamentName);
   return (
     <>
-      <div style={{ position: "absolute", left: 300 - 144, top: 100, opacity: t < 12 ? 1 : 0.35 }}>
-        <Sprite rows={cycle(BOOM, Math.min(t, 11), 3)} palette={BOOM_PALETTE} px={18} />
+      <div style={{ position: "absolute", left: 44, top: 40 }}>
+        <Slam frame={t} at={0} text="BIGGEST UPSET" style={display(32, color.accent)} fill={color.accent} />
+        <div style={{ ...caption, marginTop: 12, opacity: snap(t, 4) }}>Your biggest win against a higher seed</div>
       </div>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 44, display: "flex", justifyContent: "center" }}>
-        <Slam frame={t} at={0} text="BIGGEST UPSET" style={display(48, color.ink)} />
-      </div>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 124, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-        <div style={{ ...caption, fontSize: 18, color: color.gold, opacity: snap(t, 6) }}>Upset factor</div>
-        <div style={{ transform: `scale(${interpolate(spring({ frame: t - 6, fps: FPS, config: springPresets.heavy }), [0, 1], [2, 1])})`, opacity: t >= 6 ? 1 : 0 }}>
-          <PixelText text={String(upset.factor)} px={16} fill={color.gold} />
+
+      <div style={{ position: "absolute", left: 44, right: 44, top: 128, display: "flex", alignItems: "center", gap: 28 }}>
+        <div
+          style={{
+            width: 176,
+            height: 176,
+            flex: "none",
+            outline: `4px solid ${color.accent}`,
+            backgroundColor: color.raised2,
+            transform: `translateX(${interpolate(snap(t, 4), [0, 1], [-400, 0])}px)`,
+          }}
+        >
+          <PixelImage
+            src={opponent?.avatarUrl ?? null}
+            rows={44}
+            px={4}
+            mode="photo"
+            levels={5}
+            fallback={<div style={{ width: 176, height: 176, display: "flex", alignItems: "center", justifyContent: "center", ...display(96, color.accent) }}>?</div>}
+          />
+        </div>
+        <div style={{ minWidth: 0, opacity: snap(t, 10) }}>
+          <div style={{ ...caption, fontSize: 18, color: color.accent }}>You beat</div>
+          {opponent?.prefix ? <div style={{ ...display(16, color.muted), marginTop: 14 }}>{displayCase(opponent.prefix)}</div> : null}
+          <div style={{ ...display(fitDisplay(beaten, 64, 290)), whiteSpace: "normal", lineHeight: 1.1, marginTop: opponent?.prefix ? 8 : 14 }}>{beaten}</div>
         </div>
       </div>
-      {opponent ? (
-        <div style={{ position: "absolute", left: 44, right: 44, top: 304, display: "flex", alignItems: "center", gap: 20, opacity: snap(t, 16) }}>
-          <div style={{ width: 96, height: 96, flex: "none", outline: `4px solid ${color.accent}`, backgroundColor: color.raised2 }}>
-            <PixelImage src={opponent.avatarUrl} rows={24} px={4} mode="photo" levels={5} fallback={<div style={{ width: 96, height: 96, display: "flex", alignItems: "center", justifyContent: "center" }}><Chip text="VS" size={32} /></div>} />
-          </div>
-          <div style={{ minWidth: 0 }}>
-            {seeds ? <div style={{ ...caption, fontSize: 18, color: color.accent }}>{seeds}</div> : null}
-            {beaten ? (
-              <div style={{ marginTop: 10 }}>
-                {opponent.prefix ? <div style={display(16, color.muted)}>{displayCase(opponent.prefix)}</div> : null}
-                <div style={{ ...display(fitDisplay(beaten, 48, 380)), marginTop: opponent.prefix ? 6 : 0 }}>{beaten}</div>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      ) : null}
-      <div style={{ position: "absolute", left: 44, right: 44, top: opponent ? 440 : 380, display: "flex", alignItems: "center", gap: 20, opacity: snap(t, 24) }}>
+
+      <div style={{ position: "absolute", left: 44, right: 44, top: 344, display: "flex", alignItems: "center", gap: 16, opacity: snap(t, 18) }}>
+        {seeds ? <div style={display(fitDisplay(seeds, 32, 400), color.gold)}>{seeds}</div> : null}
+        <Chip text={`+${upset.factor}`} fill={color.gold} size={24} />
+      </div>
+
+      <div style={{ position: "absolute", left: 44, right: 44, top: 430, display: "flex", alignItems: "center", gap: 20, opacity: snap(t, 26) }}>
         <div style={{ width: 80, height: 80, flex: "none", outline: `4px solid ${color.casingDeep}`, backgroundColor: color.raised2 }}>
           <PixelImage src={upset.tournamentImageUrl} rows={20} px={4} mode="photo" levels={5} />
         </div>
         <div style={{ minWidth: 0 }}>
-          <div style={display(fitDisplay(name, 32, 400))}>{name}</div>
+          <div style={display(fitDisplay(tournament, 32, 400))}>{tournament}</div>
           <div style={{ ...caption, marginTop: 12, whiteSpace: "normal" }}>{upset.eventName}</div>
         </div>
       </div>
@@ -197,31 +169,21 @@ const Upset: React.FC<{ t: number; data: ArcadeData }> = ({ t, data }) => {
 };
 
 export const BonusStage: React.FC<ActProps> = ({ t, data }) => {
+  const plan = bonusPlan({ bestRuns: data.bestRuns.length, worstRun: data.worstRun !== null, upset: data.upset !== null });
   const hasRuns = data.bestRuns.length > 0 || data.worstRun !== null;
-  const upsetAt = data.upset ? (hasRuns ? UPSET_AT : RUNS_AT) : Infinity;
-  const card = t < RUNS_AT || (!hasRuns && !data.upset);
-  const drop = interpolate(spring({ frame: t - 8, fps: FPS, config: springPresets.bouncy }), [0, 1], [-260, 0]);
 
-  return (
-    <>
-      <Bricks />
-      <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, background: "rgba(11,15,13,0.55)" }} />
-      {card ? (
-        <>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 150, display: "flex", justifyContent: "center" }}>
-            <Slam frame={t} at={2} text="BEST RESULTS" style={display(64, color.gold)} fill={color.gold} />
-          </div>
-          <div style={{ position: "absolute", left: 300 - 70, top: 300 + drop }}>
-            <Sprite rows={CHEST[0]} palette={CHEST_PALETTE} px={10} />
-          </div>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 404, height: 6, backgroundColor: color.casingDeep, opacity: interpolate(t, [0, 6], [0, 1], clamp) }} />
-          {!hasRuns && !data.upset ? (
-            <div style={{ position: "absolute", left: 0, right: 0, top: 440, textAlign: "center", ...caption, fontSize: 18 }}>No seeded runs reported</div>
-          ) : null}
-        </>
-      ) : null}
-      {t >= RUNS_AT && t < upsetAt && hasRuns ? <Runs t={t - RUNS_AT} data={data} /> : null}
-      {t >= upsetAt && data.upset ? <Upset t={t - upsetAt} data={data} /> : null}
-    </>
-  );
+  if (t < plan.runsAt || (!hasRuns && !data.upset)) {
+    return (
+      <>
+        <div style={{ position: "absolute", left: 0, right: 0, top: 268, display: "flex", justifyContent: "center" }}>
+          <Slam frame={t} at={2} text="BEST RESULTS" style={display(64, color.gold)} fill={color.gold} />
+        </div>
+        {!hasRuns && !data.upset ? (
+          <div style={{ position: "absolute", left: 0, right: 0, top: 360, textAlign: "center", ...caption, fontSize: 18 }}>No seeded runs reported</div>
+        ) : null}
+      </>
+    );
+  }
+  if (t < plan.upsetAt || !data.upset) return <Runs t={t - plan.runsAt} data={data} listAt={plan.listAt - plan.runsAt} />;
+  return <Upset t={t - plan.upsetAt} data={data} />;
 };
