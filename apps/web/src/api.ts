@@ -57,6 +57,16 @@ export async function searchPlayers(gamertag: string, signal?: AbortSignal) {
   return data;
 }
 
+/** How many recaps exist: this season (every distinct recap served) and in the cache now (last 24 hours). */
+export async function fetchStats() {
+  const { data, error } = await client.api.v1.stats.get();
+
+  if (error) throw new Error(`Failed to fetch stats: ${error.status}`);
+  return data;
+}
+
+export type RecapStats = Awaited<ReturnType<typeof fetchStats>>;
+
 export type PlayerSearchResult = Awaited<ReturnType<typeof searchPlayers>>[number];
 
 /**

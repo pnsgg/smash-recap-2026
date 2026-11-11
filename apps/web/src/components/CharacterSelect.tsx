@@ -143,6 +143,9 @@ function Portrait({ player, className }: { player: FeaturedPlayer; className: st
       width={400}
       height={400}
       loading="lazy"
+      // The hero's recap preview draws the same avatars into a canvas, which needs a CORS copy. Asking for
+      // one here too keeps the browser from caching a plain copy that the canvas then can't read.
+      crossOrigin="anonymous"
       onError={() => setFailed(true)}
     />
   );
