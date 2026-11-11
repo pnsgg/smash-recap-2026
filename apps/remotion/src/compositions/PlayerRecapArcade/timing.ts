@@ -12,7 +12,7 @@ const ACT_BARS = {
   challenger: 6,
   finalRound: 5,
   bonusStage: 6,
-  coinLedger: 5,
+  coinLedger: 6,
   rankings: 4,
   continue: 5,
 } as const;

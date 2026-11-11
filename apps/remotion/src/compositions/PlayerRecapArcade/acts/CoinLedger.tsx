@@ -8,8 +8,11 @@ import { Slam } from "../components/Slam";
 import { COIN_STACKED, CROWN, GOLD } from "../components/sprites";
 import { caption, color, display, displayCase, fitDisplay } from "../theme";
 
-const DAYS_AT = 130;
-const SERIES_AT = 210;
+// Months fill up, their coins drop out of the bottom, then the weekdays fill up the same way.
+const DROP_AT = 120;
+const DAYS_AT = 140;
+const LANDED = 70;
+const SERIES_AT = 280;
 const BASE = 466;
 const CHART = { left: 44, width: 512, height: 280 } as const;
 const COIN_W = 10;
@@ -88,79 +91,95 @@ const Series: React.FC<{ t: number; data: LedgerData }> = ({ t, data }) => (
   </>
 );
 
+/** One coin per tournament falling onto its column, in order; all are down by frame 66 whatever their number. */
+const Rain: React.FC<{ t: number; columns: Column[]; px: number; dropAt?: number }> = ({ t, columns, px, dropAt = Infinity }) => {
+  const grid = layout(columns, px);
+  const all = slots(columns);
+  const landAt = (k: number) => 6 + (k * 50) / Math.max(1, all.length);
+  return (
+    <>
+      {all.map((slot, k) => {
+        const fall = interpolate(t, [landAt(k), landAt(k) + 10], [0, 1], { ...clamp, easing: (x) => x * x });
+        if (fall <= 0) return null;
+        const home = grid.y(slot.row);
+        // Dropping out: the bottom of each stack goes first, the whole chart is gone in 16 frames.
+        const gone = Math.max(0, t - dropAt - (slot.row / Math.max(1, columns[slot.col]!.count)) * 6);
+        const y = home - (1 - fall) * (home + 40) + gone * gone * 3;
+        return (
+          <div key={k} style={{ position: "absolute", left: grid.x(slot.col), top: y }}>
+            <Sprite rows={COIN_STACKED} palette={GOLD} px={px} />
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+const landedCount = (columns: Column[], t: number) => {
+  const total = slots(columns).length;
+  return Array.from({ length: total }, (_, k) => 6 + (k * 50) / Math.max(1, total)).filter((at) => t >= at + 10).length;
+};
+
+const Crown: React.FC<{ columns: Column[]; px: number; index: number }> = ({ columns, px, index }) => {
+  const grid = layout(columns, px);
+  return (
+    <div style={{ position: "absolute", left: grid.x(index) + (COIN_W * px - 44) / 2, top: grid.y(columns[index]!.count - 1) - 44 }}>
+      <Sprite rows={CROWN} palette={GOLD} px={4} />
+    </div>
+  );
+};
+
+const Count: React.FC<{ t: number; columns: Column[]; by: string }> = ({ t, columns, by }) => (
+  <>
+    <div style={{ display: "flex", alignItems: "flex-end", gap: 16 }}>
+      <PixelText text={String(landedCount(columns, t))} px={8} fill={color.gold} />
+      <div style={{ ...display(32), marginBottom: -2 }}>TOURNAMENTS</div>
+    </div>
+    <div style={{ ...caption, marginTop: 12, opacity: snap(t, 4) }}>One coin per tournament, by {by}</div>
+  </>
+);
+
 export const CoinLedger: React.FC<{ t: number; data: LedgerData }> = ({ t, data }) => {
   if (t >= SERIES_AT && data.series.length > 0) return <Series t={t - SERIES_AT} data={data} />;
 
   const months: Column[] = data.months.map((m) => ({ label: m.month.slice(0, 1).toUpperCase(), count: m.count }));
   const days: Column[] = data.days.map((d) => ({ label: d.day.slice(0, 3).toUpperCase(), count: d.count }));
-  const monthSlots = slots(months);
-  const daySlots = slots(days);
-  const monthGrid = layout(months, 4);
-  const dayGrid = layout(days, 5);
-  const total = monthSlots.length;
-  // All coins are down by frame 66, whatever their number.
-  const landAt = (k: number) => 6 + (k * 50) / Math.max(1, total);
-  const landed = monthSlots.filter((_, k) => t >= landAt(k) + 10).length;
   const busiestMonth = data.busiestMonth ? data.months.indexOf(data.busiestMonth) : -1;
   const busiestDay = data.busiestDay ? data.days.indexOf(data.busiestDay) : -1;
   const toDays = t >= DAYS_AT;
+  const d = t - DAYS_AT;
 
   return (
     <>
-      {/* Header: the running count, then the busiest weekday */}
       <div style={{ position: "absolute", left: 44, top: 40, height: 80 }}>
         {!toDays ? (
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 16 }}>
-            <PixelText text={String(landed)} px={8} fill={color.gold} />
-            <div style={{ ...display(32), marginBottom: -2 }}>TOURNAMENTS</div>
+          <div style={{ opacity: t < DROP_AT ? 1 : 0 }}>
+            <Count t={t} columns={months} by="month" />
           </div>
-        ) : data.busiestDay ? (
+        ) : d < LANDED || !data.busiestDay ? (
+          <Count t={d} columns={days} by="weekday" />
+        ) : (
           <>
-            <Slam frame={t} at={DAYS_AT + 16} text={dayName(data.busiestDay.day)} style={display(48, color.gold)} fill={color.gold} />
-            <div style={{ ...caption, fontSize: 18, marginTop: 12, opacity: snap(t, DAYS_AT + 22) }}>
+            <Slam frame={d} at={LANDED} text={dayName(data.busiestDay.day)} style={display(48, color.gold)} fill={color.gold} />
+            <div style={{ ...caption, fontSize: 18, marginTop: 12, opacity: snap(d, LANDED + 6) }}>
               Busiest day · {data.busiestDay.count} tournaments
             </div>
           </>
-        ) : null}
-        {!toDays ? <div style={{ ...caption, marginTop: 12, opacity: snap(t, 4) }}>One coin per tournament, by month</div> : null}
+        )}
       </div>
 
-      {monthSlots.map((slot, k) => {
-        const day = daySlots[k];
-        const fall = interpolate(t, [landAt(k), landAt(k) + 10], [0, 1], { ...clamp, easing: (x) => x * x });
-        const from = { x: monthGrid.x(slot.col), y: monthGrid.y(slot.row) };
-        const to = day ? { x: dayGrid.x(day.col), y: dayGrid.y(day.row) } : from;
-        const move = interpolate(t, [DAYS_AT + (k / total) * 10, DAYS_AT + 6 + (k / total) * 10], [0, 1], { ...clamp, easing: (x) => x * x * (3 - 2 * x) });
-        const px = 4 + move;
-        const x = from.x + (to.x - from.x) * move;
-        const y = (from.y + (to.y - from.y) * move) - (1 - fall) * (from.y + 40) - Math.sin(move * Math.PI) * 60;
-        if (fall <= 0) return null;
-        return (
-          <div key={k} style={{ position: "absolute", left: x, top: y }}>
-            <Sprite rows={COIN_STACKED} palette={GOLD} px={px} />
-          </div>
-        );
-      })}
-
-      {!toDays && busiestMonth >= 0 && t >= 70 ? (
-        <div
-          style={{
-            position: "absolute",
-            left: monthGrid.x(busiestMonth) - 2,
-            top: monthGrid.y(data.months[busiestMonth]!.count - 1) - 44,
-          }}
-        >
-          <Sprite rows={CROWN} palette={GOLD} px={4} />
-        </div>
-      ) : null}
-      {toDays && busiestDay >= 0 && t >= DAYS_AT + 16 ? (
-        <div style={{ position: "absolute", left: dayGrid.x(busiestDay) + 3, top: dayGrid.y(data.days[busiestDay]!.count - 1) - 46 }}>
-          <Sprite rows={CROWN} palette={GOLD} px={4} />
-        </div>
-      ) : null}
+      {!toDays ? <Rain t={t} columns={months} px={4} dropAt={DROP_AT} /> : <Rain t={d} columns={days} px={5} />}
+      {!toDays && busiestMonth >= 0 && t >= LANDED && t < DROP_AT ? <Crown columns={months} px={4} index={busiestMonth} /> : null}
+      {toDays && busiestDay >= 0 && d >= LANDED ? <Crown columns={days} px={5} index={busiestDay} /> : null}
 
       <div style={{ position: "absolute", left: CHART.left, width: CHART.width, top: BASE, height: 4, backgroundColor: color.casingDeep }} />
-      {!toDays ? <Labels columns={months} t={t} highlight={busiestMonth} size={t >= 70 ? 3 : 0} /> : <Labels columns={days} t={t - DAYS_AT} highlight={busiestDay} size={3} />}
+      {!toDays ? (
+        <div style={{ opacity: t < DROP_AT ? 1 : 0 }}>
+          <Labels columns={months} t={t} highlight={busiestMonth} size={t >= LANDED ? 3 : 0} />
+        </div>
+      ) : (
+        <Labels columns={days} t={d} highlight={busiestDay} size={d >= LANDED ? 3 : 0} />
+      )}
     </>
   );
 };

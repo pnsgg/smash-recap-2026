@@ -8,7 +8,7 @@ const ACT_BARS = {
   gamesInstalled: 4,
   biggestCrowds: 5,
   series: 3,
-  coinBox: 4,
+  coinBox: 5,
   continue: 5,
 } as const;
 
