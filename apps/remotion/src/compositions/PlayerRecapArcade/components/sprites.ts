@@ -155,22 +155,6 @@ export const SPARK = [
 ] as const;
 export const SPARK_PALETTE = { a: color.gold, b: color.accent, w: color.ink } as const;
 
-export const CHEST = [
-  [
-    "..kkkkkkkkkk..",
-    ".kcccccccccck.",
-    "kcaaaaaaaaaack",
-    "kccccckkkcccck",
-    "kkkkkkbakkkkkk",
-    "kddddkbakddddk",
-    "kddddkkkkddddk",
-    "kddddddddddddk",
-    "kcccccccccccck",
-    "kkkkkkkkkkkkkk",
-  ],
-] as const;
-export const CHEST_PALETTE = { ...GOLD, d: "#6b3f1d" } as const;
-
 export const CRATE = [
   [
     "kkkkkkkkkkkkkkkk",

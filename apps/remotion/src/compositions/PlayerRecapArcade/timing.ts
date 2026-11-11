@@ -11,7 +11,7 @@ const ACT_BARS = {
   stageSelect: 7,
   challenger: 6,
   finalRound: 5,
-  bonusStage: 5,
+  bonusStage: 6,
   coinLedger: 5,
   rankings: 4,
   continue: 5,
