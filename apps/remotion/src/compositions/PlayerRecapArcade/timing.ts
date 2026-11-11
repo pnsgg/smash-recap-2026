@@ -27,18 +27,33 @@ export const LENGTH = Object.fromEntries(ACTS.map((n) => [n, ACT_BARS[n] * BAR])
 
 export const DURATION = ACTS.reduce((sum, n) => sum + ACT_BARS[n] * BAR, 0);
 
+type TimelineRecap = Pick<PlayerRecapProps, "mostPlayedCharacters" | "stageActivity" | "rankings">;
+
+/**
+ * Player select stops after its last step: the first pick (at frame 50), the second (140), then the
+ * "also picked" list (210, the full act). Each ends 90-100 frames after its last step, on a beat.
+ */
+const PLAYER_SELECT_BARS = { 1: 2.5, 2: 4 } as const;
+
+const actLength = (name: Act, recap: TimelineRecap) => {
+  if (name !== "playerSelect") return LENGTH[name];
+  const fighters = recap.mostPlayedCharacters.length;
+  return fighters === 1 || fighters === 2 ? PLAYER_SELECT_BARS[fighters] * BAR : LENGTH.playerSelect;
+};
+
 /** The acts this recap plays, when each starts and how long it runs: no characters, stages or rankings, no act. */
-export const timeline = (recap: Pick<PlayerRecapProps, "mostPlayedCharacters" | "stageActivity" | "rankings">) => {
+export const timeline = (recap: TimelineRecap) => {
   const acts = ACTS.filter(
     (name) =>
       !(name === "playerSelect" && recap.mostPlayedCharacters.length === 0) &&
       !(name === "stageSelect" && recap.stageActivity.length === 0) &&
       !(name === "rankings" && recap.rankings.length === 0),
   );
+  const length = (name: Act) => actLength(name, recap);
   const start = Object.fromEntries(
-    acts.map((name, i) => [name, acts.slice(0, i).reduce((sum, n) => sum + LENGTH[n], 0)]),
+    acts.map((name, i) => [name, acts.slice(0, i).reduce((sum, n) => sum + length(n), 0)]),
   ) as Partial<Record<Act, number>>;
-  return { acts, start, duration: acts.reduce((sum, n) => sum + LENGTH[n], 0) };
+  return { acts, start, duration: acts.reduce((sum, n) => sum + length(n), 0) };
 };
 
 export const POWER_ON = 42;
