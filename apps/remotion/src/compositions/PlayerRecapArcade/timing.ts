@@ -9,7 +9,7 @@ const ACT_BARS = {
   insertCoin: 4,
   playerSelect: 5,
   stageSelect: 7,
-  challenger: 5,
+  challenger: 6,
   finalRound: 5,
   bonusStage: 5,
   coinLedger: 5,
