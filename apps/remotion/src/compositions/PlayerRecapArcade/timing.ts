@@ -1,5 +1,6 @@
 import type { PlayerRecapProps } from "@shared";
 import { BAR } from "../../lib/motion";
+import { stageViewCount } from "./data";
 
 export const FPS = 30;
 export const SIZE = 600;
@@ -7,7 +8,7 @@ export const SIZE = 600;
 const ACT_BARS = {
   insertCoin: 4,
   playerSelect: 5,
-  stageSelect: 5,
+  stageSelect: 7,
   challenger: 5,
   finalRound: 5,
   bonusStage: 5,
@@ -27,6 +28,10 @@ export const LENGTH = Object.fromEntries(ACTS.map((n) => [n, ACT_BARS[n] * BAR])
 
 export const DURATION = ACTS.reduce((sum, n) => sum + ACT_BARS[n] * BAR, 0);
 
+/** Stage select: the grid until the first stage screen, then 4 seconds per screen (whole bars throughout). */
+export const STAGE_VIEW_AT = [60, 180, 300] as const;
+const STAGE_VIEW_FRAMES = 120;
+
 type TimelineRecap = Pick<PlayerRecapProps, "mostPlayedCharacters" | "stageActivity" | "rankings">;
 
 /**
@@ -36,6 +41,7 @@ type TimelineRecap = Pick<PlayerRecapProps, "mostPlayedCharacters" | "stageActiv
 const PLAYER_SELECT_BARS = { 1: 2.5, 2: 4 } as const;
 
 const actLength = (name: Act, recap: TimelineRecap) => {
+  if (name === "stageSelect") return STAGE_VIEW_AT[0] + stageViewCount(recap.stageActivity) * STAGE_VIEW_FRAMES;
   if (name !== "playerSelect") return LENGTH[name];
   const fighters = recap.mostPlayedCharacters.length;
   return fighters === 1 || fighters === 2 ? PLAYER_SELECT_BARS[fighters] * BAR : LENGTH.playerSelect;

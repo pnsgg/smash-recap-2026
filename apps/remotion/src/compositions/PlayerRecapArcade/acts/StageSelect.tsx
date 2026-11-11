@@ -1,25 +1,22 @@
-import { interpolate, spring } from "remotion";
-import { clamp, springPresets } from "../../../lib/motion";
+import { interpolate } from "remotion";
+import { clamp } from "../../../lib/motion";
 import type { ActProps } from "../../PlayerRecapArcade";
 import type { ArcadeData } from "../data";
 import { Bevel, snap } from "../components/kit";
 import { PixelText, Sprite } from "../components/Pixel";
-import { FEET, STAGE_COLS, tileMood, type StageMood } from "../components/Stage";
-import { stageFloor, StageView } from "../components/StageView";
-import { CASING, CROWN, cycle, GOLD, HAND, STORM, STORM_PALETTE } from "../components/sprites";
+import { STAGE_COLS, tileMood, type StageMood } from "../components/Stage";
+import { StageView } from "../components/StageView";
+import { CASING, HAND } from "../components/sprites";
 import { caption, color, display, displayCase, fitDisplay, percent } from "../theme";
-import { FPS } from "../timing";
+import { STAGE_VIEW_AT } from "../timing";
 
 type StageRow = ArcadeData["stages"][number];
 
 const TILE = { w: 128, gap: 10, cols: 4, rows: 3, x: 29, y: 92 } as const;
 const TILE_H = Math.round((TILE.w * 80) / STAGE_COLS);
 const TILE_BOX = TILE_H + 34;
-const VIEW_AT = [60, 145, 220] as const;
 const WHIP = 8;
 const SCREEN = { y: -20, w: 600 } as const;
-const UNIT = SCREEN.w / STAGE_COLS;
-const SCREEN_H = (SCREEN.w * 80) / STAGE_COLS;
 
 type View = { kind: "top" | "best" | "worst"; stage: StageRow; mood: StageMood; label: string };
 
@@ -46,17 +43,6 @@ const Tile: React.FC<{ stage: StageRow; i: number; t: number; lit: boolean }> = 
   </Bevel>
 );
 
-const Prop: React.FC<{ view: View; t: number }> = ({ view, t }) => {
-  const bob = Math.floor(t / 10) % 2 === 0 ? 0 : -UNIT;
-  if (view.kind === "best") {
-    return <Sprite rows={CROWN} palette={GOLD} px={5} style={{ transform: `translateY(${bob}px)` }} />;
-  }
-  if (view.kind === "worst") {
-    return <Sprite rows={cycle(STORM, t, 4)} palette={STORM_PALETTE} px={5} style={{ transform: `translateY(${bob}px)` }} />;
-  }
-  return null;
-};
-
 const FullView: React.FC<{ view: View; t: number }> = ({ view, t }) => {
   const { stage, mood } = view;
   const lead = view.kind === "top" ? "games" : "rate";
@@ -79,24 +65,6 @@ const FullView: React.FC<{ view: View; t: number }> = ({ view, t }) => {
       <div style={{ position: "absolute", left: 0, top: SCREEN.y }}>
         <StageView stage={stage} width={SCREEN.w} mood={mood} frame={t} />
       </div>
-      {/* What the stage meant, dropping in to hover over its floor: a crown for the best, a storm for the worst */}
-      <div
-        style={{
-          position: "absolute",
-          left: FEET.x * UNIT - 100,
-          width: 200,
-          top: SCREEN.y + stageFloor(stage.stageId) * SCREEN_H - 160,
-          height: 100,
-          transform: `translateY(${interpolate(spring({ frame: t - 2, fps: FPS, config: springPresets.bouncy }), [0, 1], [-300, 0])}px)`,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          gap: 10,
-        }}
-      >
-        <Prop view={view} t={t} />
-      </div>
       <div style={{ position: "absolute", left: 44, right: 44, top: 396 }}>
         <div style={{ ...caption, fontSize: 18, color: accent }}>{view.label}</div>
         <div style={{ ...display(fitDisplay(name, 48, 520)), marginTop: 10 }}>{name}</div>
@@ -117,16 +85,16 @@ export const StageSelect: React.FC<ActProps> = ({ t, data }) => {
 
   const views: View[] = [
     { kind: "top", stage: topStage, mood: tileMood(topStage.stageId), label: "Most played stage" },
-    ...(bestStage ? [{ kind: "best" as const, stage: bestStage, mood: "gold" as const, label: "Best win rate · 10+ games" }] : []),
-    ...(worstStage ? [{ kind: "worst" as const, stage: worstStage, mood: "storm" as const, label: "Lowest win rate · 10+ games" }] : []),
+    ...(bestStage ? [{ kind: "best" as const, stage: bestStage, mood: "gold" as const, label: "Best win rate" }] : []),
+    ...(worstStage ? [{ kind: "worst" as const, stage: worstStage, mood: "storm" as const, label: "Lowest win rate" }] : []),
   ];
   const shown = stages.slice(0, TILE.cols * TILE.rows);
   const more = stages.length - shown.length;
 
-  if (t < VIEW_AT[0]) {
+  if (t < STAGE_VIEW_AT[0]) {
     // Zoom from the first tile to full screen over the last beat of the grid: the full-size picture, scaled
     // down to the tile and back up as one block with its red frame, so the two always move together.
-    const zoom = interpolate(t, [VIEW_AT[0] - 10, VIEW_AT[0]], [0, 1], { ...clamp, easing: (x) => x * x * (3 - 2 * x) });
+    const zoom = interpolate(t, [STAGE_VIEW_AT[0] - 10, STAGE_VIEW_AT[0]], [0, 1], { ...clamp, easing: (x) => x * x * (3 - 2 * x) });
     const scale = TILE.w / SCREEN.w + (1 - TILE.w / SCREEN.w) * zoom;
     return (
       <>
@@ -174,7 +142,7 @@ export const StageSelect: React.FC<ActProps> = ({ t, data }) => {
     );
   }
 
-  const progress = VIEW_AT.slice(1, views.length).reduce(
+  const progress = STAGE_VIEW_AT.slice(1, views.length).reduce(
     (sum, at) => sum + interpolate(t, [at - WHIP, at], [0, 1], { ...clamp, easing: (x) => x * x * (3 - 2 * x) }),
     0,
   );
@@ -186,7 +154,7 @@ export const StageSelect: React.FC<ActProps> = ({ t, data }) => {
         const x = (i - progress) * 600;
         return (
           <div key={i} style={{ position: "absolute", inset: 0, transform: `translateX(${x}px)`, filter: whipping ? "blur(3px)" : undefined }}>
-            <FullView view={view} t={t - VIEW_AT[i]!} />
+            <FullView view={view} t={t - STAGE_VIEW_AT[i]!} />
           </div>
         );
       })}

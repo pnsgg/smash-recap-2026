@@ -52,8 +52,6 @@ const proceduralLayout = (id: string): Layout => {
 export const stageLayout = (stage: { stageId: string; stageName: string }) =>
   LAYOUTS[normalise(stage.stageName)] ?? proceduralLayout(stage.stageId);
 
-export const FEET = { x: STAGE_COLS / 2, y: FLOOR };
-
 export type StageMood = "night" | "dusk" | "gold" | "storm";
 
 type Sky = {

@@ -2,11 +2,17 @@ import type { PlayerRecapProps } from "@shared";
 
 export const MIN_STAGE_GAMES = 10;
 
+/** Stages played enough to rank by win rate. */
+export const ratedStages = <T extends { count: number }>(stages: T[]) => stages.filter((s) => s.count >= MIN_STAGE_GAMES);
+
+/** Stage screens the stage act shows: the most played, then the best and lowest win rates when there are rated stages. */
+export const stageViewCount = (stages: { count: number }[]) => 1 + Math.min(ratedStages(stages).length, 2);
+
 const EVENT_TYPE = { singles: "1", teams: "5" } as const;
 
 export const deriveArcade = (recap: PlayerRecapProps) => {
   const stages = [...recap.stageActivity].sort((a, b) => b.count - a.count);
-  const rated = stages.filter((s) => s.count >= MIN_STAGE_GAMES);
+  const rated = ratedStages(stages);
   const byRate = [...rated].sort((a, b) => b.winRate - a.winRate || b.count - a.count);
   const bestStage = byRate[0] ?? null;
   const worstStage = byRate.length > 1 ? byRate[byRate.length - 1]! : null;

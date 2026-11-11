@@ -1,7 +1,7 @@
 import { staticFile } from "remotion";
 import { color } from "../theme";
 import { PixelImage } from "./PixelImage";
-import { FLOOR, STAGE_COLS, STAGE_ROWS, StageDiorama, type StageMood } from "./Stage";
+import { STAGE_COLS, STAGE_ROWS, StageDiorama, type StageMood } from "./Stage";
 
 const ULTIMATE_ART = new Set([
   307, 308, 309, 310, 311, 312, 313, 314, 315, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330,
@@ -10,15 +10,6 @@ const ULTIMATE_ART = new Set([
   381, 384, 385, 386, 387, 388, 389, 390, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406,
   407, 408, 416, 417, 484, 497, 513,
 ]);
-
-const FLOOR_ROW: Record<number, number> = {
-  311: 82, 484: 82, 312: 80, 328: 84, 378: 82, 377: 82, 387: 94, 397: 92, 348: 92,
-  513: 82, 417: 86, 407: 104, 324: 100, 331: 86, 353: 76, 497: 82,
-};
-const DEFAULT_FLOOR_ROW = 84;
-
-export const stageFloor = (stageId: string) =>
-  ULTIMATE_ART.has(Number(stageId)) ? (FLOOR_ROW[Number(stageId)] ?? DEFAULT_FLOOR_ROW) / 128 : FLOOR / STAGE_ROWS;
 
 export const stageArt = (stageId: string) =>
   ULTIMATE_ART.has(Number(stageId)) ? staticFile(`stages/ultimate/${stageId}.png`) : null;

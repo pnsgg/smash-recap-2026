@@ -124,26 +124,6 @@ export const STAR = [
   "kk...kk",
 ] as const;
 
-export const STORM = [
-  [
-    ".....kkkk.......",
-    "...kkwwwwkk.....",
-    "..kwwwwwwwwkkk..",
-    ".kwwwwwwwwwwwwk.",
-    "kwwwwwwwwwwwwwwk",
-    "kqqwwwwwwwwwwqqk",
-    ".kqqqqqqqqqqqqk.",
-    "..kkkkkkkkkkkk..",
-    "......kak.......",
-    ".....kak........",
-    "....kaaak.......",
-    "......kak.......",
-    ".....kak........",
-    ".....kk.........",
-  ],
-] as const;
-export const STORM_PALETTE = { k: outline, w: color.muted, q: color.cardMuted, a: color.gold } as const;
-
 export const SIREN = [
   [
     "...kkkk...",
