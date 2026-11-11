@@ -1,4 +1,4 @@
-import { fetchPlayerRecap, settle } from "../api";
+import { fetchPlayerRecap, fetchStats, settle } from "../api";
 import { RECAP_YEAR } from "../config";
 import { FEATURED_PLAYERS } from "../data/featured";
 import { pageMeta, siteOrigin } from "../lib/meta";
@@ -7,10 +7,10 @@ import type { Route } from "./+types/home";
 
 export function loader({ request }: Route.LoaderArgs) {
   // Not awaited: every recap streams into the page as it arrives (instantly from the API's cache).
-  return {
-    origin: siteOrigin(request),
-    featured: FEATURED_PLAYERS.map((p) => settle(fetchPlayerRecap(p.discriminator))),
-  };
+  const featured = FEATURED_PLAYERS.map((p) => settle(fetchPlayerRecap(p.discriminator)));
+  // Picked here, not in the browser, so the server and the hydrated page show the same player.
+  const preview = Math.floor(Math.random() * FEATURED_PLAYERS.length);
+  return { origin: siteOrigin(request), featured, preview, stats: settle(fetchStats()) };
 }
 
 export const meta: Route.MetaFunction = ({ loaderData }) =>
@@ -22,10 +22,9 @@ export const meta: Route.MetaFunction = ({ loaderData }) =>
     imageAlt: `SmashRecap: replay your ${RECAP_YEAR} season`,
   });
 
-export const links: Route.LinksFunction = () => [
-  { rel: "preload", as: "image", href: "/media/hall-crt.jpg", fetchPriority: "high" },
-];
-
 export default function HomeRoute({ loaderData }: Route.ComponentProps) {
-  return <Home featured={loaderData.featured} />;
+  const { featured, preview, stats } = loaderData;
+  return (
+    <Home featured={featured} preview={{ player: FEATURED_PLAYERS[preview]!, recap: featured[preview]! }} stats={stats} />
+  );
 }

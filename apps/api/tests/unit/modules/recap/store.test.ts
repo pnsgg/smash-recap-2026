@@ -42,6 +42,7 @@ describe('RecapStore', () => {
         writes.push({ key, seconds })
         return 'OK'
       },
+      sadd: async () => 1,
     }
     const { store } = createStore(cache)
 
@@ -53,6 +54,23 @@ describe('RecapStore', () => {
       { key: 'recap:organizer:2026:541f04fd', seconds: RECAP_TTL_SECONDS },
     ])
     expect(RECAP_TTL_SECONDS).toBe(24 * 60 * 60)
+  })
+
+  test('adds each recap served to its season set once, whether computed or read from the cache', async () => {
+    const cache = new FakeCacheClient()
+    const { store } = createStore(cache)
+
+    await store.player(asUserSlug('541f04fd'), 2026, ULTIMATE)
+    await Bun.sleep(1)
+    await store.player(asUserSlug('541f04fd'), 2026, ULTIMATE)
+    await store.player(asUserSlug('541f04fd'), 2026, asVideogameId('1'))
+    await store.tournamentOrganizer(asUserSlug('541f04fd'), 2026)
+
+    expect([...(cache.sets.get('stats:2026:recaps:player') ?? [])]).toEqual([
+      'recap:player:2026:1386:541f04fd',
+      'recap:player:2026:1:541f04fd',
+    ])
+    expect([...(cache.sets.get('stats:2026:recaps:organizer') ?? [])]).toEqual(['recap:organizer:2026:541f04fd'])
   })
 
   test('does not cache an unknown account', async () => {
@@ -72,6 +90,7 @@ describe('RecapStore', () => {
     const silent: CacheClient = {
       get: () => new Promise(() => {}),
       set: () => new Promise(() => {}),
+      sadd: () => new Promise(() => {}),
     }
     const { store, players } = createStore(silent)
 

@@ -18,4 +18,14 @@ export class FakeCacheClient implements CacheClient {
     this.store.set(key, { value, expiresAt: Date.now() + seconds * 1000 })
     return 'OK' as const
   }
+
+  readonly sets = new Map<string, Set<string>>()
+
+  async sadd(key: string, member: string) {
+    const set = this.sets.get(key) ?? new Set<string>()
+    const added = set.has(member) ? 0 : 1
+    set.add(member)
+    this.sets.set(key, set)
+    return added
+  }
 }

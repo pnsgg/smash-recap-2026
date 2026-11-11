@@ -10,43 +10,14 @@
   min-height: 100svh;
 }
 
-.cab__marquee {
-  --led: var(--accent-ink);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1.5rem;
-  padding: calc(var(--frame) + 0.25rem) var(--margin) 0.25rem;
-  background: var(--accent);
-  color: var(--accent-ink);
-}
-
-/* Same size as the recap page's bar (.recap__bar). */
-.cab__wordmark {
-  font-size: var(--step-lead);
-}
-
-.cab__nav {
-  display: flex;
-  gap: clamp(1rem, 2vw, 2rem);
-  margin-left: auto;
-  font-size: var(--step-small);
-  font-weight: 700;
-}
-
-.cab__nav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
-}
-
-/* The putty casing around the tube, with the lip that holds the power light and speaker. */
+/* The putty casing around the tube, with the front panel under it. */
 .cab__casing {
   flex: 1;
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
-  gap: 0.75rem;
-  padding: clamp(0.75rem, 1.6vw, 1.5rem) var(--margin) calc(var(--frame) + 0.75rem);
+  gap: clamp(0.75rem, 1.4vw, 1.25rem);
+  /* With no bar above it, the casing starts at the cabinet's frame. */
+  padding: calc(var(--frame) + clamp(0.75rem, 1.6vw, 1.5rem)) var(--margin) calc(var(--frame) + 0.75rem);
   background: var(--casing);
 }
 
@@ -55,71 +26,240 @@
   display: grid;
 }
 
+/* The picture, laid out like a news channel: the station bug and clock in the top corners, the desk
+   (the search) with the box over its shoulder (a top player's recap playing), the lower third carrying
+   the headline, and the crawl along the bottom. */
 .cab__power {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "bug clock"
+    "desk box"
+    "third third"
+    "ticker ticker";
+  gap: clamp(1rem, 2.4vh, 1.75rem) clamp(2rem, 4vw, 4rem);
+  padding: clamp(1rem, 2.6vh, 1.75rem) clamp(1.25rem, 3vw, 3rem);
   border-radius: var(--screen-radius);
   background: var(--ground);
+  container-type: inline-size;
   /* The search results open past the tube's edge. */
   overflow: visible;
   transform-origin: 50% 50%;
 }
 
-.cab__picture {
+.news__bug {
+  grid-area: bug;
+  justify-self: start;
+  padding: 0.25rem 0.625rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-size: var(--step-small);
+}
+
+.news__clock {
+  grid-area: clock;
+  justify-self: end;
+  font-family: var(--font-display);
+  font-size: var(--step-lead);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The desk sits on the lower third, level with the bottom of the box beside it. */
+.news__desk {
+  grid-area: desk;
+  align-self: end;
   position: relative;
   z-index: 2;
+}
+
+.news__box {
+  grid-area: box;
+  align-self: center;
+  justify-self: end;
   display: grid;
-  align-content: center;
-  gap: clamp(1.5rem, 4vh, 2.5rem);
-  padding: clamp(1.5rem, 4vh, 3rem) clamp(1.25rem, 3.5vw, 3.5rem);
-  container-type: inline-size;
+  width: min(100%, 47svh);
+  color: var(--ink);
+  text-decoration: none;
 }
 
-.cab__title {
-  font-size: clamp(2.25rem, min(11.4cqi, 15svh), 7rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-
-.cab__line {
-  display: block;
-}
-
-/* Square inside the tube's rounded right side, in full colour under the scanlines. */
-.cab__hall {
+.news__picture {
   position: relative;
-  min-height: 0;
+  display: block;
+  aspect-ratio: 1;
   overflow: clip;
-  border-radius: 0 var(--screen-radius) var(--screen-radius) 0;
+  background: var(--raised);
 }
 
-.cab__hall img {
+.news__snow {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  filter: contrast(1.08) saturate(0.85);
+  opacity: 0.35;
+  image-rendering: pixelated;
 }
 
-.cab__lip {
+.news__strap {
+  display: flex;
+  background: var(--ink);
+  color: var(--ground);
+}
+
+.news__tag {
+  flex: none;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 1.25rem;
-  padding: 0 clamp(1.25rem, 3.5vw, 3.5rem);
+  padding: 0.5rem 0.75rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-size: var(--step-small);
+}
+
+.news__strap-text {
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color var(--t-hover) ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .news__box:hover .news__strap-text {
+    color: var(--accent-edge);
+  }
+}
+
+/* The lower third: the headline on the white band, the red tab on its left edge. */
+.news__third {
+  grid-area: third;
+  display: flex;
+  align-items: stretch;
+  background: var(--ink);
+  color: var(--ground);
+}
+
+.news__label {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(0.75rem, 1.4vw, 1.25rem);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-display);
+  font-size: var(--step-lead);
+}
+
+.news__headline {
+  padding: clamp(0.5rem, 1.2vh, 0.875rem) clamp(0.75rem, 1.4vw, 1.25rem);
+  font-size: clamp(1.75rem, 3.6cqi, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+/* The crawl: the lines run right to left forever, twice in a row so the loop has no seam. */
+.news__ticker {
+  grid-area: ticker;
+  display: flex;
+  align-items: stretch;
+  margin: 0;
+  overflow: clip;
+  background: var(--raised-2);
+  font-size: var(--step-small);
+  font-weight: 600;
+}
+
+.news__ticker-label {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.875rem;
+  background: var(--ground);
+  color: var(--accent);
+  font-family: var(--font-display);
+}
+
+.news__crawl {
+  display: flex;
+  white-space: nowrap;
+}
+
+.news__run {
+  display: flex;
+  flex: none;
+}
+
+.news__item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.5rem 0 0.5rem 1.25rem;
+}
+
+.news__item::after {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--accent);
+}
+
+/* The front panel, read left to right like the TV's own: power light, buttons, speaker, inputs. */
+.cab__panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem clamp(1rem, 2.4vw, 2rem);
+  padding: 0 clamp(0.25rem, 1.5vw, 1.5rem);
+  color: var(--card-ink);
 }
 
 .cab__led {
+  flex: none;
   width: 0.75rem;
   height: 0.75rem;
   background: var(--accent);
 }
 
+/* The two switches become the set's push buttons: a block of the darker putty that sinks when pressed. */
+.cab__buttons {
+  gap: 0.5rem;
+}
+
+.cab__buttons .toggles__item {
+  min-height: 2.75rem;
+  padding: 0.25rem 0.875rem;
+  background: var(--casing-deep);
+  color: var(--card-ink);
+  transition:
+    transform var(--t-press) var(--ease-out),
+    background-color var(--t-hover) ease;
+}
+
+.cab__buttons .toggles__item:active {
+  transform: translateY(2px);
+}
+
+.cab__buttons .toggles__item[aria-pressed="true"] .toggles__led {
+  background: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cab__buttons .toggles__item:hover {
+    background: #a9a59c;
+  }
+}
+
 .cab__speaker {
   display: flex;
   gap: 0.375rem;
+  margin-left: auto;
 }
 
 .cab__speaker span {
@@ -128,28 +268,114 @@
   background: var(--casing-deep);
 }
 
+.cab__jacks {
+  display: flex;
+  gap: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
+/* An RCA socket: a coloured collar in the putty, the dark hole in its middle. */
+.cab__jack {
+  display: grid;
+  justify-items: center;
+  gap: 0.375rem;
+  font-size: var(--step-note);
+  font-weight: 700;
+  color: var(--card-muted);
+}
+
+.cab__socket {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--casing-deep);
+}
+
+.cab__socket::before,
+.cab__socket::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.cab__socket::before {
+  inset: 0.25rem;
+  background: var(--jack);
+}
+
+.cab__socket::after {
+  inset: 0.75rem;
+  background: var(--card-ink);
+}
+
+.cab__jack[data-tone="video"] {
+  --jack: #f2c318;
+}
+
+.cab__jack[data-tone="left"] {
+  --jack: #f4f2ec;
+}
+
+.cab__jack[data-tone="right"] {
+  --jack: #d0321c;
+}
+
 @media (max-width: 1000px) {
+  /* Stacked: the headline first, then the search, then the box, the crawl last. */
   .cab__power {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(11rem, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: none;
+    grid-template-areas:
+      "bug clock"
+      "third third"
+      "desk desk"
+      "box box"
+      "ticker ticker";
+    align-content: center;
   }
 
-  .cab__hall {
-    border-radius: 0 0 var(--screen-radius) var(--screen-radius);
+  .news__box {
+    justify-self: stretch;
+    width: 100%;
+    max-width: 30rem;
+  }
+
+  .news__headline {
+    font-size: clamp(1.75rem, 6cqi, 3rem);
   }
 }
 
 @media (max-width: 640px) {
-  .cab__nav {
+  .cab__speaker {
     display: none;
   }
 
-  .cab__toggles {
+  .cab__jacks {
     margin-left: auto;
   }
 
-  .cab__title {
-    font-size: clamp(2rem, 12cqi, 3.5rem);
+  .cab__socket {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .cab__socket::after {
+    inset: 0.6875rem;
+  }
+
+  /* No room beside the headline: the tab sits on top of the band, at its left edge. */
+  .news__third {
+    flex-direction: column;
+  }
+
+  .news__label {
+    align-self: start;
+    padding: 0.25rem 0.75rem;
+    font-size: var(--step-small);
+  }
+
+  .news__headline {
+    font-size: clamp(1.75rem, 9cqi, 2.5rem);
   }
 }
 
@@ -158,14 +384,35 @@
     animation: tube-on 620ms var(--ease-expo) both;
   }
 
+  .js .news__third {
+    animation: wipe-in 480ms var(--ease-expo) 260ms both;
+  }
+
+  .news__crawl {
+    animation: crawl calc(var(--items) * 6s) linear infinite;
+  }
+
   .js .cab__type {
     clip-path: inset(0 100% 0 0);
     animation: type-in calc(var(--chars) * 28ms) steps(var(--chars)) forwards;
     animation-delay: calc(380ms + var(--i) * 330ms);
   }
 
-  .cab__hall img {
-    animation: room-settle 2400ms var(--ease-soft) both;
+  .js .cab__panel > :not(.cab__led) {
+    animation: panel-in 420ms var(--ease-out) both;
+    animation-delay: calc(500ms + var(--n, 0) * 70ms);
+  }
+
+  .cab__panel > :nth-child(2) {
+    --n: 1;
+  }
+
+  .cab__panel > :nth-child(3) {
+    --n: 2;
+  }
+
+  .cab__panel > :nth-child(4) {
+    --n: 3;
   }
 
   .cab__led {
@@ -179,8 +426,22 @@
   }
 }
 
-@keyframes room-settle {
+@keyframes panel-in {
   from {
-    transform: scale(1.14);
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes wipe-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+/* Two identical runs side by side: moving by one run's width lands exactly where it started. */
+@keyframes crawl {
+  to {
+    transform: translateX(-50%);
   }
 }
