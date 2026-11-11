@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.8.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.7.1...smash-recap-v1.8.0) (2026-11-11)
+
+
+### Features
+
+* **api:** count the season's recaps and those in the cache ([d8364ae](https://github.com/pnsgg/smash-recap-2026/commit/d8364ae9436feb91cf51ff663b23854b04c543f4))
+* **api:** record every recap served this season ([c6b13c7](https://github.com/pnsgg/smash-recap-2026/commit/c6b13c71d725e429325f939dc7f91e22d4f132f0))
+* CRT news hero with a recap on air and a recap count ticker ([48e1549](https://github.com/pnsgg/smash-recap-2026/commit/48e1549c663a1996d3c4b54bfbd832aacbeb8b51))
+* **recap:** empty the month chart before filling the weekday chart ([a6778ac](https://github.com/pnsgg/smash-recap-2026/commit/a6778acee7248166577532575eb9e7a166b8ec76))
+* **recap:** give the best run its own screen, list the other runs and drop the chest and brick wall ([c3ceba3](https://github.com/pnsgg/smash-recap-2026/commit/c3ceba32bb4a9e758e569a1f0c115c5c1af99c36))
+* **recap:** hold each stage screen for 4 seconds and drop the crown and storm props ([a2f717f](https://github.com/pnsgg/smash-recap-2026/commit/a2f717fe3051680f45f94de026a8122e9f9c0af6))
+* **recap:** hold the rival alert for 3 seconds ([6ef42aa](https://github.com/pnsgg/smash-recap-2026/commit/6ef42aa1c6d79cde5b80f89e20967943c679a7b9))
+* **recap:** redesign the biggest upset screen around the player beaten ([4de7116](https://github.com/pnsgg/smash-recap-2026/commit/4de711644ddea057d08e85e17a09b8d76c3d20c7))
+* **web:** turn the home hero into a CRT news broadcast with a recap on air and a recap count ticker ([c624187](https://github.com/pnsgg/smash-recap-2026/commit/c6241877a90caecd937ba6ab843928e4cd31f14c))
+
+
+### Bug Fixes
+
+* **recap:** give each video screen time to be read ([3387316](https://github.com/pnsgg/smash-recap-2026/commit/3387316fbe566ab020f646d88b9fe6c5a277381f))
+* **recap:** shorten the character select act for players with one or two characters ([29e91cf](https://github.com/pnsgg/smash-recap-2026/commit/29e91cf3a780be03a1738da6ff8925139c0199e8))
+
 ## [1.7.1](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.7.0...smash-recap-v1.7.1) (2026-11-08)
 
 
