@@ -1,20 +1,15 @@
 import { interpolate, spring } from "remotion";
 import { springPresets } from "../../../lib/motion";
 import type { ActProps } from "../../PlayerRecapArcade";
-import type { ArcadeData } from "../data";
+import { bonusPlan, type ArcadeData } from "../data";
 import { Chip, snap } from "../components/kit";
 import { PixelImage } from "../components/PixelImage";
-import { PixelText, Sprite } from "../components/Pixel";
+import { PixelText } from "../components/Pixel";
 import { Slam } from "../components/Slam";
-import { BOOM, BOOM_PALETTE, cycle } from "../components/sprites";
 import { FPS } from "../timing";
 import { caption, color, display, displayCase, fitDisplay, font } from "../theme";
 
-const RUNS_AT = 40;
-const UPSET_AT = 280;
-
 // The best run gets the screen to itself, then the other runs and the worst one as a list that stays up.
-const LIST_AT = 90;
 const ROW = { top: 132, pitch: 66, logo: 52 } as const;
 
 const signed = (spr: number) => (spr > 0 ? `+${spr}` : String(spr));
@@ -107,56 +102,65 @@ const OtherRuns: React.FC<{ t: number; runs: Run[]; worst: Run | null }> = ({ t,
   );
 };
 
-const Runs: React.FC<{ t: number; data: ArcadeData }> = ({ t, data }) => {
+const Runs: React.FC<{ t: number; data: ArcadeData; listAt: number }> = ({ t, data, listAt }) => {
   const [best, ...others] = data.bestRuns;
   const hasList = others.length > 0 || data.worstRun !== null;
-  if (best && (t < LIST_AT || !hasList)) return <BestRun t={t} run={best} />;
-  return <OtherRuns t={best ? t - LIST_AT : t} runs={others} worst={data.worstRun} />;
+  if (best && (t < listAt || !hasList)) return <BestRun t={t} run={best} />;
+  return <OtherRuns t={t - listAt} runs={others} worst={data.worstRun} />;
 };
 
+/** The player beaten is the story: their face and name big, the seeds that made it an upset, then where. */
 const Upset: React.FC<{ t: number; data: ArcadeData }> = ({ t, data }) => {
   const upset = data.upset!;
-  const name = displayCase(upset.tournamentName);
   const opponent = upset.opponent;
-  const beaten = opponent?.gamerTag ? displayCase(opponent.gamerTag) : null;
-  const seeds =
-    upset.playerSeed !== null && opponent ? `Seed ${upset.playerSeed} beat seed ${opponent.seed}` : null;
+  const beaten = opponent?.gamerTag ? displayCase(opponent.gamerTag) : "A higher seed";
+  const seeds = upset.playerSeed !== null && opponent ? displayCase(`Seed ${upset.playerSeed} beat seed ${opponent.seed}`) : null;
+  const tournament = displayCase(upset.tournamentName);
   return (
     <>
-      <div style={{ position: "absolute", left: 300 - 144, top: 100, opacity: t < 12 ? 1 : 0.35 }}>
-        <Sprite rows={cycle(BOOM, Math.min(t, 11), 3)} palette={BOOM_PALETTE} px={18} />
+      <div style={{ position: "absolute", left: 44, top: 40 }}>
+        <Slam frame={t} at={0} text="BIGGEST UPSET" style={display(32, color.accent)} fill={color.accent} />
+        <div style={{ ...caption, marginTop: 12, opacity: snap(t, 4) }}>Your biggest win against a higher seed</div>
       </div>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 44, display: "flex", justifyContent: "center" }}>
-        <Slam frame={t} at={0} text="BIGGEST UPSET" style={display(48, color.ink)} />
-      </div>
-      <div style={{ position: "absolute", left: 0, right: 0, top: 124, display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
-        <div style={{ ...caption, fontSize: 18, color: color.gold, opacity: snap(t, 6) }}>Upset factor</div>
-        <div style={{ transform: `scale(${interpolate(spring({ frame: t - 6, fps: FPS, config: springPresets.heavy }), [0, 1], [2, 1])})`, opacity: t >= 6 ? 1 : 0 }}>
-          <PixelText text={String(upset.factor)} px={16} fill={color.gold} />
+
+      <div style={{ position: "absolute", left: 44, right: 44, top: 128, display: "flex", alignItems: "center", gap: 28 }}>
+        <div
+          style={{
+            width: 176,
+            height: 176,
+            flex: "none",
+            outline: `4px solid ${color.accent}`,
+            backgroundColor: color.raised2,
+            transform: `translateX(${interpolate(snap(t, 4), [0, 1], [-400, 0])}px)`,
+          }}
+        >
+          <PixelImage
+            src={opponent?.avatarUrl ?? null}
+            rows={44}
+            px={4}
+            mode="photo"
+            levels={5}
+            fallback={<div style={{ width: 176, height: 176, display: "flex", alignItems: "center", justifyContent: "center", ...display(96, color.accent) }}>?</div>}
+          />
+        </div>
+        <div style={{ minWidth: 0, opacity: snap(t, 10) }}>
+          <div style={{ ...caption, fontSize: 18, color: color.accent }}>You beat</div>
+          {opponent?.prefix ? <div style={{ ...display(16, color.muted), marginTop: 14 }}>{displayCase(opponent.prefix)}</div> : null}
+          <div style={{ ...display(fitDisplay(beaten, 64, 290)), whiteSpace: "normal", lineHeight: 1.1, marginTop: opponent?.prefix ? 8 : 14 }}>{beaten}</div>
         </div>
       </div>
-      {opponent ? (
-        <div style={{ position: "absolute", left: 44, right: 44, top: 304, display: "flex", alignItems: "center", gap: 20, opacity: snap(t, 16) }}>
-          <div style={{ width: 96, height: 96, flex: "none", outline: `4px solid ${color.accent}`, backgroundColor: color.raised2 }}>
-            <PixelImage src={opponent.avatarUrl} rows={24} px={4} mode="photo" levels={5} fallback={<div style={{ width: 96, height: 96, display: "flex", alignItems: "center", justifyContent: "center" }}><Chip text="VS" size={32} /></div>} />
-          </div>
-          <div style={{ minWidth: 0 }}>
-            {seeds ? <div style={{ ...caption, fontSize: 18, color: color.accent }}>{seeds}</div> : null}
-            {beaten ? (
-              <div style={{ marginTop: 10 }}>
-                {opponent.prefix ? <div style={display(16, color.muted)}>{displayCase(opponent.prefix)}</div> : null}
-                <div style={{ ...display(fitDisplay(beaten, 48, 380)), marginTop: opponent.prefix ? 6 : 0 }}>{beaten}</div>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      ) : null}
-      <div style={{ position: "absolute", left: 44, right: 44, top: opponent ? 440 : 380, display: "flex", alignItems: "center", gap: 20, opacity: snap(t, 24) }}>
+
+      <div style={{ position: "absolute", left: 44, right: 44, top: 344, display: "flex", alignItems: "center", gap: 16, opacity: snap(t, 18) }}>
+        {seeds ? <div style={display(fitDisplay(seeds, 32, 400), color.gold)}>{seeds}</div> : null}
+        <Chip text={`+${upset.factor}`} fill={color.gold} size={24} />
+      </div>
+
+      <div style={{ position: "absolute", left: 44, right: 44, top: 430, display: "flex", alignItems: "center", gap: 20, opacity: snap(t, 26) }}>
         <div style={{ width: 80, height: 80, flex: "none", outline: `4px solid ${color.casingDeep}`, backgroundColor: color.raised2 }}>
           <PixelImage src={upset.tournamentImageUrl} rows={20} px={4} mode="photo" levels={5} />
         </div>
         <div style={{ minWidth: 0 }}>
-          <div style={display(fitDisplay(name, 32, 400))}>{name}</div>
+          <div style={display(fitDisplay(tournament, 32, 400))}>{tournament}</div>
           <div style={{ ...caption, marginTop: 12, whiteSpace: "normal" }}>{upset.eventName}</div>
         </div>
       </div>
@@ -165,24 +169,21 @@ const Upset: React.FC<{ t: number; data: ArcadeData }> = ({ t, data }) => {
 };
 
 export const BonusStage: React.FC<ActProps> = ({ t, data }) => {
+  const plan = bonusPlan({ bestRuns: data.bestRuns.length, worstRun: data.worstRun !== null, upset: data.upset !== null });
   const hasRuns = data.bestRuns.length > 0 || data.worstRun !== null;
-  const upsetAt = data.upset ? (hasRuns ? UPSET_AT : RUNS_AT) : Infinity;
-  const card = t < RUNS_AT || (!hasRuns && !data.upset);
 
-  return (
-    <>
-      {card ? (
-        <>
-          <div style={{ position: "absolute", left: 0, right: 0, top: 268, display: "flex", justifyContent: "center" }}>
-            <Slam frame={t} at={2} text="BEST RESULTS" style={display(64, color.gold)} fill={color.gold} />
-          </div>
-          {!hasRuns && !data.upset ? (
-            <div style={{ position: "absolute", left: 0, right: 0, top: 360, textAlign: "center", ...caption, fontSize: 18 }}>No seeded runs reported</div>
-          ) : null}
-        </>
-      ) : null}
-      {t >= RUNS_AT && t < upsetAt && hasRuns ? <Runs t={t - RUNS_AT} data={data} /> : null}
-      {t >= upsetAt && data.upset ? <Upset t={t - upsetAt} data={data} /> : null}
-    </>
-  );
+  if (t < plan.runsAt || (!hasRuns && !data.upset)) {
+    return (
+      <>
+        <div style={{ position: "absolute", left: 0, right: 0, top: 268, display: "flex", justifyContent: "center" }}>
+          <Slam frame={t} at={2} text="BEST RESULTS" style={display(64, color.gold)} fill={color.gold} />
+        </div>
+        {!hasRuns && !data.upset ? (
+          <div style={{ position: "absolute", left: 0, right: 0, top: 360, textAlign: "center", ...caption, fontSize: 18 }}>No seeded runs reported</div>
+        ) : null}
+      </>
+    );
+  }
+  if (t < plan.upsetAt || !data.upset) return <Runs t={t - plan.runsAt} data={data} listAt={plan.listAt - plan.runsAt} />;
+  return <Upset t={t - plan.upsetAt} data={data} />;
 };

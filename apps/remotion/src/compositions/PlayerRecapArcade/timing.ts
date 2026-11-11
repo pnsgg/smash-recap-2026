@@ -1,6 +1,6 @@
 import type { PlayerRecapProps } from "@shared";
 import { BAR } from "../../lib/motion";
-import { stageViewCount } from "./data";
+import { bonusPlan, stageViewCount } from "./data";
 
 export const FPS = 30;
 export const SIZE = 600;
@@ -32,7 +32,10 @@ export const DURATION = ACTS.reduce((sum, n) => sum + ACT_BARS[n] * BAR, 0);
 export const STAGE_VIEW_AT = [60, 180, 300] as const;
 const STAGE_VIEW_FRAMES = 120;
 
-type TimelineRecap = Pick<PlayerRecapProps, "mostPlayedCharacters" | "stageActivity" | "rankings">;
+type TimelineRecap = Pick<
+  PlayerRecapProps,
+  "mostPlayedCharacters" | "stageActivity" | "rankings" | "bestPerformances" | "worstPerformance" | "highestUpset"
+>;
 
 /**
  * Player select stops after its last step: the first pick (at frame 50), the second (140), then the
@@ -41,6 +44,13 @@ type TimelineRecap = Pick<PlayerRecapProps, "mostPlayedCharacters" | "stageActiv
 const PLAYER_SELECT_BARS = { 1: 2.5, 2: 4 } as const;
 
 const actLength = (name: Act, recap: TimelineRecap) => {
+  if (name === "bonusStage") {
+    return bonusPlan({
+      bestRuns: recap.bestPerformances.length,
+      worstRun: recap.worstPerformance !== null,
+      upset: recap.highestUpset !== null,
+    }).length;
+  }
   if (name === "stageSelect") return STAGE_VIEW_AT[0] + stageViewCount(recap.stageActivity) * STAGE_VIEW_FRAMES;
   if (name !== "playerSelect") return LENGTH[name];
   const fighters = recap.mostPlayedCharacters.length;

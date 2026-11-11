@@ -177,62 +177,6 @@ export const CRATE = [
 ] as const;
 export const CRATE_PALETTE = { k: outline, w: "#a8743a", p: "#7a4f24" } as const;
 
-export const BOOM = [
-  [
-    "................",
-    "................",
-    "................",
-    "......aaaa......",
-    ".....abbbba.....",
-    "....abwwwwba....",
-    "....abwwwwba....",
-    "....abwwwwba....",
-    ".....abbbba.....",
-    "......aaaa......",
-    "................",
-  ],
-  [
-    "......a..a......",
-    "...a.aabbaa.a...",
-    "....abbbbbbba...",
-    "..aabbwwwwbbaa..",
-    "..abbwwwwwwbba..",
-    ".aabwwwwwwwwbaa.",
-    "..abbwwwwwwbba..",
-    "..aabbwwwwbbaa..",
-    "....abbbbbbba...",
-    "...a.aabbaa.a...",
-    "......a..a......",
-  ],
-  [
-    "..a...a..a...a..",
-    "a..aabb..bbaa..a",
-    "..abb..aa..bba..",
-    ".ab..aabbaa..ba.",
-    "ab..ab....ba..ba",
-    ".a.ab......ba.a.",
-    "ab..ab....ba..ba",
-    ".ab..aabbaa..ba.",
-    "..abb..aa..bba..",
-    "a..aabb..bbaa..a",
-    "..a...a..a...a..",
-  ],
-  [
-    "a..............a",
-    "...a..b..b..a...",
-    ".b............b.",
-    "....a......a....",
-    "..b..........b..",
-    "a..............a",
-    "..b..........b..",
-    "....a......a....",
-    ".b............b.",
-    "...a..b..b..a...",
-    "a..............a",
-  ],
-] as const;
-export const BOOM_PALETTE = { a: color.accent, b: color.gold, w: "#fff1b8" } as const;
-
 export const ARROW_UP = ["...k...", "..kak..", ".kaaak.", "kaaaaak", "kkaaakk", "..kak..", "..kak..", "..kkk.."] as const;
 export const ARROW_DOWN = [...ARROW_UP].reverse();
 

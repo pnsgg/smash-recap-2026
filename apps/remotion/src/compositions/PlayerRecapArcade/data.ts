@@ -1,6 +1,23 @@
 import type { PlayerRecapProps } from "@shared";
+import { BAR } from "../../lib/motion";
 
 export const MIN_STAGE_GAMES = 10;
+
+const BEAT = BAR / 4;
+
+/**
+ * When each part of the results act starts: the "Best results" card, the best run on its own, the
+ * other runs and the worst one as a list, then the biggest upset. Parts with no data are skipped and
+ * the act ends on the beat after the last one.
+ */
+export const bonusPlan = (r: { bestRuns: number; worstRun: boolean; upset: boolean }) => {
+  const list = r.bestRuns > 1 || r.worstRun;
+  const runsAt = 40;
+  const listAt = runsAt + (r.bestRuns > 0 ? (list ? 90 : 120) : 0);
+  const upsetAt = listAt + (list ? 150 : 0);
+  const end = upsetAt + (r.upset ? 120 : 0);
+  return { runsAt, listAt, upsetAt, length: Math.ceil(Math.max(end, 120) / BEAT) * BEAT };
+};
 
 /** Stages played enough to rank by win rate. */
 export const ratedStages = <T extends { count: number }>(stages: T[]) => stages.filter((s) => s.count >= MIN_STAGE_GAMES);
