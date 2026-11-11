@@ -13,6 +13,7 @@
       "#env": ["./src/env.ts"],
       "#recap/*": ["./src/routes/recap/*"],
       "#search/*": ["./src/routes/search/*"],
+      "#stats/*": ["./src/routes/stats/*"],
       "#libs/*": ["./src/libs/*"],
       "#/graphql": ["./src/libs/startgg/graphql.ts"],
       "#/graphql-env": ["./src/libs/startgg/graphql-env.d.ts"],

@@ -15,6 +15,7 @@
     "#plugins/*": "./src/plugins/*.ts",
     "#recap/*": "./src/routes/recap/*.ts",
     "#search/*": "./src/routes/search/*.ts",
+    "#stats/*": "./src/routes/stats/*.ts",
     "#libs/*": "./src/libs/*.ts",
     "#/graphql": "./src/libs/startgg/graphql.ts",
     "#/graphql-env": "./src/libs/startgg/graphql-env.d.ts",
