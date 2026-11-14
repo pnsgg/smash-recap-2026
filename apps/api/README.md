@@ -8,7 +8,7 @@ Elysia/Bun HTTP API serving yearly recap stats for Smash players and tournament 
 bun run dev
 ```
 
-Serves `/api/v1/players/search`, `/api/v1/players/:slug/recap`, `/api/v1/tournament-organizers/:slug/recap`, plus OpenAPI docs at `/openapi`.
+Serves `/api/v1/players/search`, `/api/v1/players/:slug/recap` and `/api/v1/tournament-organizers/:slug/recap`.
 
 ## Testing
 

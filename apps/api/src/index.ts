@@ -20,7 +20,7 @@ async function clientFile(pathname: string) {
 if (await Bun.file(SERVER_BUILD).exists()) {
   const { fetch: renderPage } = (await import(SERVER_BUILD)) as PageRenderer
 
-  app.all('*', { detail: { hide: true } }, async ({ request }) => {
+  app.all('*', async ({ request }) => {
     const { pathname } = new URL(request.url)
     const file = request.method === 'GET' || request.method === 'HEAD' ? await clientFile(pathname) : null
     if (!file) return renderPage(request)
