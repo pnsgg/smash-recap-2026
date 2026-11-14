@@ -31,7 +31,7 @@ export const createRecapModule = (
 ) => {
   const store = new RecapStore(cacheClient, playerService, tournamentOrganizerService)
 
-  return new Elysia({ tags: ['Recap'], normalize: 'typebox' })
+  return new Elysia({ normalize: 'typebox' })
     .use(envPlugin)
     .onError(UserNotFoundError, ({ error }) =>
       status(404, { error: 'not_found', message: error.message })
@@ -47,11 +47,6 @@ export const createRecapModule = (
       params: playerRecapParamsSchema,
       query: playerRecapQuerySchema,
       response: { 200: 'Recap.PlayerRecapResponse', 404: 'Recap.NotFound' },
-      detail: {
-        summary: 'Get a player recap',
-        description:
-          "Fetches a player's yearly recap stats by their start.gg user slug and an optional videogame ID (defaults to Super Smash Bros. Ultimate).",
-      },
     }, ({ params, query, env }) =>
       store.player(
         asUserSlug(params.slug),
@@ -61,21 +56,11 @@ export const createRecapModule = (
     .get('/tournament-organizers/:slug/recap', {
       params: tournamentOrganizerRecapParamsSchema,
       response: { 200: 'Recap.TournamentOrganizerRecapResponse', 404: 'Recap.NotFound' },
-      detail: {
-        summary: 'Get a tournament organizer recap',
-        description:
-          "Fetches a tournament organizer's yearly recap stats by their start.gg user slug.",
-      },
     }, ({ params, env }) => store.tournamentOrganizer(asUserSlug(params.slug), env.RECAP_YEAR))
     .get('/players/:slug/summary', {
       params: playerRecapParamsSchema,
       query: playerRecapQuerySchema,
       response: { 200: 'Recap.PlayerSummaryResponse', 404: 'Recap.NotFound' },
-      detail: {
-        summary: 'Get a player recap summary',
-        description:
-          "The player's name and headline numbers for the year, for link previews. Reads the same cached recap as the full recap endpoint.",
-      },
     }, async ({ params, query, env }) =>
       presentPlayerSummary(
         await store.player(
@@ -87,11 +72,6 @@ export const createRecapModule = (
     .get('/tournament-organizers/:slug/summary', {
       params: tournamentOrganizerRecapParamsSchema,
       response: { 200: 'Recap.TournamentOrganizerSummaryResponse', 404: 'Recap.NotFound' },
-      detail: {
-        summary: 'Get a tournament organizer recap summary',
-        description:
-          "The organizer's name and headline numbers for the year, for link previews. Reads the same cached recap as the full recap endpoint.",
-      },
     }, async ({ params, env }) =>
       presentTournamentOrganizerSummary(await store.tournamentOrganizer(asUserSlug(params.slug), env.RECAP_YEAR)))
 }
