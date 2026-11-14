@@ -21,40 +21,15 @@
   gap: 0.5rem;
 }
 
-/* The image row: which social it is sized for, then the button that draws it. */
-.actions__image {
+/* The post links, two by two: each opens a prefilled post once the image is saved. */
+.actions__posts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
   gap: 0.5rem;
 }
 
-.actions__image .button {
+.actions__posts .button {
   width: 100%;
-}
-
-.actions__format select {
-  width: 100%;
-  /* Same box as the .button beside it. */
-  min-height: 3.25rem;
-  padding: 0.75rem 2.75rem 0.75rem 1.4rem;
-  border: 0;
-  border-radius: 0;
-  appearance: none;
-  background:
-    var(--raised-2)
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' shape-rendering='crispEdges'%3E%3Cpath d='M0 0h10v2H8v2H6v2H4V4H2V2H0z' fill='%23e9f1ea'/%3E%3C/svg%3E")
-    no-repeat right 1.4rem center;
-  color: var(--ink);
-  font-family: var(--font-text);
-  font-size: var(--step-body);
-  font-weight: 700;
-  line-height: 1.1;
-}
-
-.actions__format select:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
 }
 
 .actions__status:empty {
@@ -71,7 +46,7 @@
 }
 
 @media (max-width: 420px) {
-  .actions__image {
+  .actions__posts {
     grid-template-columns: 1fr;
   }
 }

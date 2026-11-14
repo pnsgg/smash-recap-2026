@@ -1,54 +1,38 @@
 import { renderStillOnWeb } from "@remotion/web-renderer";
-import { STILL_FORMATS, type StillFormatKey } from "@video/constants";
-import { ORGANIZER_ARCADE_STILL_COMPONENTS, organizerArcadeStillId } from "@video/stills/arcade/OrganizerArcadeStills";
-import { PLAYER_ARCADE_STILL_COMPONENTS, playerArcadeStillId } from "@video/stills/arcade/PlayerArcadeStills";
+import { CARD } from "@video/stills/card/kit";
+import { OrganizerCard, ORGANIZER_CARD_ID } from "@video/stills/card/OrganizerCard";
+import { PlayerCard, PLAYER_CARD_ID } from "@video/stills/card/PlayerCard";
 import { DEFAULT_GAME } from "@shared";
 import { RECAP_YEAR } from "../config";
 import type { RecapData } from "../pages/Recap";
 
 /**
- * Renders a recap's image for one platform in the browser and returns it as a PNG.
+ * Renders a recap's card in the browser and returns it as a PNG: one image for every social.
  * Browser only, and heavy: the recap page imports this module on the first click.
  */
-export async function renderRecapImage(input: RecapData, key: StillFormatKey, signal?: AbortSignal) {
-  const { width, height } = STILL_FORMATS[key];
+export async function renderRecapImage(input: RecapData, signal?: AbortSignal) {
   const options = { frame: 0, licenseKey: "free-license", signal } as const;
+  const size = { durationInFrames: 1, fps: 30, width: CARD.width * CARD.scale, height: CARD.height * CARD.scale };
   const still =
     input.kind === "player"
       ? await renderStillOnWeb({
           ...options,
-          composition: {
-            id: playerArcadeStillId(key),
-            component: PLAYER_ARCADE_STILL_COMPONENTS[key],
-            durationInFrames: 1,
-            fps: 30,
-            width,
-            height,
-            defaultProps: input.recap,
-          },
-          inputProps: input.recap,
+          composition: { id: PLAYER_CARD_ID, component: PlayerCard, ...size, defaultProps: input.recap },
+          inputProps: { ...input.recap, gameName: input.game.name, year: RECAP_YEAR },
         })
       : await renderStillOnWeb({
           ...options,
-          composition: {
-            id: organizerArcadeStillId(key),
-            component: ORGANIZER_ARCADE_STILL_COMPONENTS[key],
-            durationInFrames: 1,
-            fps: 30,
-            width,
-            height,
-            defaultProps: input.recap,
-          },
-          inputProps: input.recap,
+          composition: { id: ORGANIZER_CARD_ID, component: OrganizerCard, ...size, defaultProps: input.recap },
+          inputProps: { ...input.recap, year: RECAP_YEAR },
         });
   return still.blob({ format: "png" });
 }
 
-/** `smashrecap-2026-licane-x.png`, `smashrecap-2026-zain-melee-x.png`, `smashrecap-2026-licane-organizer-x.png`. */
-export const recapImageName = (input: RecapData, key: StillFormatKey) => {
+/** `smashrecap-2026-licane.png`, `smashrecap-2026-zain-melee.png`, `smashrecap-2026-licane-organizer.png`. */
+export const recapImageName = (input: RecapData) => {
   const tag = fileSafe(input.recap.gamerTag);
   const kind = input.kind === "organizer" ? "-organizer" : recapGameSuffix(input);
-  return `smashrecap-${RECAP_YEAR}-${tag || "player"}${kind}-${key}.png`;
+  return `smashrecap-${RECAP_YEAR}-${tag || "player"}${kind}.png`;
 };
 
 /** Lowercase letters, digits and dashes only, for file names. */
