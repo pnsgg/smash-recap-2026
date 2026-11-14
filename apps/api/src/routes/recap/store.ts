@@ -29,6 +29,16 @@ export const recapKey = {
 
 const CACHE_READ_TIMEOUT_MS = 500
 
+/**
+ * A cached player recap made before `setRecord`, `bestFinishes` (with `ultrankTier`) and `mostBeaten` existed is
+ * computed again.
+ */
+const isCurrentPlayerRecap = (recap: PlayerRecap) =>
+  'setRecord' in recap &&
+  'mostBeaten' in recap &&
+  Array.isArray(recap.bestFinishes) &&
+  recap.bestFinishes.every((finish) => 'ultrankTier' in finish)
+
 export class RecapStore {
   constructor(
     private readonly cache: CacheClient,
@@ -37,7 +47,7 @@ export class RecapStore {
   ) {}
 
   player(slug: UserSlug, year: number, videogameId: VideogameId): Promise<PlayerRecap> {
-    return this.cached(recapKey.player(year, videogameId, slug), recapKey.seasonPlayers(year), async () => {
+    return this.cached(recapKey.player(year, videogameId, slug), recapKey.seasonPlayers(year), isCurrentPlayerRecap, async () => {
       const { player, skippedEventCount, nemesisProfile, rivalProfile, upsetOpponentProfile, rankings } =
         await this.players.getRecap(slug, new Date(year, 0, 1), videogameId)
       return presentPlayerRecap(player, skippedEventCount, nemesisProfile, rivalProfile, upsetOpponentProfile, rankings)
@@ -45,20 +55,26 @@ export class RecapStore {
   }
 
   tournamentOrganizer(slug: UserSlug, year: number): Promise<TournamentOrganizerRecap> {
-    return this.cached(recapKey.organizer(year, slug), recapKey.seasonOrganizers(year), async () =>
+    return this.cached(recapKey.organizer(year, slug), recapKey.seasonOrganizers(year), () => true, async () =>
       presentTournamentOrganizerRecap(await this.organizers.getRecap(slug, new Date(year, 0, 1)))
     )
   }
 
   /** The cached recap, or a fresh one cached for next time. Either way it joins the season's set. */
-  private async cached<T>(key: string, season: string, compute: () => Promise<T>): Promise<T> {
+  private async cached<T>(
+    key: string,
+    season: string,
+    isCurrent: (value: T) => boolean,
+    compute: () => Promise<T>
+  ): Promise<T> {
     const hit = await Promise.race([
       this.cache.get(key).catch(() => null),
       Bun.sleep(CACHE_READ_TIMEOUT_MS).then(() => null),
     ])
-    if (hit !== null) {
+    const cachedValue = hit === null ? null : (JSON.parse(hit) as T)
+    if (cachedValue !== null && isCurrent(cachedValue)) {
       this.cache.sadd(season, key).catch(() => null)
-      return JSON.parse(hit) as T
+      return cachedValue
     }
 
     const value = await compute()

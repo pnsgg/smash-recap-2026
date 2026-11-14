@@ -1,5 +1,5 @@
 import type { Character } from '#recap/domain/character'
-import type { Event } from '#recap/domain/event'
+import type { Event, PlayerWin } from '#recap/domain/event'
 import { EventType } from '#recap/domain/event_type'
 import { clusterSeries, type TournamentSeries } from '#recap/domain/series_clustering'
 import type { Set as EventSet } from '#recap/domain/set'
@@ -14,6 +14,36 @@ export type PlayerParams = {
   tournaments: Tournament[]
   avatarUrl?: string | null
 }
+
+/** An opponent the player beat, as `bestFinishes` and `mostBeaten` show them. */
+export type BeatenOpponent = {
+  playerId: PlayerId
+  name: string
+  seed: number | null
+  character: Character | null
+}
+
+export type Placement = {
+  tournament: Tournament
+  event: Event
+  placement: number
+  /** Entrants in the event. */
+  entrants: number
+  /** Placement ÷ entrants: 0.01 is the top 1% of the bracket. */
+  topShare: number
+  /** Players beaten in the event, best event seed first. */
+  wins: BeatenOpponent[]
+}
+
+const beaten = (win: PlayerWin): BeatenOpponent => ({
+  playerId: win.opponentPlayerId,
+  name: win.opponentName,
+  seed: win.opponentSeed,
+  character: win.opponentCharacter,
+})
+
+const bySeed = (a: { seed: number | null }, b: { seed: number | null }) =>
+  (a.seed ?? Number.POSITIVE_INFINITY) - (b.seed ?? Number.POSITIVE_INFINITY)
 
 type HeadToHeadEntry = {
   opponentPlayerId: PlayerId
@@ -161,6 +191,79 @@ export class Player {
       .filter((perf): perf is { tournament: Tournament; spr: number } => perf.spr !== null)
       .sort((a, b) => b.spr - a.spr)
       .filter(({ spr }) => spr > 0)
+      .slice(0, limit)
+  }
+
+  /**
+   * Sets won and lost across the season. Excludes sets with a DQ: they were not played.
+   */
+  setRecord(): { won: number; lost: number } {
+    const sets = this.tournaments
+      .flatMap((t) => t.events.flatMap((e) => e.sets))
+      .filter((set) => set.competitors.has(this.id) && !set.hasDisqualification())
+    const won = sets.filter((set) => set.winnerId === this.id).length
+    return { won, lost: sets.length - won }
+  }
+
+  /**
+   * The player's best finishes in completed singles events, by the share of the bracket placed at or
+   * above them (placement ÷ entrants, smallest first), then the bigger event. A win at a big event
+   * comes before a win at a small one. Events without an entrant count are left out. Each lists up
+   * to `winsPerEvent` players beaten there, best event seed first.
+   */
+  bestFinishes(limit: number, winsPerEvent = 4): Placement[] {
+    const placements: Placement[] = []
+    for (const tournament of this.tournaments) {
+      for (const event of tournament.events.filter((e) => !e.isTeams() && e.isCompleted && e.numEntrants > 0)) {
+        const placement = event.getPlayerPlacement(this.id)
+        if (placement === null) continue
+        // One win per opponent: beating the same player twice in an event shows them once.
+        const wins = new Map<PlayerId, BeatenOpponent>()
+        for (const win of event.getPlayerWins(this.id)) {
+          if (!wins.has(win.opponentPlayerId)) wins.set(win.opponentPlayerId, beaten(win))
+        }
+        placements.push({
+          tournament,
+          event,
+          placement,
+          entrants: event.numEntrants,
+          topShare: Math.min(1, placement / event.numEntrants),
+          wins: [...wins.values()].sort(bySeed).slice(0, winsPerEvent),
+        })
+      }
+    }
+    return placements
+      .sort((a, b) => a.topShare - b.topShare || b.entrants - a.entrants)
+      .slice(0, limit)
+  }
+
+  /**
+   * The opponents the player beat the most sets against in singles events, most first, then by name. Each shows the
+   * character they played the most games with in those sets and the entrant name they last used.
+   */
+  mostBeaten(limit: number): (BeatenOpponent & { count: number })[] {
+    const opponents = new Map<PlayerId, { win: BeatenOpponent; count: number; characters: Map<string, { character: Character; count: number }> }>()
+    for (const tournament of [...this.tournaments].sort((a, b) => a.startDate.getTime() - b.startDate.getTime())) {
+      for (const event of tournament.events.filter((e) => !e.isTeams())) {
+        for (const win of event.getPlayerWins(this.id)) {
+          const entry = opponents.get(win.opponentPlayerId) ?? { win: beaten(win), count: 0, characters: new Map() }
+          entry.count++
+          entry.win = { ...entry.win, name: win.opponentName }
+          for (const character of win.set.getPlayerCharacters(win.opponentPlayerId)) {
+            const pick = entry.characters.get(character.id) ?? { character, count: 0 }
+            pick.count++
+            entry.characters.set(character.id, pick)
+          }
+          opponents.set(win.opponentPlayerId, entry)
+        }
+      }
+    }
+    return [...opponents.values()]
+      .map(({ win, count, characters }) => {
+        const main = [...characters.values()].sort((a, b) => b.count - a.count)[0]
+        return { ...win, seed: null, character: main?.character ?? null, count }
+      })
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
       .slice(0, limit)
   }
 

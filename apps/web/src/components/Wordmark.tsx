@@ -4,7 +4,7 @@ import "./Wordmark.css";
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
     <Link to="/" className={`wordmark ${className}`} aria-label="SmashRecap home">
-      <span className="wordmark__led" aria-hidden="true" />
+      <img className="wordmark__mark" src="/favicon.svg" alt="" width={16} height={16} />
       SmashRecap
     </Link>
   );

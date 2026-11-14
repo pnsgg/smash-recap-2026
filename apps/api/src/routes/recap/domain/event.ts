@@ -7,8 +7,21 @@ import type { Stage } from '#recap/domain/stage'
 import type { Videogame } from '#recap/domain/videogame'
 import type { EventId, PlayerId } from '#libs/ids'
 
+/** A set the player won, and who they beat in it. */
+export type PlayerWin = {
+  set: Set
+  opponentPlayerId: PlayerId
+  /** The opponent's entrant name in this event. */
+  opponentName: string
+  /** The opponent's seed in this event, or null when start.gg has none. */
+  opponentSeed: number | null
+  opponentCharacter: Character | null
+}
+
 export type EventParams = {
   id: EventId
+  /** start.gg's `tournament/<t>/event/<e>`, or null when unknown. */
+  slug?: string | null
   name: string
   videogame: Videogame
   isOnline: boolean
@@ -18,10 +31,13 @@ export type EventParams = {
   participants: Participant[]
   sets: Set[]
   numEntrants?: number
+  /** False while start.gg has the event in progress: its placements are not final yet. Defaults to true. */
+  isCompleted?: boolean
 }
 
 export class Event {
   public readonly id: EventId
+  public readonly slug: string | null
   public readonly name: string
   public readonly videogame: Videogame
   public readonly isOnline: boolean
@@ -30,11 +46,13 @@ export class Event {
   public readonly participants: Participant[]
   public readonly sets: Set[]
   public readonly numEntrants: number
+  public readonly isCompleted: boolean
 
   constructor(params: EventParams) {
     this.checkPreconditions(params)
 
     this.id = params.id
+    this.slug = params.slug ?? null
     this.name = params.name
     this.videogame = params.videogame
     this.isOnline = params.isOnline
@@ -43,6 +61,7 @@ export class Event {
     this.participants = params.participants
     this.sets = params.sets
     this.numEntrants = params.numEntrants ?? 0
+    this.isCompleted = params.isCompleted ?? true
   }
 
   private checkPreconditions(params: EventParams) {
@@ -69,6 +88,34 @@ export class Event {
     const participant = this.participants.find((p) => p.playerId === playerId)
     if (!participant) return null
     return participant.seed.seedingPerformanceRating(this.lastBracketType)
+  }
+
+  /** The player's final placement in this event, or null if they were not in it. */
+  getPlayerPlacement(playerId: PlayerId): number | null {
+    return this.participants.find((p) => p.playerId === playerId)?.seed.finalPlacement ?? null
+  }
+
+  /**
+   * The sets the player won in this event and who they beat: the opponent's entrant name, event
+   * seed and the character they played most in that set. Excludes sets with a DQ: they were not played.
+   */
+  getPlayerWins(playerId: PlayerId): PlayerWin[] {
+    const wins: PlayerWin[] = []
+    for (const set of this.sets) {
+      if (set.winnerId !== playerId || set.hasDisqualification()) continue
+      const opponent = set.opponentOf(playerId)
+      if (!opponent) continue
+      const name = this.participants.find((p) => p.playerId === opponent.playerId)?.name
+      if (!name) continue
+      wins.push({
+        set,
+        opponentPlayerId: opponent.playerId,
+        opponentName: name,
+        opponentSeed: opponent.seed?.initialSeed ?? null,
+        opponentCharacter: set.mostPlayedCharacter(opponent.playerId),
+      })
+    }
+    return wins
   }
 
   /**

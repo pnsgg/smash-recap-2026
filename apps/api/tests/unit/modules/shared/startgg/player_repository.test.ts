@@ -130,6 +130,9 @@ const fetcher = new InMemoryFetcher()
           name: 'Genesis X Singles',
           isOnline: false,
           type: 2,
+          slug: null,
+          numEntrants: null,
+          state: null,
           videogame: { id: '1386', name: 'Super Smash Bros. Ultimate' },
           phases: [
             {
@@ -257,6 +260,9 @@ const fetcher = new InMemoryFetcher()
           name: 'Genesis X Doubles',
           isOnline: false,
           type: 2,
+          slug: null,
+          numEntrants: null,
+          state: null,
           videogame: { id: '1386', name: 'Super Smash Bros. Ultimate' },
           phases: [
             {

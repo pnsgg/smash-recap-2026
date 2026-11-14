@@ -12,6 +12,7 @@ import type { EventId } from '#libs/ids'
 
 type EventOverrides = {
   id?: EventId
+  slug?: string | null
   name?: string
   videogame?: Videogame
   isOnline?: boolean
@@ -20,6 +21,7 @@ type EventOverrides = {
   participants?: Participant[]
   sets?: Set[]
   numEntrants?: number
+  isCompleted?: boolean
 }
 
 export const EventFactory = Factory.define<Event, any, Event, EventOverrides>(
@@ -38,6 +40,7 @@ export const EventFactory = Factory.define<Event, any, Event, EventOverrides>(
 
     return new Event({
       id,
+      slug: params.slug ?? null,
       name,
       videogame,
       isOnline,
@@ -46,6 +49,7 @@ export const EventFactory = Factory.define<Event, any, Event, EventOverrides>(
       participants,
       sets,
       numEntrants,
+      isCompleted: params.isCompleted ?? true,
     })
   }
 )

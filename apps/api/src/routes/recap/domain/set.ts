@@ -168,6 +168,19 @@ export class Set {
     return characters
   }
 
+  /** The character `playerId` played the most games with in this set; the first picked between equals. */
+  mostPlayedCharacter(playerId: PlayerId): Character | null {
+    const counts = new Map<string, { character: Character; count: number }>()
+    for (const character of this.getPlayerCharacters(playerId)) {
+      const entry = counts.get(character.id) ?? { character, count: 0 }
+      entry.count++
+      counts.set(character.id, entry)
+    }
+    let best: { character: Character; count: number } | null = null
+    for (const entry of counts.values()) if (!best || entry.count > best.count) best = entry
+    return best?.character ?? null
+  }
+
   getOpponentCharacters(playerId: PlayerId): Character[] {
     if (!this.competitors.has(playerId)) return []
     const opponentId = Array.from(this.competitors.keys()).find((id) => id !== playerId)
