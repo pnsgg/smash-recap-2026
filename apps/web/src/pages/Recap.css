@@ -6,7 +6,6 @@
 }
 
 .recap__bar {
-  --led: var(--accent-ink);
   display: flex;
   align-items: center;
   gap: 0.5rem 1.5rem;

@@ -11,9 +11,9 @@
   color: inherit;
 }
 
-/* The monitor's power light. */
-.wordmark__led {
-  width: 0.5em;
-  height: 0.5em;
-  background: var(--led, var(--accent));
+/* The mark: the arcade screen playing the season back. Drawn on a 16 px grid, scaled in whole steps of it. */
+.wordmark__mark {
+  width: 1.25em;
+  height: 1.25em;
+  image-rendering: pixelated;
 }
