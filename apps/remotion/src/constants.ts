@@ -27,5 +27,3 @@ export const TOURNAMENT_ORGANIZER_RECAP_ARCADE = {
   posterFrame: 210,
 } as const;
 
-/** The downloadable recap images, one per platform (see stills/formats.ts). */
-export { STILL_FORMATS, STILL_FORMAT_KEYS, type StillFormatKey } from "./stills/formats";
