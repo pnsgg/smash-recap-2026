@@ -45,6 +45,12 @@ const characterImageFields = {
   stockIconUrl: t.Nullable(t.String()),
 }
 
+/** The character a beaten opponent played most against the player, when start.gg has it. */
+const beatenCharacterFields = {
+  characterName: t.Nullable(t.String()),
+  stockIconUrl: t.Nullable(t.String()),
+}
+
 export const playerRecapResponseSchema = t.Object({
   id: t.String(),
   prefix: t.Nullable(t.String()),
@@ -52,6 +58,8 @@ export const playerRecapResponseSchema = t.Object({
   avatarUrl: t.Nullable(t.String()),
   totalTournaments: t.Number(),
   totalSets: t.Number(),
+  /** Sets won and lost, without DQs. */
+  setRecord: t.Object({ won: t.Number(), lost: t.Number() }),
   dayOfWeekActivity: t.Array(t.Object({ day: t.String(), count: t.Number() })),
   tournamentsByMonth: t.Array(t.Object({ month: t.String(), count: t.Number() })),
   cleanSweeps: t.Number(),
@@ -65,6 +73,24 @@ export const playerRecapResponseSchema = t.Object({
       spr: t.Number(),
     })
   ),
+  /** Completed singles events, smallest share of the bracket (placement ÷ entrants) first, then the bigger event. */
+  bestFinishes: t.Array(
+    t.Object({
+      tournamentName: t.String(),
+      tournamentImageUrl: t.Nullable(t.String()),
+      eventName: t.String(),
+      /** UltRank's tier for the event (SP, P+, P, S+ … D), or null when UltRank does not rank it. */
+      ultrankTier: t.Nullable(t.String()),
+      placement: t.Number(),
+      entrants: t.Number(),
+      /** Placement ÷ entrants: 0.01 is the top 1% of the bracket. */
+      topShare: t.Number(),
+      /** Players beaten in the event, best event seed first. */
+      wins: t.Array(t.Object({ name: t.String(), seed: t.Nullable(t.Number()), ...beatenCharacterFields })),
+    })
+  ),
+  /** The opponents beaten the most sets against in singles events, most first. */
+  mostBeaten: t.Array(t.Object({ name: t.String(), count: t.Number(), ...beatenCharacterFields })),
   worstPerformance: t.Nullable(
     t.Object({
       tournamentName: t.String(),

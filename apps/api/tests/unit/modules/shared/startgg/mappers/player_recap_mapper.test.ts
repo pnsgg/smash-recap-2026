@@ -36,6 +36,9 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
         id: 'event-1',
         name: 'Ultimate Singles',
         type: 1,
+        slug: null,
+        numEntrants: null,
+        state: null,
         isOnline: false,
         videogame: {
           id: '1386',
@@ -267,6 +270,9 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
         id: 'event-2',
         name: 'Ultimate Teams',
         type: 5,
+        slug: null,
+        numEntrants: null,
+        state: null,
         isOnline: true,
         videogame: { id: '1386', name: 'Super Smash Bros. Ultimate' },
         phases: [
@@ -318,6 +324,9 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
         id: 'event-1',
         name: 'Disqualified Event',
         type: 1,
+        slug: null,
+        numEntrants: null,
+        state: null,
         isOnline: false,
         videogame: { id: '1386', name: 'Game' },
         phases: [
@@ -367,6 +376,9 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
         id: 'event-1',
         name: 'Event',
         type: 1,
+        slug: null,
+        numEntrants: null,
+        state: null,
         isOnline: false,
         videogame: { id: '1386', name: 'Game' },
         phases: null,
@@ -396,6 +408,9 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
         id: 'event-1',
         name: 'Event',
         type: 1,
+        slug: null,
+        numEntrants: null,
+        state: null,
         isOnline: false,
         videogame: { id: '1386', name: 'Game' },
         phases: [
@@ -459,6 +474,9 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
         id: 'event-1',
         name: 'Event',
         type: 1,
+        slug: null,
+        numEntrants: null,
+        state: null,
         isOnline: false,
         videogame: { id: '1386', name: 'Game' },
         phases: [
@@ -547,8 +565,11 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
 
   type MockEvent = {
     id?: string | null
+    slug?: string | null
     name?: string | null
     type?: number | null
+    numEntrants?: number | null
+    state?: string | null
     isOnline?: boolean | null
     videogame: {
       id?: string | null
@@ -659,6 +680,9 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
     id: 'event-1',
     name: 'Event',
     type: 1,
+    slug: null,
+    numEntrants: null,
+    state: null,
     isOnline: false,
     videogame: { id: '1386', name: 'Game' },
     phases: [
@@ -749,6 +773,25 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
     event.type = null
     const { skippedEventCount } = mapPlayerRecap(playerId, playerHeader, [event as EventResult])
     expect(skippedEventCount).toBe(1)
+  })
+
+  test('an event start.gg has not completed maps as not completed, a completed one as completed', () => {
+    const active = makeBaseEvent()
+    active.state = 'ACTIVE'
+    const done = makeBaseEvent()
+    done.state = 'COMPLETED'
+    const [a, d] = [active, done].map(
+      (e) => mapPlayerRecap(playerId, playerHeader, [e as EventResult]).player.tournaments[0]!.events[0]!
+    )
+    expect(a.isCompleted).toBe(false)
+    expect(d.isCompleted).toBe(true)
+  })
+
+  test("the event keeps start.gg's slug", () => {
+    const event = makeBaseEvent()
+    event.slug = 'tournament/kagaribi-15/event/singles'
+    const mapped = mapPlayerRecap(playerId, playerHeader, [event as EventResult]).player.tournaments[0]!.events[0]!
+    expect(mapped.slug).toBe('tournament/kagaribi-15/event/singles')
   })
 
   test('event type code is unsupported', () => {
@@ -884,6 +927,9 @@ describe('PlayerRecapMapper - set seeds', () => {
     id: 'event-1',
     name: '1v1 Ultimate (FULL BO5)',
     type: 1,
+    slug: null,
+    numEntrants: null,
+    state: null,
     isOnline: false,
     videogame: { id: '1386', name: 'Super Smash Bros. Ultimate' },
     phases: [

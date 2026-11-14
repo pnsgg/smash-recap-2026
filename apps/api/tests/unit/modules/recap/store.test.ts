@@ -34,6 +34,35 @@ describe('RecapStore', () => {
     expect(players.calls).toBe(1)
   })
 
+  test('computes again a cached player recap made before its newest fields existed', async () => {
+    const cache = new FakeCacheClient()
+    const { store, players } = createStore(cache)
+    const fresh = await store.player(asUserSlug('541f04fd'), 2026, ULTIMATE)
+    await Bun.sleep(1)
+    const { setRecord: _, bestFinishes: __, mostBeaten: ___, ...stale } = fresh
+    await cache.set('recap:player:2026:1386:541f04fd', JSON.stringify(stale), 'EX', RECAP_TTL_SECONDS)
+
+    const served = await store.player(asUserSlug('541f04fd'), 2026, ULTIMATE)
+
+    expect(served).toEqual(fresh)
+    expect(players.calls).toBe(2)
+  })
+
+  test('computes again a cached player recap whose best finishes have no UltRank tier', async () => {
+    const cache = new FakeCacheClient()
+    const { store, players } = createStore(cache)
+    const fresh = await store.player(asUserSlug('541f04fd'), 2026, ULTIMATE)
+    await Bun.sleep(1)
+    // A finish as cached before the tier existed.
+    const finish = { tournamentName: 'KAGARIBI#15', tournamentImageUrl: null, eventName: 'Singles', placement: 1, entrants: 300, topShare: 1 / 300, wins: [] }
+    const stale = { ...fresh, bestFinishes: [finish] }
+    await cache.set('recap:player:2026:1386:541f04fd', JSON.stringify(stale), 'EX', RECAP_TTL_SECONDS)
+
+    await store.player(asUserSlug('541f04fd'), 2026, ULTIMATE)
+
+    expect(players.calls).toBe(2)
+  })
+
   test('keeps recaps for a day, one entry per account, year and game', async () => {
     const writes: { key: string; seconds: number }[] = []
     const cache: CacheClient = {

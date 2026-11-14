@@ -1,7 +1,15 @@
+import type { Character } from '#recap/domain/character'
 import type { Player } from '#recap/domain/player'
 import type { PlayerProfile } from '#recap/domain/player_profile'
 import type { PlayerRanking } from '#recap/domain/player_ranking'
 import type { TournamentOrganizer } from '#recap/domain/tournament_organizer'
+import { ultrankTier } from '#libs/ultrank/tiers'
+
+/** A beaten opponent's character, by name and stock icon, or nulls when start.gg has none. */
+const characterOf = (character: Character | null) => ({
+  characterName: character?.name ?? null,
+  stockIconUrl: character?.images.stockIconUrl ?? null,
+})
 
 export function presentPlayerRecap(
   player: Player,
@@ -25,6 +33,7 @@ export function presentPlayerRecap(
     avatarUrl: player.avatarUrl,
     totalTournaments: player.tournaments.length,
     totalSets: player.totalSets(),
+    setRecord: player.setRecord(),
     dayOfWeekActivity: player.dayOfWeekActivity(),
     tournamentsByMonth: player.tournamentsByMonth(),
     cleanSweeps: player.cleanSweeps(),
@@ -35,6 +44,21 @@ export function presentPlayerRecap(
       tournamentName: perf.tournament.name,
       tournamentImageUrl: perf.tournament.imageUrl,
       spr: perf.spr,
+    })),
+    bestFinishes: player.bestFinishes(5).map((p) => ({
+      tournamentName: p.tournament.name,
+      tournamentImageUrl: p.tournament.imageUrl,
+      eventName: p.event.name,
+      ultrankTier: ultrankTier(p.event.slug),
+      placement: p.placement,
+      entrants: p.entrants,
+      topShare: p.topShare,
+      wins: p.wins.map((win) => ({ name: win.name, seed: win.seed, ...characterOf(win.character) })),
+    })),
+    mostBeaten: player.mostBeaten(10).map((opponent) => ({
+      name: opponent.name,
+      count: opponent.count,
+      ...characterOf(opponent.character),
     })),
     worstPerformance: (() => {
       const perf = player.worstPerformance()

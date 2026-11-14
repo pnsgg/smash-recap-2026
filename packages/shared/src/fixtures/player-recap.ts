@@ -7,6 +7,7 @@ export const licanePlayerRecap: PlayerRecapProps = {
   avatarUrl: "https://images.start.gg/images/user/1243541/image-b38cbde96f299e440a9ecee473de1d3e-optimized.jpg",
   totalTournaments: 52,
   totalSets: 315,
+  setRecord: { won: 169, lost: 142 },
   dayOfWeekActivity: [
     { day: "Sun", count: 4 },
     { day: "Mon", count: 0 },
@@ -65,6 +66,227 @@ export const licanePlayerRecap: PlayerRecapProps = {
         "https://images.start.gg/images/tournament/852990/image-e9fd4e27afa6d38a20e7abfcea8ed8b3-optimized.png",
       spr: 3,
     },
+  ],
+  bestFinishes: [
+    {
+      tournamentName: "Slay O'Clock #62",
+      tournamentImageUrl: "https://images.start.gg/images/tournament/941367/image-8ba1f9303a2e97d423e6361ad36a40e0-optimized.png",
+      eventName: "1v1 Ultimate",
+      ultrankTier: null,
+      placement: 2,
+      entrants: 32,
+      topShare: 0.0625,
+      wins: [
+        {
+          name: "Rhubarbe",
+          seed: 3,
+          characterName: "Snake",
+          stockIconUrl: "https://images.start.gg/images/character/1331/image-3b5e98b24889837ae8e28b2a7eebe4f4.png"
+        },
+        {
+          name: "Duo | Tac",
+          seed: 6,
+          characterName: "R.O.B.",
+          stockIconUrl: "https://images.start.gg/images/character/1323/image-ff45bd739bb70c5b557247b071757f9c.png"
+        },
+        {
+          name: "SSL | | Fybusss",
+          seed: 7,
+          characterName: "Mii Brawler",
+          stockIconUrl: "https://images.start.gg/images/character/1311/image-f6cd7a894956ae95c15c11cc9bfdbb98.png"
+        },
+        {
+          name: "cbm",
+          seed: 22,
+          characterName: "Pit",
+          stockIconUrl: "https://images.start.gg/images/character/1320/image-f40b11b0016d86d7e48ab258c021422d.png"
+        }
+      ]
+    },
+    {
+      tournamentName: "PNS BloomBagarre - 5 juin",
+      tournamentImageUrl: "https://images.start.gg/images/tournament/917585/image-ac486a7ca4998bfa91e13ecaa18dc9df-optimized.png",
+      eventName: "Khaousmash",
+      ultrankTier: null,
+      placement: 2,
+      entrants: 26,
+      topShare: 0.07692307692307693,
+      wins: [
+        {
+          name: "Cyrano du nord",
+          seed: 4,
+          characterName: "Piranha Plant",
+          stockIconUrl: "https://images.start.gg/images/character/1441/image-b9aa4a03697eab36005ba72baa526be6.png"
+        },
+        {
+          name: "CNM | Nev",
+          seed: 6,
+          characterName: "Mii Swordfighter",
+          stockIconUrl: "https://images.start.gg/images/character/1414/image-8635c2934d2844518790c528b215991c.png"
+        },
+        {
+          name: "ARK | AVM | Cyrano du sud",
+          seed: 8,
+          characterName: "Dark Pit",
+          stockIconUrl: "https://images.start.gg/images/character/1278/image-9cacbc80e4af52b90a83e4f2ab7e60d8.png"
+        },
+        {
+          name: "TLS - PINGU | Cyrano du Web",
+          seed: 10,
+          characterName: "Steve",
+          stockIconUrl: "https://images.start.gg/images/character/1766/image-e10b45277133ff1b0d7d8abbde48562a-optimized.png?ehk=M5lSP14k1HSuIDtehmaoGTy%2Ba3ANW263SohOHLLSMoI%3D&ehkOptimized=O9962O3g9%2BiCXCb9EWtgR0kRlxf87%2BTrT2gl%2B5q0TRw%3D"
+        }
+      ]
+    },
+    {
+      tournamentName: "La Comète #1",
+      tournamentImageUrl: "https://images.start.gg/images/tournament/950287/image-f18b14404caa783d5e0ccc9c741fa0fd-optimized.png",
+      eventName: "Bracket 1 vs 1 Ultimate",
+      ultrankTier: null,
+      placement: 1,
+      entrants: 12,
+      topShare: 0.08333333333333333,
+      wins: [
+        {
+          name: "[LUNA] | Joj",
+          seed: 1,
+          characterName: "Cloud",
+          stockIconUrl: "https://images.start.gg/images/character/1275/image-354129bab0aa613d617cbb3ff095a70a.png"
+        },
+        {
+          name: "FP | AnakinLVM",
+          seed: 3,
+          characterName: "Wario",
+          stockIconUrl: "https://images.start.gg/images/character/1335/image-914d0e656e6af3459e82cebb0fe9b478.png"
+        },
+        {
+          name: "Whisper",
+          seed: 7,
+          characterName: "Hero",
+          stockIconUrl: "https://images.start.gg/images/character/1526/image-02bc44c2a40238cd0b7b1847d3a257a7.png"
+        }
+      ]
+    },
+    {
+      tournamentName: "KiLyAN #2 - Kilya x PNS",
+      tournamentImageUrl: "https://images.start.gg/images/tournament/926257/image-87e4acc541b7f1c7e24fe4fc27d69a3c-optimized.png",
+      eventName: "Super Smash Bros. Ultimate",
+      ultrankTier: null,
+      placement: 1,
+      entrants: 10,
+      topShare: 0.1,
+      wins: [
+        {
+          name: "PotiChat",
+          seed: 2,
+          characterName: "Diddy Kong",
+          stockIconUrl: "https://images.start.gg/images/character/1279/image-38d006b1878b11418aecbe9770facf62.png"
+        },
+        {
+          name: "RouxChov",
+          seed: 4,
+          characterName: "Sora",
+          stockIconUrl: "https://images.start.gg/images/character/1897/image-7b99fccff2359d92031492bdd6bc25ce-optimized.png?ehk=uGdRHSEGYKo4YF0AJ6Vzoc9owR4xdWGuREHoP9d59RQ%3D&ehkOptimized=O39ql54rbZBp55eKGOeYnRQL9s9FLHqsOUiKoyaRrkg%3D"
+        },
+        {
+          name: "Gaston",
+          seed: 9,
+          characterName: "Greninja",
+          stockIconUrl: "https://images.start.gg/images/character/1289/image-cc620acf7dd40071f90d624a11d1cd3d.png"
+        }
+      ]
+    },
+    {
+      tournamentName: "The Flamin'Goat X - Smash à Lez x MES Esport",
+      tournamentImageUrl: "https://images.start.gg/images/tournament/898107/image-ef0b1d26fadad29d87599325c0729c48-optimized.png",
+      eventName: "Side-Event Amateur - Flammekueche (LR1)",
+      ultrankTier: null,
+      placement: 5,
+      entrants: 44,
+      topShare: 0.11363636363636363,
+      wins: [
+        {
+          name: "Dapoce",
+          seed: 7,
+          characterName: null,
+          stockIconUrl: null
+        },
+        {
+          name: "LeTweeks",
+          seed: 15,
+          characterName: "Palutena",
+          stockIconUrl: "https://images.start.gg/images/character/1316/image-3fab6611ff1cb12578ef5bed59c42ec3.png"
+        },
+        {
+          name: "BxH | Vasochak",
+          seed: 23,
+          characterName: "Jigglypuff",
+          stockIconUrl: "https://images.start.gg/images/character/1293/image-327deaa1e363b2012a55ea31362ff4e1.png"
+        }
+      ]
+    }
+  ],
+  mostBeaten: [
+    {
+      name: "lucali",
+      count: 6,
+      characterName: "King K. Rool",
+      stockIconUrl: "https://images.start.gg/images/character/1407/image-649a64550b8848a082dbf9b8d6e545d1.png"
+    },
+    {
+      name: "LTH | Ketro",
+      count: 5,
+      characterName: "Zelda",
+      stockIconUrl: "https://images.start.gg/images/character/1340/image-69a5cd75f8fce5c015f5d707ba2cceb1.png"
+    },
+    {
+      name: "MSU | EVIL",
+      count: 5,
+      characterName: "Inkling",
+      stockIconUrl: "https://images.start.gg/images/character/1292/image-af172ef6e2da4bb33409821b91610472.png"
+    },
+    {
+      name: "Nathy",
+      count: 5,
+      characterName: "Lucas",
+      stockIconUrl: "https://images.start.gg/images/character/1299/image-6e84ea41fe27f12d2419ec2eaf164c09.png"
+    },
+    {
+      name: "Holm-heuSS",
+      count: 4,
+      characterName: "Mii Brawler",
+      stockIconUrl: "https://images.start.gg/images/character/1311/image-f6cd7a894956ae95c15c11cc9bfdbb98.png"
+    },
+    {
+      name: "LT | D2S | TZ | Bill Wick",
+      count: 3,
+      characterName: "Ness",
+      stockIconUrl: "https://images.start.gg/images/character/1313/image-3870ed5a1c84b3979055a5c5014eb3cb.png"
+    },
+    {
+      name: "PotiChat",
+      count: 3,
+      characterName: "Diddy Kong",
+      stockIconUrl: "https://images.start.gg/images/character/1279/image-38d006b1878b11418aecbe9770facf62.png"
+    },
+    {
+      name: "TLS - PINGU | Seidokan UwU",
+      count: 3,
+      characterName: "Steve",
+      stockIconUrl: "https://images.start.gg/images/character/1766/image-e10b45277133ff1b0d7d8abbde48562a-optimized.png?ehk=M5lSP14k1HSuIDtehmaoGTy%2Ba3ANW263SohOHLLSMoI%3D&ehkOptimized=O9962O3g9%2BiCXCb9EWtgR0kRlxf87%2BTrT2gl%2B5q0TRw%3D"
+    },
+    {
+      name: "[ LD/XIII ] | Conix13",
+      count: 2,
+      characterName: "Zelda",
+      stockIconUrl: "https://images.start.gg/images/character/1340/image-69a5cd75f8fce5c015f5d707ba2cceb1.png"
+    },
+    {
+      name: "[LUNA] | Joj",
+      count: 2,
+      characterName: "Cloud",
+      stockIconUrl: "https://images.start.gg/images/character/1275/image-354129bab0aa613d617cbb3ff095a70a.png"
+    }
   ],
   worstPerformance: {
     tournamentName: "Croc'Online S2 #3",

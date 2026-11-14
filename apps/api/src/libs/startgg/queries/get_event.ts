@@ -4,9 +4,12 @@ export const getEvent = graphql(`
   query GetEvent($eventId: ID!, $userId: ID!) {
     event(id: $eventId) {
       id
+      slug
       name
       isOnline
       type
+      numEntrants
+      state
       videogame {
         id
         name

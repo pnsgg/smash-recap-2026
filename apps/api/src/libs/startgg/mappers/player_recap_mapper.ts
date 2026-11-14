@@ -261,6 +261,7 @@ function mapEvent(
 
   return new Event({
     id: asEventId(eventId),
+    slug: rawEvent.slug ?? null,
     name: eventName,
     videogame,
     isOnline: !!rawEvent.isOnline,
@@ -268,6 +269,8 @@ function mapEvent(
     lastBracketType: bracketType,
     participants: Array.from(participantsMap.values()),
     sets,
+    numEntrants: rawEvent.numEntrants ?? 0,
+    isCompleted: rawEvent.state === null || rawEvent.state === 'COMPLETED',
   })
 }
 
