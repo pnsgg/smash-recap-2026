@@ -1,7 +1,7 @@
 import { graphql } from '#/graphql'
 
 export const getEvent = graphql(`
-  query GetEvent($eventId: ID!, $userId: ID!) {
+  query GetEvent($eventId: ID!, $userId: ID!, $setsPage: Int!, $setsPerPage: Int!) {
     event(id: $eventId) {
       id
       slug
@@ -48,7 +48,10 @@ export const getEvent = graphql(`
         standing {
           placement
         }
-        paginatedSets(filters: { hideEmpty: true }) {
+        paginatedSets(page: $setsPage, perPage: $setsPerPage, filters: { hideEmpty: true }) {
+          pageInfo {
+            totalPages
+          }
           nodes {
             id
             round

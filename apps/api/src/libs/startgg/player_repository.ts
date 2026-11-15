@@ -32,6 +32,8 @@ type StartggPlayerRepositoryConfig = {
  */
 const SEARCH_PAGE_SIZE = 50
 
+const SETS_PER_PAGE = 14
+
 export class StartggPlayerRepository implements PlayerRepository {
   constructor(
     private readonly fetcher: StartggClientInterface,
@@ -128,15 +130,14 @@ export class StartggPlayerRepository implements PlayerRepository {
     }
 
     // Phase 2 — fetch full event data, and the game's character pictures once for all of it.
-    const [eventsResponses, charactersResponse] = await Promise.all([
-      Promise.all(eventIds.map((eventId) => this.fetcher.fetch(getEvent, { eventId, userId }))),
+    const [events, charactersResponse] = await Promise.all([
+      Promise.all(eventIds.map((eventId) => this.fetchEventWithAllSets(eventId, userId))),
       this.fetcher.fetch(getVideogameCharacters, { videogameId: videoGameId }).catch(() => null),
     ])
 
     const rawEvents: EventResult[] = []
     let unreadableEventCount = 0
-    for (const response of eventsResponses) {
-      const event = (response as { data?: typeof response.data }).data?.event
+    for (const event of events) {
       if (event === undefined) unreadableEventCount++
       else if (event !== null) rawEvents.push(event)
     }
@@ -176,6 +177,43 @@ export class StartggPlayerRepository implements PlayerRepository {
         },
       ]
     })
+  }
+
+  private async fetchEventWithAllSets(eventId: string, userId: string): Promise<EventResult | null | undefined> {
+    const fetchPage = async (setsPage: number) => {
+      const response = await this.fetcher.fetch(getEvent, {
+        eventId,
+        userId,
+        setsPage,
+        setsPerPage: SETS_PER_PAGE,
+      })
+      return (response as { data?: typeof response.data }).data?.event
+    }
+
+    const event = await fetchPage(1)
+    const sets = event?.userEntrant?.paginatedSets
+    const totalPages = sets?.pageInfo?.totalPages ?? 1
+    if (!event || !event.userEntrant || !sets || totalPages <= 1) return event
+
+    const laterPages = await Promise.all(
+      Array.from({ length: totalPages - 1 }, (_, i) => fetchPage(i + 2))
+    )
+    const laterNodes = laterPages.map((page) => page?.userEntrant?.paginatedSets?.nodes)
+    if (laterNodes.some((nodes) => !nodes)) return undefined
+
+    // Keyed by set ID, so a set start.gg repeats across two pages is still counted once.
+    const byId = new Map<string, NonNullable<NonNullable<typeof sets.nodes>[number]>>()
+    for (const node of [...(sets.nodes ?? []), ...laterNodes.flatMap((nodes) => nodes ?? [])]) {
+      if (node?.id != null && !byId.has(String(node.id))) byId.set(String(node.id), node)
+    }
+
+    return {
+      ...event,
+      userEntrant: {
+        ...event.userEntrant,
+        paginatedSets: { ...sets, nodes: [...byId.values()] },
+      },
+    }
   }
 
   /**
