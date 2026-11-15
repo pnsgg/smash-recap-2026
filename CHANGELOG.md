@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.1](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.9.0...smash-recap-v1.9.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **api:** fetch every page of a player's sets in an event ([03159b3](https://github.com/pnsgg/smash-recap-2026/commit/03159b3ec49209b16b966360cc9a181490912a98))
+* **api:** fetch every page of a player's sets in an event ([4d55660](https://github.com/pnsgg/smash-recap-2026/commit/4d5566060a07cb982adcca12d24e9d1bd107299c))
+
 ## [1.9.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.8.0...smash-recap-v1.9.0) (2026-11-14)
 
 
