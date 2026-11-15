@@ -79,6 +79,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
             placement: 9,
           },
           paginatedSets: {
+            pageInfo: { totalPages: 1 },
             nodes: [
               {
                 id: 'set-1',
@@ -446,6 +447,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           players: [{ id: 'player-123' }],
           standing: { placement: 9 },
           paginatedSets: {
+            pageInfo: { totalPages: 1 },
             nodes: [
               {
                 id: 'set-1',
@@ -512,6 +514,7 @@ describe('PlayerRecapMapper - skips events with mapping errors and counts them',
           players: [{ id: 'player-123' }],
           standing: { placement: 9 },
           paginatedSets: {
+            pageInfo: { totalPages: 1 },
             nodes: [
               {
                 id: 'set-1',
@@ -958,6 +961,7 @@ describe('PlayerRecapMapper - set seeds', () => {
       players: [{ id: playerId }],
       standing: { placement: 17 },
       paginatedSets: {
+        pageInfo: { totalPages: 1 },
         nodes: [
           {
             id: 'set-1',

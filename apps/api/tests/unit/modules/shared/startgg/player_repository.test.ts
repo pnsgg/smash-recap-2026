@@ -1,5 +1,6 @@
 import { InMemoryFetcher } from '#tests/unit/modules/shared/startgg/in_memory_fetcher'
 import { describe, expect, test } from 'bun:test'
+import type { ResultOf, VariablesOf } from 'gql.tada'
 import { EventType } from '#recap/domain/event_type'
 import { UserNotFoundError } from '#recap/model'
 import { asPlayerId, asUserSlug } from '#libs/ids'
@@ -168,6 +169,7 @@ const fetcher = new InMemoryFetcher()
             players: [{ id: 'user-glutonny-id' }],
             standing: { placement: 3 },
             paginatedSets: {
+              pageInfo: { totalPages: 1 },
               nodes: [
                 {
                   id: 'set-1',
@@ -309,6 +311,7 @@ const fetcher = new InMemoryFetcher()
             players: [{ id: 'user-glutonny-id' }],
             standing: { placement: 1 },
             paginatedSets: {
+              pageInfo: { totalPages: 1 },
               nodes: [],
             },
           },
@@ -509,3 +512,90 @@ describe('Searching for players', () => {
   })
 })
 
+
+describe('Getting player recap — sets over several pages', () => {
+  type EventData = Awaited<ReturnType<typeof fetcher.fetch<ResultOf<typeof getEvent>, VariablesOf<typeof getEvent>>>>['data']
+
+  /**
+   * Event 1 split over three pages of sets: page 1 is the fixture's set, page 2 a new set plus the
+   * page-1 set again (start.gg can repeat one across pages), page 3 one more set.
+   */
+  const paged = (failingPage?: number) => {
+    const requestedPages: number[] = []
+    const client: typeof fetcher = Object.assign(Object.create(fetcher), {
+      fetch: async (document: unknown, variables: VariablesOf<typeof getEvent>) => {
+        if (document !== getEvent || variables.eventId !== 'event-1') {
+          return fetcher.fetch(document as never, variables as never)
+        }
+        requestedPages.push(variables.setsPage)
+        if (variables.setsPage === failingPage) return { data: undefined }
+
+        const { data } = (await fetcher.fetch(getEvent, { ...variables, setsPage: 1 })) as { data: EventData }
+        const event = data.event!
+        const sets = event.userEntrant!.paginatedSets!
+        const first = sets.nodes![0]!
+        const nodes =
+          variables.setsPage === 1
+            ? [first]
+            : variables.setsPage === 2
+              ? [{ ...first, id: 'set-2' }, first]
+              : [{ ...first, id: 'set-3' }]
+        return {
+          data: {
+            event: {
+              ...event,
+              userEntrant: { ...event.userEntrant!, paginatedSets: { pageInfo: { totalPages: 3 }, nodes } },
+            },
+          },
+        }
+      },
+    })
+    return { client, requestedPages }
+  }
+
+  test('fetches the later pages of an event with more than one page, and counts each set once', async () => {
+    const { client, requestedPages } = paged()
+
+    const { player, skippedEventCount } = await new StartggPlayerRepository(client, {}).getPlayerRecap(
+      asUserSlug('user/glutonny'),
+      new Date('2026-01-01'),
+      '1386' as any
+    )
+
+    const singles = player.tournaments[0]!.events.find((e) => e.name === 'Genesis X Singles')
+    expect(singles?.sets.map((set) => String(set.id)).sort()).toEqual(['set-1', 'set-2', 'set-3'])
+    expect(requestedPages.sort()).toEqual([1, 2, 3])
+    expect(skippedEventCount).toBe(0)
+  })
+
+  test('an event with a single page of sets costs one request', async () => {
+    const requested: Array<{ eventId: string; setsPage: number }> = []
+    const client: typeof fetcher = Object.assign(Object.create(fetcher), {
+      fetch: (document: unknown, variables: VariablesOf<typeof getEvent>) => {
+        if (document === getEvent) requested.push({ eventId: variables.eventId, setsPage: variables.setsPage })
+        return fetcher.fetch(document as never, variables as never)
+      },
+    })
+
+    await new StartggPlayerRepository(client, {}).getPlayerRecap(
+      asUserSlug('user/glutonny'),
+      new Date('2026-01-01'),
+      '1386' as any
+    )
+
+    expect(requested.filter((r) => r.eventId === 'event-1')).toEqual([{ eventId: 'event-1', setsPage: 1 }])
+  })
+
+  test('a later page start.gg answers without data skips the whole event instead of keeping part of its sets', async () => {
+    const { client } = paged(3)
+
+    const { player, skippedEventCount } = await new StartggPlayerRepository(client, {}).getPlayerRecap(
+      asUserSlug('user/glutonny'),
+      new Date('2026-01-01'),
+      '1386' as any
+    )
+
+    expect(player.tournaments[0]!.events.map((e) => e.name)).toEqual(['Genesis X Doubles'])
+    expect(skippedEventCount).toBe(1)
+  })
+})
