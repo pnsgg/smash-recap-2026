@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.8.0...smash-recap-v1.9.0) (2026-11-14)
+
+
+### Features
+
+* **api:** add set record, best finishes with UltRank tiers and most beaten to the player recap ([ca1bb69](https://github.com/pnsgg/smash-recap-2026/commit/ca1bb699b677550168f96136dc41dea9977c4c54))
+* **api:** import UltRank tournament scores and map them to tiers ([b7bbe44](https://github.com/pnsgg/smash-recap-2026/commit/b7bbe44ff73972e1bb1886b60295b92a063e6dde))
+* recap card redesign with UltRank tournaments tiers ([0e6351a](https://github.com/pnsgg/smash-recap-2026/commit/0e6351ad0481b7c17c81516d9bee2c8be8118e9a))
+* **recap:** replace the per-platform stills with one player card and one organizer card ([37a9c68](https://github.com/pnsgg/smash-recap-2026/commit/37a9c6863b696bdcb7e7b3292f1e4c9c111781b1))
+* **web:** download the recap card and post it from share links ([802be14](https://github.com/pnsgg/smash-recap-2026/commit/802be14c20e98672871a6d386af5bf0b7e504d41))
+* **web:** redesign the logo and favicon ([751b257](https://github.com/pnsgg/smash-recap-2026/commit/751b257eecc853f40e6fe2dfdb98650421e00ece))
+
 ## [1.8.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.7.1...smash-recap-v1.8.0) (2026-11-11)
 
 
