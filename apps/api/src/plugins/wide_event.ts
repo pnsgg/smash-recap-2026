@@ -11,7 +11,7 @@ const emitted = new WeakSet<WideEvent>()
 
 export const REQUEST_ID_HEADER = 'x-request-id'
 const VALID_REQUEST_ID = /^[\w.:-]{1,128}$/
-const QUIET_PATHS = new Set(['/health'])
+const QUIET_PATHS = new Set(['/health', '/__manifest'])
 
 export function annotate(fields: LogFields) {
   const event = storage.getStore()

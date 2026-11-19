@@ -38,6 +38,7 @@ class PlayersWithUnknownSlug extends FakePlayerRecapService {
 const app = new Elysia({ normalize: 'typebox' })
   .use(wideEventPlugin)
   .get('/health', () => ({ status: 'ok' }))
+  .get('/__manifest', () => ({}))
   .get('/work/:id', async ({ params }) => {
     annotate({ player: { id: params.id } })
     await deepWork()
@@ -112,8 +113,9 @@ describe('Wide event', () => {
     expect(lines[0].event.error.stack).toBeUndefined()
   })
 
-  test('skips successful health checks', async () => {
+  test('skips successful health checks and React Router manifest requests', async () => {
     await app.handle(new Request('http://localhost/health'))
+    await app.handle(new Request('http://localhost/__manifest?p=%2Fplayer&version=abc'))
     await settle()
 
     expect(lines).toHaveLength(0)
