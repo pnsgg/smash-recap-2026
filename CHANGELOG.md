@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.10.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.9.1...smash-recap-v1.10.0) (2026-11-19)
+
+
+### Features
+
+* **api:** log one structured JSON event per request ([a8e71ac](https://github.com/pnsgg/smash-recap-2026/commit/a8e71ac98f45c3903d0ee96ab114de0f30284a3c))
+* **api:** log one structured JSON event per request ([ec9b4cb](https://github.com/pnsgg/smash-recap-2026/commit/ec9b4cbb1139dc194e7385a7e964fd3cb0267bd4))
+* **api:** record recap, cache and start.gg context on each request's log event ([32533c4](https://github.com/pnsgg/smash-recap-2026/commit/32533c40bc7df58c6549c6f99eb6cb565d0901c4))
+
 ## [1.9.1](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.9.0...smash-recap-v1.9.1) (2026-11-15)
 
 
