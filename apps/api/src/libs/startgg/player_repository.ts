@@ -21,6 +21,7 @@ import { getPlayerUserId } from '#libs/startgg/queries/get_player_user_id'
 import { getVideogameCharacters } from '#libs/startgg/queries/get_videogame_characters'
 import { searchPlayerByGamerTag } from '#libs/startgg/queries/search_player_by_gamertag'
 import type { StartggClientInterface } from '#libs/startgg/client'
+import { annotate } from '#plugins/wide_event'
 
 type StartggPlayerRepositoryConfig = {
   eventType?: number
@@ -119,9 +120,11 @@ export class StartggPlayerRepository implements PlayerRepository {
     const prefix = user.player?.prefix || null
     const avatarUrl = user.images?.[0]?.url ?? null
     const playerId = asPlayerId(playerGlobalId.toString())
+    annotate({ player: { id: playerId, user_id: String(userId), gamer_tag: gamerTag } })
 
     // Phase 1 — collect event IDs for the year (sequential pagination, early stop)
     const eventIds = await this.fetchEventIdsForYear(slug, year, videoGameId)
+    annotate({ player: { event_count: eventIds.length } })
     if (eventIds.length === 0) {
       return {
         player: mapEmptyPlayer(playerId, { gamerTag, prefix, avatarUrl }),
@@ -132,7 +135,10 @@ export class StartggPlayerRepository implements PlayerRepository {
     // Phase 2 — fetch full event data, and the game's character pictures once for all of it.
     const [events, charactersResponse] = await Promise.all([
       Promise.all(eventIds.map((eventId) => this.fetchEventWithAllSets(eventId, userId))),
-      this.fetcher.fetch(getVideogameCharacters, { videogameId: videoGameId }).catch(() => null),
+      this.fetcher.fetch(getVideogameCharacters, { videogameId: videoGameId }).catch((error: unknown) => {
+        annotate({ recap: { character_images_error: error } })
+        return null
+      }),
     ])
 
     const rawEvents: EventResult[] = []
@@ -142,6 +148,7 @@ export class StartggPlayerRepository implements PlayerRepository {
       else if (event !== null) rawEvents.push(event)
     }
 
+    annotate({ player: { unreadable_event_count: unreadableEventCount } })
     const characterImages = mapCharacterImages(charactersResponse?.data?.videogame?.characters ?? [])
     const recap = mapPlayerRecap(playerId, { gamerTag, prefix, avatarUrl }, rawEvents, characterImages)
     return { ...recap, skippedEventCount: recap.skippedEventCount + unreadableEventCount }

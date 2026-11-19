@@ -27,6 +27,7 @@ import {
 } from '#libs/ids'
 import type { PlayerId } from '#libs/ids'
 import type { getEvent } from '#libs/startgg/queries/get_event'
+import { append } from '#plugins/wide_event'
 
 export type EventResult = Exclude<ResultOf<typeof getEvent>['event'], null | undefined>
 type EntrantResult = Exclude<EventResult['userEntrant'], null | undefined>
@@ -84,7 +85,7 @@ export function mapPlayerRecap(
         const mappedEvent = mapEvent(rawEvent, playerId, characterImages)
         if (mappedEvent) events.push(mappedEvent)
       } catch (error) {
-        console.error('[StartggMapper] Skipping event due to mapping error:', error)
+        append('recap', 'skipped_events', { event_id: rawEvent.id?.toString() ?? null, error })
         skippedEventCount++
       }
     }

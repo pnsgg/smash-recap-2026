@@ -1,6 +1,7 @@
 import type { UserSlug, VideogameId } from '#libs/ids'
 import { presentPlayerRecap, presentTournamentOrganizerRecap } from '#recap/presenter'
 import type { PlayerRecapService, TournamentOrganizerRecapService } from '#recap/service'
+import { annotate } from '#plugins/wide_event'
 
 export interface CacheClient {
   get: (key: string) => Promise<string | null>
@@ -46,18 +47,32 @@ export class RecapStore {
     private readonly organizers: TournamentOrganizerRecapService
   ) {}
 
-  player(slug: UserSlug, year: number, videogameId: VideogameId): Promise<PlayerRecap> {
-    return this.cached(recapKey.player(year, videogameId, slug), recapKey.seasonPlayers(year), isCurrentPlayerRecap, async () => {
+  async player(slug: UserSlug, year: number, videogameId: VideogameId): Promise<PlayerRecap> {
+    annotate({ recap: { kind: 'player', slug, year, videogame_id: videogameId } })
+    const recap = await this.cached(recapKey.player(year, videogameId, slug), recapKey.seasonPlayers(year), isCurrentPlayerRecap, async () => {
       const { player, skippedEventCount, nemesisProfile, rivalProfile, upsetOpponentProfile, rankings } =
         await this.players.getRecap(slug, new Date(year, 0, 1), videogameId)
       return presentPlayerRecap(player, skippedEventCount, nemesisProfile, rivalProfile, upsetOpponentProfile, rankings)
     })
+    annotate({
+      player: {
+        id: recap.id,
+        gamer_tag: recap.gamerTag,
+        tournament_count: recap.totalTournaments,
+        set_count: recap.totalSets,
+        skipped_event_count: recap.skippedEventCount,
+      },
+    })
+    return recap
   }
 
-  tournamentOrganizer(slug: UserSlug, year: number): Promise<TournamentOrganizerRecap> {
-    return this.cached(recapKey.organizer(year, slug), recapKey.seasonOrganizers(year), () => true, async () =>
+  async tournamentOrganizer(slug: UserSlug, year: number): Promise<TournamentOrganizerRecap> {
+    annotate({ recap: { kind: 'organizer', slug, year } })
+    const recap = await this.cached(recapKey.organizer(year, slug), recapKey.seasonOrganizers(year), () => true, async () =>
       presentTournamentOrganizerRecap(await this.organizers.getRecap(slug, new Date(year, 0, 1)))
     )
+    annotate({ organizer: { id: recap.id, gamer_tag: recap.gamerTag, tournament_count: recap.totalTournaments } })
+    return recap
   }
 
   /** The cached recap, or a fresh one cached for next time. Either way it joins the season's set. */
@@ -67,17 +82,30 @@ export class RecapStore {
     isCurrent: (value: T) => boolean,
     compute: () => Promise<T>
   ): Promise<T> {
+    const readStarted = performance.now()
+    let read: 'ok' | 'error' | 'timeout' = 'ok'
     const hit = await Promise.race([
-      this.cache.get(key).catch(() => null),
-      Bun.sleep(CACHE_READ_TIMEOUT_MS).then(() => null),
+      this.cache.get(key).catch((error: unknown) => {
+        read = 'error'
+        annotate({ cache: { read_error: error } })
+        return null
+      }),
+      Bun.sleep(CACHE_READ_TIMEOUT_MS).then(() => {
+        read = 'timeout'
+        return null
+      }),
     ])
     const cachedValue = hit === null ? null : (JSON.parse(hit) as T)
-    if (cachedValue !== null && isCurrent(cachedValue)) {
+    const outcome = cachedValue === null ? 'miss' : isCurrent(cachedValue) ? 'hit' : 'stale'
+    annotate({ cache: { key, outcome, read, read_ms: Math.round(performance.now() - readStarted) } })
+    if (outcome === 'hit') {
       this.cache.sadd(season, key).catch(() => null)
-      return cachedValue
+      return cachedValue as T
     }
 
+    const computeStarted = performance.now()
     const value = await compute()
+    annotate({ recap: { compute_ms: Math.round(performance.now() - computeStarted) } })
     this.cache.set(key, JSON.stringify(value), 'EX', RECAP_TTL_SECONDS).catch(() => null)
     this.cache.sadd(season, key).catch(() => null)
     return value

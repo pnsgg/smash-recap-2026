@@ -1,5 +1,6 @@
 import { Elysia, t, type UnwrapSchema } from 'elysia'
 import { ParseError, Value } from 'typebox/value'
+import { logger } from '#libs/logger'
 
 const EnvSchema = t.Object({
   PORT: t.Number({ default: 3001, minimum: 0 }),
@@ -18,7 +19,9 @@ try {
       (acc, err) => ({ ...acc, [err.instancePath.slice(1)]: err.message }),
       {}
     )
-    console.error('❌ Invalid environment variables:', formatted)
+    logger.error({ event: 'invalid_environment', errors: formatted })
+  } else {
+    logger.error({ event: 'invalid_environment', error: e })
   }
   process.exit(1)
 }
