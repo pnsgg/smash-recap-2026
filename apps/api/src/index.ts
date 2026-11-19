@@ -2,6 +2,8 @@ import { stat } from 'node:fs/promises'
 import { join, resolve, sep } from 'node:path'
 import { app } from './app'
 import { env } from '#env'
+import { logger } from '#libs/logger'
+import { annotate } from '#plugins/wide_event'
 
 
 const WEB_BUILD_DIR = resolve(Bun.env.WEB_BUILD_DIR ?? '../web/build')
@@ -17,20 +19,26 @@ async function clientFile(pathname: string) {
   return info?.isFile() ? path : null
 }
 
-if (await Bun.file(SERVER_BUILD).exists()) {
+const hasWebBuild = await Bun.file(SERVER_BUILD).exists()
+
+if (hasWebBuild) {
   const { fetch: renderPage } = (await import(SERVER_BUILD)) as PageRenderer
 
   app.all('*', async ({ request }) => {
     const { pathname } = new URL(request.url)
     const file = request.method === 'GET' || request.method === 'HEAD' ? await clientFile(pathname) : null
     if (!file) return renderPage(request)
+    annotate({ http: { kind: 'static' } })
     const cacheControl = pathname.startsWith('/assets/') ? 'public, max-age=31536000, immutable' : 'public, max-age=3600'
     return new Response(Bun.file(file), { headers: { 'Cache-Control': cacheControl } })
   })
-} else {
-  console.log(`No web build at ${SERVER_BUILD}: serving the API only`)
 }
 
 app.listen(env.PORT)
 
-console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`)
+logger.info({
+  event: 'server_started',
+  server: { hostname: app.server?.hostname, port: app.server?.port },
+  web_build: hasWebBuild ? WEB_BUILD_DIR : null,
+  recap_year: env.RECAP_YEAR,
+})

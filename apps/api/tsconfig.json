@@ -11,6 +11,7 @@
     "baseUrl": ".",
     "paths": {
       "#env": ["./src/env.ts"],
+      "#plugins/*": ["./src/plugins/*"],
       "#recap/*": ["./src/routes/recap/*"],
       "#search/*": ["./src/routes/search/*"],
       "#stats/*": ["./src/routes/stats/*"],
