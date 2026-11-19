@@ -3,6 +3,7 @@ import { RedisKeyCounter } from '#libs/redis/key_counter'
 import { recapKey } from '#recap/store'
 import type { KeyCounter } from '#stats/domain/ports/key_counter'
 import type { StatsResponse } from '#stats/model'
+import { append } from '#plugins/wide_event'
 
 /**
  * How many recaps exist: over the whole season (every distinct recap served, kept in a set that never
@@ -29,9 +30,18 @@ export class StatsService {
 
   /** One kind of recap: the cached ones, then the season's set once they are in it. Never throws. */
   private async tally(cachedPattern: string, seasonKey: string) {
-    const cached = await this.counter.keys(cachedPattern).catch(() => [])
-    await this.counter.add(seasonKey, cached).catch(() => null)
-    const season = await this.counter.size(seasonKey).catch(() => cached.length)
+    const failure = (step: 'keys' | 'add' | 'size', key: string) => (error: unknown) => {
+      append('stats', 'redis_errors', { step, key, error })
+    }
+    const cached = await this.counter.keys(cachedPattern).catch((error: unknown) => {
+      failure('keys', cachedPattern)(error)
+      return []
+    })
+    await this.counter.add(seasonKey, cached).catch(failure('add', seasonKey))
+    const season = await this.counter.size(seasonKey).catch((error: unknown) => {
+      failure('size', seasonKey)(error)
+      return cached.length
+    })
     return { cached: cached.length, season: Math.max(season, cached.length) }
   }
 }

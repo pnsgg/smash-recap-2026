@@ -8,6 +8,7 @@ import { getPlayerUserId } from '#libs/startgg/queries/get_player_user_id'
 import { getTournamentDetails } from '#libs/startgg/queries/get_tournament_details'
 import { getTournamentsOrganized } from '#libs/startgg/queries/get_tournaments_organised'
 import type { StartggClientInterface } from '#libs/startgg/client'
+import { annotate } from '#plugins/wide_event'
 
 type TournamentDetailsResult = Exclude<
   ResultOf<typeof getTournamentDetails>['tournament'],
@@ -35,9 +36,11 @@ export class StartggTournamentOrganizerRepository implements TournamentOrganizer
     const gamerTag = userData.user?.player?.gamerTag
 
     if (!gamerTag) throw new UserNotFoundError(slug)
+    annotate({ organizer: { gamer_tag: gamerTag } })
 
     // Phase 1 — paginate to collect all tournament IDs for the target year
     const tournamentIds = await this.fetchTournamentIdsForYear(slug, year)
+    annotate({ organizer: { tournament_count: tournamentIds.length } })
 
     // Phase 2 — fetch full details for each tournament in parallel
     const detailResponses = await Promise.all(
