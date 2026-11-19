@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.10.0...smash-recap-v1.10.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* silence manifest path ([61f65b0](https://github.com/pnsgg/smash-recap-2026/commit/61f65b0c993f002ab9be32b5c6c67765e8909091))
+
 ## [1.10.0](https://github.com/pnsgg/smash-recap-2026/compare/smash-recap-v1.9.1...smash-recap-v1.10.0) (2026-11-19)
 
 
