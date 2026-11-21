@@ -27,7 +27,7 @@ A Bun monorepo:
 ```
 browser ──► web (React Router) ──► api (Elysia) ──► start.gg
                │                      │
-               └── Remotion player     └── Redis (recaps cached 24 h, season stats)
+               └── Remotion player    └── Redis (recaps cached 24 h, season stats)
 ```
 
 The API reads start.gg's public site endpoint, so **no start.gg API key is needed**.
@@ -35,8 +35,8 @@ The API reads start.gg's public site endpoint, so **no start.gg API key is neede
 ## Requirements
 
 - [Bun](https://bun.sh) 1.x
-- Redis 7, for the cache and the season stats (`docker compose up redis` starts one)
-- Docker, only to build or run the production image
+- Redis 7, for the cache and the season stats (the `dev` Compose profile starts one)
+- Docker, for Redis and to build or run the production image
 - **The UltRank database**, only to update tournament tiers (see [UltRank tiers](#ultrank-tiers)). The
   repository already has the imported data, so you don't need it to run the app.
 
@@ -44,10 +44,10 @@ The API reads start.gg's public site endpoint, so **no start.gg API key is neede
 
 ```bash
 bun install
-docker compose up -d redis
+docker compose --profile dev up -d
 ```
 
-Then run the API and the website in two terminals:
+This starts Redis on `localhost:6379` and RedisInsight on http://127.0.0.1:5540 to look into the cache. Then run the API and the website in two terminals:
 
 ```bash
 # apps/api: the API on http://localhost:3001
@@ -135,19 +135,18 @@ CI runs both on every pull request and builds the Docker image.
 
 ## Production
 
-One container serves the API and the website:
+One container serves the API and the website, built from `apps/api/Dockerfile`. Docker Compose runs it with Redis,
+the app on http://localhost:3003:
 
-```bash
-docker build -f apps/api/Dockerfile -t smash-recap .
-```
+| Profile | Command | Starts |
+|---|---|---|
+| `prod` | `docker compose --profile prod up -d` | The published image, `ghcr.io/pnsgg/smash-recap-2026:main`, and Redis |
+| `local` | `docker compose --profile local up -d --build` | An image built from your checkout, `smash-recap-2026:local`, and Redis |
+| `dev` | `docker compose --profile dev up -d` | Redis and RedisInsight only, for [Getting started](#getting-started) |
 
-Or run it with Redis through Docker Compose, the app on http://localhost:3003:
-
-```bash
-RECAP_YEAR=2026 SITE_URL=https://recap2026.pns.gg docker compose up --build
-```
-
-The compose file also starts RedisInsight on http://127.0.0.1:5540 to look into the cache.
+`APP_TAG` picks the published image's tag, for example `APP_TAG=smash-recap-v1.10.0`. The `main` tag follows every
+push to `main`. `RECAP_YEAR` (default `2026`) and `SITE_URL` (default `https://recap2026.pns.gg`) are passed to the
+app. Redis keeps its data in the `redis-data` volume, so the cache and the season stats survive a restart.
 
 Releases are made with [release-please](https://github.com/googleapis/release-please): merging its pull request
 on `main` tags a version and publishes the image to the GitHub Container Registry.
