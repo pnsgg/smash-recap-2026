@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { AbsoluteFill, useDelayRender } from "remotion";
+import { useEffect, useState } from "react";
+import { AbsoluteFill, Img, useDelayRender } from "remotion";
 import { PixelText } from "../../compositions/PlayerRecapArcade/components/Pixel";
 import { PixelImage } from "../../compositions/PlayerRecapArcade/components/PixelImage";
 import { SITE } from "../../compositions/PlayerRecapArcade/acts/Continue";
@@ -34,36 +34,18 @@ export const CardImg: React.FC<{ src: string | null; style?: React.CSSProperties
   style,
   fallback = null,
 }) => {
-  const [state, setState] = useState<"loading" | "ok" | "failed">(src ? "loading" : "failed");
-  const { delayRender, continueRender } = useDelayRender();
-  const [handle] = useState(() => (src ? delayRender(`Loading ${src}`) : null));
-  const pending = useRef(handle !== null);
-
-  useEffect(() => {
-    if (!src || handle === null) return;
-    const release = () => {
-      if (pending.current) {
-        pending.current = false;
-        continueRender(handle);
-      }
-    };
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      setState("ok");
-      release();
-    };
-    img.onerror = () => {
-      setState("failed");
-      release();
-    };
-    img.src = src;
-    return release;
-  }, [src, handle, continueRender]);
-
-  if (state === "failed") return <>{fallback}</>;
-  if (state === "loading" || !src) return null;
-  return <img src={src} crossOrigin="anonymous" alt="" style={{ display: "block", ...uncapped, ...style }} />;
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) return <>{fallback}</>;
+  return (
+    <Img
+      src={src}
+      crossOrigin="anonymous"
+      alt=""
+      maxRetries={0}
+      onError={() => setFailed(true)}
+      style={{ display: "block", ...uncapped, ...style }}
+    />
+  );
 };
 
 /** The ground: a faint checkerboard under scanlines, the card's only CRT effect. */
