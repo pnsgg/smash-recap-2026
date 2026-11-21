@@ -26,15 +26,15 @@
     "@elysia/cors": "rc",
     "@sinclair/typebox": "^0.34.0",
     "elysia": "rc",
-    "gql.tada": "^1.11.3",
-    "graphql": "^17.0.2",
-    "typebox": "^1.4.2"
+    "gql.tada": "^1.11.5",
+    "graphql": "^17.1.0",
+    "typebox": "^1.4.7"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.6.0",
     "bun-types": "latest",
     "fishery": "^2.4.0",
-    "typescript": "~5.9.3"
+    "typescript": "~7.0.2"
   },
   "module": "src/index.js"
 }
