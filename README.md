@@ -109,7 +109,8 @@ thresholds come from [SmashWiki's UltRank 2026 page](https://www.ssbwiki.com/Ult
 stores scores. Both are kept in `apps/api/src/libs/ultrank/`.
 
 The API doesn't read the database itself. A script imports it into `tournaments.json`, which is committed and bundled
-with the server. When a new database is published:
+with the server. The `Update UltRank scores` workflow runs the import every day and opens a pull request when the
+scores change; merging it releases them. To run it by hand when a new database is published:
 
 1. Download the latest `ur_db_2026.zip` and unzip it.
 2. Import it:
