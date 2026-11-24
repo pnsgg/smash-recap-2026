@@ -1,0 +1,45 @@
+name: Update UltRank scores
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+env:
+  DATABASE_URL: https://raw.githubusercontent.com/kenniky/ultrank-database/main/ur_db_2026.zip
+
+jobs:
+  update:
+    name: Import the UltRank database
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Download and import the database
+        id: import
+        run: |
+          curl -sfL -o "$RUNNER_TEMP/ur_db.zip" "$DATABASE_URL"
+          unzip -o -q "$RUNNER_TEMP/ur_db.zip" -d "$RUNNER_TEMP/ur_db"
+          db=$(find "$RUNNER_TEMP/ur_db" -name '*.db' | head -n 1)
+          cd apps/api
+          echo "summary=$(bun run scripts/import-ultrank.ts "$db" | sed 's/ written to [^,]*//')" >>"$GITHUB_OUTPUT"
+
+      # Pull requests opened with the default token don't run the tests: set ULTRANK_PR_TOKEN to a token that can.
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.ULTRANK_PR_TOKEN || github.token }}
+          branch: ultrank-update
+          delete-branch: true
+          add-paths: apps/api/src/libs/ultrank/tournaments.json
+          commit-message: "feat(api): update the UltRank scores"
+          title: "feat(api): update the UltRank scores"
+          body: |
+            Imported from [kenniky/ultrank-database](https://github.com/kenniky/ultrank-database) `ur_db_2026.zip`:
+            ${{ steps.import.outputs.summary }}.
+
+            Opened by the `Update UltRank scores` workflow.
